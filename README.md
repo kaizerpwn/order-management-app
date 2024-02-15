@@ -6,7 +6,7 @@
 
 <p align="center">
   <img alt="Static Badge" src="https://img.shields.io/badge/Java-21.0-cbf871?logo=java&logoColor=cbf871">
-  <img alt="Static Badge" src="https://img.shields.io/badge/Spring-3.2.2-cbf871?logo=spring&logoColor=%23fff">  
+  <img alt="Static Badge" src="https://img.shields.io/badge/Spring Boot-3.2.2-cbf871?logo=spring&logoColor=%23fff">  
 </p> 
 
 # Database Entity-Relationship Diagram
