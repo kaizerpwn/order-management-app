@@ -1,0 +1,7 @@
+1.) What is Spring Data JPA(https://docs.spring.io/spring-data/jpa/docs/1.3.0.RELEASE/reference/html/jpa.repositories.html)
+2.) JPA repositories pattern
+3.) Using lombok to be more productive
+- Getters / Setters with @Data annotation
+- @NoArgsConstructor for clean constructor
+- @AllArgsConstructor for constructor with all parameters needed
+- @Builder annotation (https://www.baeldung.com/lombok-builder) for creating instances of our class
