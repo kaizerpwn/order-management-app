@@ -3,6 +3,7 @@ package com.ibrahimokic.ordermanagement.controller;
 import com.ibrahimokic.ordermanagement.domain.User;
 import com.ibrahimokic.ordermanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,8 +24,13 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<User> getAllUsers(){
-        return userService.getAllUsers();
+    @Operation(summary = "Get all users", description = "Get list of all users")
+    @ApiResponse(responseCode = "200", description = "List of users", content = {
+            @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))
+    })
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{userId}")
@@ -43,18 +49,25 @@ public class UserController {
         }
     }
 
-    @PostMapping @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create new user", description = "Create new user based on request body")
     public User createUser(@RequestBody User user)
     {
         return userService.createUser(user);
     }
 
-    @PatchMapping@ResponseStatus(HttpStatus.OK) User updateUser(@PathVariable Long userId, @RequestBody User newUser)
+    @PatchMapping
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Edit user", description = "Edit user based on request body and users id")
+    public User updateUser(@PathVariable Long userId, @RequestBody User newUser)
     {
         return userService.updateUser(userId, newUser);
     }
 
-    @DeleteMapping("/{userId}") @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Delete user", description = "Delete user with provided user id")
     public void deleteUser(@PathVariable Long userId){
         userService.deleteUser(userId);
     }

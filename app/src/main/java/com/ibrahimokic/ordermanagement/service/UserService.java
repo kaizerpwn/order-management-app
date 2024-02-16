@@ -1,6 +1,6 @@
 package com.ibrahimokic.ordermanagement.service;
 
-import com.ibrahimokic.ordermanagement.dao.UserRepository;
+import com.ibrahimokic.ordermanagement.repositories.UserRepository;
 import com.ibrahimokic.ordermanagement.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
