@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -27,11 +27,11 @@ public class Product {
 
     @Column(name = "available_from", nullable = false)
     @Temporal(TemporalType.DATE)
-    private Date availableFrom;
+    private LocalDate availableFrom;
 
     @Column(name = "available_until", nullable = false)
     @Temporal(TemporalType.DATE)
-    private Date availableUntil;
+    private LocalDate availableUntil;
 
     @Column(name = "available_quantity", nullable = false)
     private int availableQuantity;
