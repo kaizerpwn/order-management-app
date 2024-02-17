@@ -9,5 +9,5 @@
   <img alt="Static Badge" src="https://img.shields.io/badge/Spring Boot-3.2.2-cbf871?logo=spring&logoColor=%23fff">  
 </p> 
 
-# Database Entity-Relationship Diagram
-![Database Entity Diagram](https://github.com/kaizerpwn/order-management-app/assets/70588174/4c9764db-6f16-470c-9acc-dc20584436cf) 
+# Database Entity-Relationship Diagram  
+![Database Entity Diagram](https://github.com/kaizerpwn/order-management-app/assets/70588174/7e431ac9-9d5b-4658-8f0e-5727ff816bd6)
