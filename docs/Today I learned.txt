@@ -7,3 +7,5 @@
 - @Builder annotation (https://www.baeldung.com/lombok-builder) for creating instances of our class
 4.) Different ways of handling dependencies (https://www.jetbrains.com/guide/java/tutorials/managing-dependencies/add-dependencies/)
 5.) OpenAPI Swagger documentation in Spring Boot (https://www.youtube.com/watch?v=Eo6v01KUeZM)
+6.) @DataJpaTest annotation for repositories testing
+7.) H2 Database in memory database for safer unit testing

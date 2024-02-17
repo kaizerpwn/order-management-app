@@ -112,7 +112,6 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
         } else {
-            // User not found
             return ResponseEntity.notFound().build();
         }
     }
