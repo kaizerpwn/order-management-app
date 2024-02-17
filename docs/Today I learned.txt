@@ -9,3 +9,5 @@
 5.) OpenAPI Swagger documentation in Spring Boot (https://www.youtube.com/watch?v=Eo6v01KUeZM)
 6.) @DataJpaTest annotation for repositories testing
 7.) H2 Database in memory database for safer unit testing
+8.) @JsonIgnore annotation for ignoring some property because of security concerns (eg. passwords, credit cards..)
+9.) access = JsonProperty.Access.WRITE_ONLY attribute which can be used if we want some field only be available for writing (eg. password)
