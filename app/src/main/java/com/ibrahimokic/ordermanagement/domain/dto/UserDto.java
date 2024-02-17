@@ -1,28 +1,28 @@
 package com.ibrahimokic.ordermanagement.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 @Data
-public class UserPostDto {
-
+public class UserDto {
     @JsonProperty("username")
     @NotNull
     private String username;
+
+    @JsonProperty("password")
+    @NotNull
+    private String password;
 
     @JsonProperty("email")
     @NotNull
     private String email;
 
-    @JsonProperty("password")
+    @JsonProperty("role")
     @NotNull
-    private String password;
+    private String role;
 
     @JsonProperty("first_name")
     @NotNull
@@ -34,23 +34,21 @@ public class UserPostDto {
 
     @JsonProperty("birth_date")
     @NotNull
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
 
     @JsonProperty("street")
     @NotNull
-    private String street;
+    private String addressStreet;
 
-    @JsonProperty("zip")
+    @JsonProperty("zip_code")
     @NotNull
-    private String zip;
+    private String addressZip;
 
     @JsonProperty("city")
     @NotNull
-    private String city;
+    private String addressCity;
 
     @JsonProperty("country")
     @NotNull
-    private String country;
+    private String addressCountry;
 }
