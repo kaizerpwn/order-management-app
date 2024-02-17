@@ -56,4 +56,21 @@ class UserRepositoryTest {
         assertTrue(allUsers.stream().anyMatch(user -> user.getUsername().equals("user1")));
         assertTrue(allUsers.stream().anyMatch(user -> user.getUsername().equals("user2")));
     }
+
+    @Test
+    void testDeleteUser(){
+        User userUnderTest = new User();
+        userUnderTest.setUsername("johndoe");
+        userUnderTest.setRole("user");
+        userUnderTest.setEmail("johndoe@gmail.com");
+        userUnderTest.setPassword("123123");
+
+        userRepository.save(userUnderTest);
+
+        userRepository.deleteById(userUnderTest.getUserId());
+
+        List<User> allUsers = userRepository.findAll();
+
+        assertEquals(0, allUsers.size());
+    }
 }

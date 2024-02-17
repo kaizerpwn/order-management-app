@@ -26,11 +26,14 @@ import java.util.Optional;
 @RequestMapping("/api/users")
 @Tag(name = "User", description = "Operations related to users")
 public class UserController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    public UserController(UserService userService, UserRepository userRepository) {
+        this.userService = userService;
+        this.userRepository = userRepository;
+    }
 
     @GetMapping
     @Operation(summary = "Get all users", description = "Get list of all users")
