@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,13 +52,15 @@ public class UserController {
             @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))
     })
     @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
-    public ResponseEntity<Optional<User>> getUserById(@PathVariable Long userId) {
+    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
         Optional<User> user = userService.getUserById(userId);
 
-        if (user != null) {
+        if (user.isPresent()) {
             return ResponseEntity.ok(user);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("User not found.");
         }
     }
 
