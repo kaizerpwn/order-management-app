@@ -2,7 +2,6 @@ package com.ibrahimokic.ordermanagement.service;
 
 import com.ibrahimokic.ordermanagement.repositories.UserRepository;
 import com.ibrahimokic.ordermanagement.domain.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
 
-    @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
