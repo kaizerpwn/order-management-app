@@ -70,19 +70,34 @@ public class AddressController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new address", description = "Create new address based on request body")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User created",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Address.class))),
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Address created",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Address.class)
+                    )
+            ),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public Address createAddress(@RequestBody(required = true) @Valid AddressDto addressDto){
-        Address newAddress = new Address();
-        newAddress.setCity(addressDto.getCity());
-        newAddress.setZip(addressDto.getZip());
-        newAddress.setCountry(addressDto.getCountry());
-        newAddress.setStreet(addressDto.getStreet());
+    public ResponseEntity<?> createAddress(
+            @RequestBody @Valid AddressDto addressDto
+    ) {
+        try {
+            Address newAddress = new Address();
+            newAddress.setCity(addressDto.getCity());
+            newAddress.setZip(addressDto.getZip());
+            newAddress.setCountry(addressDto.getCountry());
+            newAddress.setStreet(addressDto.getStreet());
 
-        return addressService.createAddress(newAddress);
+            Address createdAddress = addressService.createAddress(newAddress);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdAddress);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Internal server error");
+        }
     }
 
     @DeleteMapping("/{addressId}")

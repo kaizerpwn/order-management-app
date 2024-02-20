@@ -1,10 +1,10 @@
 package com.ibrahimokic.ordermanagement.controller;
 
-import com.ibrahimokic.ordermanagement.domain.Address;
 import com.ibrahimokic.ordermanagement.domain.User;
 import com.ibrahimokic.ordermanagement.domain.dto.UserDto;
 import com.ibrahimokic.ordermanagement.repositories.UserRepository;
 import com.ibrahimokic.ordermanagement.service.UserService;
+import com.ibrahimokic.ordermanagement.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -73,25 +73,20 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public User createUser(@RequestBody(required = false) @Valid UserDto userDto)
-    {
-        User user = new User();
-        user.setUsername(userDto.getUsername());
-        user.setPassword(userDto.getPassword());
-        user.setEmail(userDto.getEmail());
-        user.setRole(userDto.getRole());
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
-        user.setBirthDate(userDto.getBirthDate());
+    public ResponseEntity<User> createUser(@RequestBody(required = false) @Valid UserDto userDto) {
+        try {
+            if (userDto == null) {
+                return ResponseEntity.badRequest().build();
+            }
 
-        Address address = new Address();
-        address.setStreet(userDto.getAddressStreet());
-        address.setZip(userDto.getAddressZip());
-        address.setCity(userDto.getAddressCity());
-        address.setCountry(userDto.getAddressCountry());
-        user.setAddress(address);
+            User user = Utils.convertDtoToUser(userDto);
 
-        return userService.createUser(user);
+            User createdUser = userService.createUser(user);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PatchMapping("/{userId}")
@@ -104,7 +99,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody UserDto updatedUserDto) {
+    public ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody UserDto updatedUserDto) {
         Optional<User> optionalExistingUser = userService.getUserById(userId);
 
         if (optionalExistingUser.isPresent()) {
@@ -113,19 +108,48 @@ public class UserController {
 
             try {
                 userRepository.save(existingUser);
-                return ResponseEntity.ok(existingUser);
+                return ResponseEntity.status(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(existingUser);
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("Internal server error.");
             }
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("User not found.");
         }
     }
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete user", description = "Delete user with provided user id")
-    public void deleteUser(@PathVariable Long userId){
-        userService.deleteUser(userId);
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User deleted"),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    })
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+        try {
+            Optional<User> userOptional = userService.getUserById(userId);
+
+            if (userOptional.isPresent()) {
+                userService.deleteUser(userId);
+                return ResponseEntity.status(HttpStatus.OK)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("User successfully deleted.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("User not found.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Internal server error.");
+        }
     }
 }
