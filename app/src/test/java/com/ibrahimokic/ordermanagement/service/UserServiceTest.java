@@ -25,7 +25,7 @@ public class UserServiceTest {
     private UserService userService;
 
     @Test
-    void getAllUsers() {
+    void testGetAllUsers() {
         User newUser = new User();
         newUser.setEmail("ibrahim@gmail.com");
         newUser.setRole("admin");
@@ -42,7 +42,7 @@ public class UserServiceTest {
         assertEquals(newUser.getEmail(), retrievedUsers.get(0).getEmail());
     }
     @Test
-    void getUserById() {
+    void testGetUserById() {
         User mockUser = mock(User.class);
         when(mockUser.getEmail()).thenReturn("ibrahim@gmail.com");
 
@@ -56,7 +56,7 @@ public class UserServiceTest {
         assertEquals(mockUser.getEmail(), retrievedUser.get().getEmail());
     }
     @Test
-    void createUser() {
+    void testCreateUser() {
         User mockUser = mock(User.class);
 
         when(userRepository.save(any(User.class))).thenReturn(mockUser);
