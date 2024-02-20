@@ -1,0 +1,130 @@
+package com.ibrahimokic.ordermanagement.controller;
+
+import com.ibrahimokic.ordermanagement.domain.Product;
+import com.ibrahimokic.ordermanagement.domain.dto.ProductDto;
+import com.ibrahimokic.ordermanagement.repositories.ProductRepository;
+import com.ibrahimokic.ordermanagement.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/product")
+@Tag(name="Product", description = "Operations related to products")
+public class ProductController {
+    private final ProductRepository productRepository;
+    private final ProductService productService;
+    @Autowired
+    public ProductController(ProductRepository productRepository, ProductService productService){
+        this.productService = productService;
+        this.productRepository = productRepository;
+    }
+
+    @GetMapping
+    @Operation(summary = "Get all products", description = "Get list of all products")
+    @ApiResponse(responseCode = "200", description = "List of addresses", content = {
+            @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Product.class)))
+    })
+    public ResponseEntity<List<Product>> getAllProducts(){
+        List<Product> addresses = productService.getAllProducts();
+        return ResponseEntity.ok(addresses);
+    }
+
+    @GetMapping("/{productId}")
+    @Operation(summary = "Get a product by ID", description = "Get a product by providing its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Product found", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "404", description = "Product not found.")
+    })
+    public ResponseEntity<?> getProductById(@PathVariable Long productId){
+        Optional<Product> product = productService.getProductById(productId);
+
+        if(product.isPresent()){
+            return ResponseEntity.ok(product);
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Product not found.");
+        }
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create new product", description = "Create new product based on request body")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Product created",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Product.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    })
+    public ResponseEntity<?> createProduct(@RequestBody @Valid ProductDto productDto) {
+        try {
+            Product newProduct = new Product();
+            newProduct.setProductName(productDto.getProductName());
+            newProduct.setPrice(productDto.getPrice());
+            newProduct.setAvailableQuantity(productDto.getAvailableQuantity());
+            newProduct.setAvailableUntil(productDto.getAvailableUntil());
+            newProduct.setAvailableFrom(productDto.getAvailableFrom());
+
+            Product createdProduct = productService.createProduct(newProduct);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Internal server error");
+        }
+    }
+
+    @PatchMapping("/{productId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Edit product", description = "Edit product based on request body and product ID")
+    public ResponseEntity<?> updateProduct(@PathVariable Long productId, @RequestBody ProductDto updatedProductDto) {
+        Optional<Product> optionalExistingProduct = productService.getProductById(productId);
+
+        if(optionalExistingProduct.isPresent()){
+            Product existingProduct = optionalExistingProduct.get();
+            BeanUtils.copyProperties(updatedProductDto, existingProduct);
+            try {
+                productRepository.save(existingProduct);
+                return ResponseEntity.ok(existingProduct);
+            } catch (Exception e){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("Internal server error");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Product with that ID does not exist in database");
+        }
+    }
+
+    @DeleteMapping("/{productId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Delete product", description = "Delete product with provided product id")
+    public void deleteProduct(@PathVariable Long productId){
+        productService.deleteProduct(productId);
+    }
+}

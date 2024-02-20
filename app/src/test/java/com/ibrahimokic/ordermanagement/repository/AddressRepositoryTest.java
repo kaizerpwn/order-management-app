@@ -35,7 +35,7 @@ public class AddressRepositoryTest {
     }
 
     @Test
-    void testGetAllAdresses(){
+    void testGetAllAddresses(){
         Address addressOne = new Address();
         addressOne.setCity("Sarajevo");
         addressOne.setZip("71000");
