@@ -1,11 +1,10 @@
 package com.ibrahimokic.ordermanagement.domain.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 public class UserDto {
@@ -35,7 +34,7 @@ public class UserDto {
 
     @JsonProperty("birth_date")
     @NotNull
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @JsonProperty("street")
     @NotNull
