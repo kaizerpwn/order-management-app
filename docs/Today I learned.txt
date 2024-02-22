@@ -12,3 +12,4 @@
 8.) @JsonIgnore annotation for ignoring some property because of security concerns (eg. passwords, credit cards..)
 9.) access = JsonProperty.Access.WRITE_ONLY attribute which can be used if we want some field only be available for writing (eg. password)
 10.) Web services crash course (https://www.youtube.com/watch?v=5RmDpDLV_RU&list=PLK4Lw8AJ60B0I9kNfv35r2dzId9CDx8ll)
+11.) Model Mappers for converting data from domain object to corresponding data transfer object (https://www.baeldung.com/java-modelmapper)

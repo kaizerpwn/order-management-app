@@ -2,7 +2,6 @@ package com.ibrahimokic.ordermanagement.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ibrahimokic.ordermanagement.domain.Address;
-import com.ibrahimokic.ordermanagement.domain.OrderItem;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -32,6 +31,6 @@ public class OrderDto {
 
     @JsonProperty("items")
     @Valid
-    private List<OrderItem> orderItems = new ArrayList<>();
-
+    private List<OrderItemDto> orderItems = new ArrayList<>();
 }
+
