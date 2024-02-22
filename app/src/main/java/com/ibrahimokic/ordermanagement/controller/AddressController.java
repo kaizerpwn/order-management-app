@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +29,6 @@ public class AddressController {
     private final AddressService addressService;
     private final AddressRepository addressRepository;
 
-    @Autowired
     public AddressController(AddressService addressService, AddressRepository addressRepository) {
         this.addressService = addressService;
         this.addressRepository = addressRepository;
