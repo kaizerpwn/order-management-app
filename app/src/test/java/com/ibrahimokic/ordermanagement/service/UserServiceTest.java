@@ -1,6 +1,6 @@
 package com.ibrahimokic.ordermanagement.service;
 import com.ibrahimokic.ordermanagement.domain.User;
-import com.ibrahimokic.ordermanagement.repositories.UserRepository;
+import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

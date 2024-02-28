@@ -1,7 +1,6 @@
 package com.ibrahimokic.ordermanagement.repository;
 
 import com.ibrahimokic.ordermanagement.domain.User;
-import com.ibrahimokic.ordermanagement.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

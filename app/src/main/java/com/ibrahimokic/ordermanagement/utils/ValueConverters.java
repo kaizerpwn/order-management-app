@@ -4,10 +4,11 @@ import com.ibrahimokic.ordermanagement.domain.Address;
 import com.ibrahimokic.ordermanagement.domain.Order;
 import com.ibrahimokic.ordermanagement.domain.OrderItem;
 import com.ibrahimokic.ordermanagement.domain.User;
+import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
 import com.ibrahimokic.ordermanagement.domain.dto.OrderDto;
 import com.ibrahimokic.ordermanagement.domain.dto.OrderItemDto;
 import com.ibrahimokic.ordermanagement.domain.dto.UserDto;
-import com.ibrahimokic.ordermanagement.repositories.AddressRepository;
+import com.ibrahimokic.ordermanagement.repository.AddressRepository;
 import com.ibrahimokic.ordermanagement.service.ProductService;
 
 import java.util.ArrayList;
@@ -48,8 +49,12 @@ public class ValueConverters {
         orderDto.setUserId(order.getUser().getUserId());
         orderDto.setOrderDate(order.getOrderDate());
         orderDto.setTotalAmount(order.getTotalAmount());
-        orderDto.setDeliveryAddress(order.getDeliveryAddress());
-        orderDto.setSourceAddress(order.getSourceAddress());
+
+        AddressDto deliveryAddressDto = convertAddressToDto(order.getDeliveryAddress());
+        AddressDto sourceAddressDto = convertAddressToDto(order.getSourceAddress());
+
+        orderDto.setDeliveryAddress(deliveryAddressDto);
+        orderDto.setSourceAddress(sourceAddressDto);
 
         List<OrderItemDto> orderItemDtos = new ArrayList<>();
         for (OrderItem orderItem : order.getOrderItems()) {
@@ -60,6 +65,16 @@ public class ValueConverters {
         orderDto.setOrderItems(orderItemDtos);
 
         return orderDto;
+    }
+
+    private static AddressDto convertAddressToDto(Address address) {
+        AddressDto addressDto = new AddressDto();
+        addressDto.setStreet(address.getStreet());
+        addressDto.setCity(address.getCity());
+        addressDto.setCountry(address.getCountry());
+        addressDto.setZip(address.getZip());
+
+        return addressDto;
     }
 
     public static OrderItemDto convertOrderItemToDto(OrderItem orderItem) {

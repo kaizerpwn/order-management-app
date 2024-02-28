@@ -1,4 +1,4 @@
-package com.ibrahimokic.ordermanagement.exceptions;
+package com.ibrahimokic.ordermanagement.exception;
 
 public class ProductNotFoundException extends RuntimeException {
 

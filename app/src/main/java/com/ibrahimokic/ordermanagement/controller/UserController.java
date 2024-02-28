@@ -2,9 +2,8 @@ package com.ibrahimokic.ordermanagement.controller;
 
 import com.ibrahimokic.ordermanagement.domain.User;
 import com.ibrahimokic.ordermanagement.domain.dto.UserDto;
-import com.ibrahimokic.ordermanagement.repositories.UserRepository;
+import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.service.UserService;
-import com.ibrahimokic.ordermanagement.utils.Utils;
 import com.ibrahimokic.ordermanagement.utils.ValueConverters;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -15,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +29,7 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
+    @Autowired
     public UserController(UserService userService, UserRepository userRepository) {
         this.userService = userService;
         this.userRepository = userRepository;

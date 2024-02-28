@@ -2,10 +2,14 @@ package com.ibrahimokic.ordermanagement.service;
 
 import com.ibrahimokic.ordermanagement.domain.Order;
 import com.ibrahimokic.ordermanagement.domain.dto.OrderDto;
-import com.ibrahimokic.ordermanagement.repositories.AddressRepository;
-import com.ibrahimokic.ordermanagement.repositories.OrderRepository;
-import com.ibrahimokic.ordermanagement.repositories.UserRepository;
+import com.ibrahimokic.ordermanagement.repository.AddressRepository;
+import com.ibrahimokic.ordermanagement.repository.OrderRepository;
+import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.utils.ValueConverters;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,6 +22,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
 
+    @Autowired
     public OrderService(OrderRepository orderRepository,
                         UserRepository userRepository,
                         AddressRepository addressRepository) {
@@ -60,4 +65,15 @@ public class OrderService {
         }
     }
 
+    public ResponseEntity<?> createNewOrder(OrderDto orderDto) {
+        if(userRepository.existsById(orderDto.getUserId())) {
+
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("User with that ID not found");
+        }
+        return null;
+    }
 }

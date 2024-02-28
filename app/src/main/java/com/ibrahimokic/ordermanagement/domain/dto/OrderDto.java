@@ -1,7 +1,6 @@
 package com.ibrahimokic.ordermanagement.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ibrahimokic.ordermanagement.domain.Address;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -24,10 +23,10 @@ public class OrderDto {
     private BigDecimal totalAmount;
 
     @JsonProperty("delivery_address_id")
-    private Address deliveryAddress;
+    private AddressDto deliveryAddress;
 
     @JsonProperty("source_address_id")
-    private Address sourceAddress;
+    private AddressDto sourceAddress;
 
     @JsonProperty("items")
     @Valid

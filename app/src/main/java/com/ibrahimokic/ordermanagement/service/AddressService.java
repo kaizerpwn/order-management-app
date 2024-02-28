@@ -1,8 +1,7 @@
 package com.ibrahimokic.ordermanagement.service;
 
 import com.ibrahimokic.ordermanagement.domain.Address;
-import com.ibrahimokic.ordermanagement.repositories.AddressRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ibrahimokic.ordermanagement.repository.AddressRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

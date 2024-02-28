@@ -1,4 +1,4 @@
-package com.ibrahimokic.ordermanagement.repositories;
+package com.ibrahimokic.ordermanagement.repository;
 
 import com.ibrahimokic.ordermanagement.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -22,9 +22,11 @@ import java.util.List;
 @RequestMapping("/api/orders")
 @Tag(name = "Order", description = "Operations related to orders")
 public class OrderController {
-
+    private final OrderService orderService;
     @Autowired
-    private OrderService orderService;
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @GetMapping
     @Operation(summary = "Get all orders with details", description = "Get a list of all orders along with associated details")
@@ -86,6 +88,6 @@ public class OrderController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     public ResponseEntity<?> createOrder(@RequestBody @Valid OrderDto orderDto) {
-        return null;
+        return orderService.createNewOrder(orderDto);
     }
 }

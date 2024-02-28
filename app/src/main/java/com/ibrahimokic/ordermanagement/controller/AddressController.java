@@ -2,7 +2,7 @@ package com.ibrahimokic.ordermanagement.controller;
 
 import com.ibrahimokic.ordermanagement.domain.Address;
 import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
-import com.ibrahimokic.ordermanagement.repositories.AddressRepository;
+import com.ibrahimokic.ordermanagement.repository.AddressRepository;
 import com.ibrahimokic.ordermanagement.service.AddressService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ public class AddressController {
     private final AddressService addressService;
     private final AddressRepository addressRepository;
 
+    @Autowired
     public AddressController(AddressService addressService, AddressRepository addressRepository) {
         this.addressService = addressService;
         this.addressRepository = addressRepository;

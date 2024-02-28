@@ -2,7 +2,7 @@ package com.ibrahimokic.ordermanagement.controller;
 
 import com.ibrahimokic.ordermanagement.domain.Product;
 import com.ibrahimokic.ordermanagement.domain.dto.ProductDto;
-import com.ibrahimokic.ordermanagement.repositories.ProductRepository;
+import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ public class ProductController {
     private final ProductRepository productRepository;
     private final ProductService productService;
 
+    @Autowired
     public ProductController(ProductRepository productRepository, ProductService productService){
         this.productService = productService;
         this.productRepository = productRepository;
