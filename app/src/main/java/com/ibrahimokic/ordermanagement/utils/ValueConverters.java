@@ -1,9 +1,10 @@
 package com.ibrahimokic.ordermanagement.utils;
 
-import com.ibrahimokic.ordermanagement.domain.Address;
-import com.ibrahimokic.ordermanagement.domain.Order;
-import com.ibrahimokic.ordermanagement.domain.OrderItem;
-import com.ibrahimokic.ordermanagement.domain.User;
+import com.ibrahimokic.ordermanagement.controller.dto.CreateOrderItemDto;
+import com.ibrahimokic.ordermanagement.domain.entity.Address;
+import com.ibrahimokic.ordermanagement.domain.entity.Order;
+import com.ibrahimokic.ordermanagement.domain.entity.OrderItem;
+import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
 import com.ibrahimokic.ordermanagement.domain.dto.OrderDto;
 import com.ibrahimokic.ordermanagement.domain.dto.OrderItemDto;
@@ -56,10 +57,10 @@ public class ValueConverters {
         orderDto.setDeliveryAddress(deliveryAddressDto);
         orderDto.setSourceAddress(sourceAddressDto);
 
-        List<OrderItemDto> orderItemDtos = new ArrayList<>();
+        List<CreateOrderItemDto> orderItemDtos = new ArrayList<>();
         for (OrderItem orderItem : order.getOrderItems()) {
-            OrderItemDto orderItemDto = convertOrderItemToDto(orderItem);
-            orderItemDtos.add(orderItemDto);
+            //CreateOrderItemDto orderItemDto = convertOrderItemToCreateDto(orderItem);
+            //orderItemDtos.add(orderItemDto);
         }
 
         orderDto.setOrderItems(orderItemDtos);
@@ -77,10 +78,9 @@ public class ValueConverters {
         return addressDto;
     }
 
-    public static OrderItemDto convertOrderItemToDto(OrderItem orderItem) {
+    public static OrderItemDto convertOrderItemToDto(CreateOrderItemDto orderItem) {
         OrderItemDto orderItemDto = new OrderItemDto();
-        orderItemDto.setOrderId(orderItem.getOrder().getOrderId());
-        orderItemDto.setProductId(orderItem.getProduct().getProductId());
+        orderItemDto.setProductId(orderItem.getProductId());
         orderItemDto.setQuantity(orderItem.getQuantity());
         orderItemDto.setItemPrice(orderItem.getItemPrice());
 
