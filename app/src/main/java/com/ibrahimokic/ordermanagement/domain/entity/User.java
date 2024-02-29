@@ -1,4 +1,4 @@
-package com.ibrahimokic.ordermanagement.domain;
+package com.ibrahimokic.ordermanagement.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

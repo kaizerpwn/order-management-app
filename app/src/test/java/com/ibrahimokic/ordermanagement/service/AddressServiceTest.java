@@ -1,6 +1,6 @@
 package com.ibrahimokic.ordermanagement.service;
 
-import com.ibrahimokic.ordermanagement.domain.Address;
+import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.repository.AddressRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

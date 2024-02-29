@@ -1,6 +1,6 @@
 package com.ibrahimokic.ordermanagement.service;
 
-import com.ibrahimokic.ordermanagement.domain.Product;
+import com.ibrahimokic.ordermanagement.domain.entity.Product;
 import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 

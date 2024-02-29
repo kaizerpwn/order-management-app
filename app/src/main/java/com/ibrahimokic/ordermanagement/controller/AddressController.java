@@ -1,6 +1,6 @@
 package com.ibrahimokic.ordermanagement.controller;
 
-import com.ibrahimokic.ordermanagement.domain.Address;
+import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
 import com.ibrahimokic.ordermanagement.repository.AddressRepository;
 import com.ibrahimokic.ordermanagement.service.AddressService;

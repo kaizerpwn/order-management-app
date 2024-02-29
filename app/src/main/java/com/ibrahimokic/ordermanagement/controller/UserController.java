@@ -1,6 +1,6 @@
 package com.ibrahimokic.ordermanagement.controller;
 
-import com.ibrahimokic.ordermanagement.domain.User;
+import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.domain.dto.UserDto;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.service.UserService;

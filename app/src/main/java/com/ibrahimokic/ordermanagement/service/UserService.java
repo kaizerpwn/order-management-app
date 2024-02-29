@@ -1,7 +1,7 @@
 package com.ibrahimokic.ordermanagement.service;
 
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
-import com.ibrahimokic.ordermanagement.domain.User;
+import com.ibrahimokic.ordermanagement.domain.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

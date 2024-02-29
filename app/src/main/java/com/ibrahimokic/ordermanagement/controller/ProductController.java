@@ -1,6 +1,6 @@
 package com.ibrahimokic.ordermanagement.controller;
 
-import com.ibrahimokic.ordermanagement.domain.Product;
+import com.ibrahimokic.ordermanagement.domain.entity.Product;
 import com.ibrahimokic.ordermanagement.domain.dto.ProductDto;
 import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.service.ProductService;
