@@ -2,6 +2,7 @@ package com.ibrahimokic.ordermanagement.service;
 
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.repository.AddressRepository;
+import com.ibrahimokic.ordermanagement.service.impl.AddressServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,7 +23,7 @@ public class AddressServiceImplTest {
     private AddressRepository addressRepository;
 
     @InjectMocks
-    private AddressService addressService;
+    private AddressServiceImpl addressService;
 
     @Test
     void testGetAllAddresses(){
