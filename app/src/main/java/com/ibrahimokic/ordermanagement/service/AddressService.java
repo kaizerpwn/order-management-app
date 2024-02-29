@@ -1,43 +1,18 @@
 package com.ibrahimokic.ordermanagement.service;
 
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
-import com.ibrahimokic.ordermanagement.repository.AddressRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class AddressService {
-    private final AddressRepository addressRepository;
+public interface AddressService {
+    List<Address> getAllAddresses();
 
-    public AddressService(AddressRepository addressRepository){
-        this.addressRepository = addressRepository;
-    }
+    Optional<Address> getAddressById(Long addressId);
 
-    public List<Address> getAllAddresses() {
-        return addressRepository.findAll();
-    }
+    Address createAddress(Address address);
 
-    public Optional<Address> getAddressById(Long addressId){
-        return addressRepository.findById(addressId);
-    }
+    Address updateAddress(Long addressId, Address newAddress);
 
-    public Address createAddress(Address address) {
-        return addressRepository.save(address);
-    }
-
-    public Address updateAddress(Long addressId, Address newAddress) {
-        if(addressRepository.existsById(addressId)){
-            newAddress.setAddressId(addressId);
-            return addressRepository.save(newAddress);
-        }
-        else {
-            return null;
-        }
-    }
-
-    public void deleteAddress(Long addressId) {
-        addressRepository.deleteById(addressId);
-    }
+    void deleteAddress(Long addressId);
 }

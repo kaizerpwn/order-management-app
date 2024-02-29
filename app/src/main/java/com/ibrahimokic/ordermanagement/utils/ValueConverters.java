@@ -10,7 +10,7 @@ import com.ibrahimokic.ordermanagement.domain.dto.OrderDto;
 import com.ibrahimokic.ordermanagement.domain.dto.OrderItemDto;
 import com.ibrahimokic.ordermanagement.domain.dto.UserDto;
 import com.ibrahimokic.ordermanagement.repository.AddressRepository;
-import com.ibrahimokic.ordermanagement.service.ProductService;
+import com.ibrahimokic.ordermanagement.service.impl.ProductServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +18,11 @@ import java.util.List;
 public class ValueConverters {
 
     private final AddressRepository addressRepository;
-    private final ProductService productService;
+    private final ProductServiceImpl productServiceImpl;
 
-    public ValueConverters(AddressRepository addressRepository, ProductService productService) {
+    public ValueConverters(AddressRepository addressRepository, ProductServiceImpl productServiceImpl) {
         this.addressRepository = addressRepository;
-        this.productService = productService;
+        this.productServiceImpl = productServiceImpl;
     }
 
     public static User convertDtoToUser(UserDto userDto) {
