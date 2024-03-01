@@ -1,4 +1,4 @@
-package com.ibrahimokic.ordermanagement.controller;
+package com.ibrahimokic.ordermanagement.controller.api;
 
 import com.ibrahimokic.ordermanagement.domain.dto.OrderDto;
 import com.ibrahimokic.ordermanagement.service.OrderService;

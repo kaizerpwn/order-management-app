@@ -2,11 +2,17 @@ package com.ibrahimokic.ordermanagement.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class UserDto {
     @JsonProperty("username")
     @NotNull
@@ -36,19 +42,7 @@ public class UserDto {
     @NotNull
     private LocalDate birthDate;
 
-    @JsonProperty("street")
+    @JsonProperty("address")
     @NotNull
-    private String addressStreet;
-
-    @JsonProperty("zip_code")
-    @NotNull
-    private String addressZip;
-
-    @JsonProperty("city")
-    @NotNull
-    private String addressCity;
-
-    @JsonProperty("country")
-    @NotNull
-    private String addressCountry;
+    private AddressDto address;
 }

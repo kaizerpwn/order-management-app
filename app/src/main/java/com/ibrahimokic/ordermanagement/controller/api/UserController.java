@@ -1,10 +1,10 @@
-package com.ibrahimokic.ordermanagement.controller;
+package com.ibrahimokic.ordermanagement.controller.api;
 
 import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.domain.dto.UserDto;
+import com.ibrahimokic.ordermanagement.mapper.Mapper;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.service.UserService;
-import com.ibrahimokic.ordermanagement.utils.ValueConverters;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.hibernate.MappingException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,10 +30,13 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
+    private final Mapper<User, UserDto> userMapper;
+
     @Autowired
-    public UserController(UserService userService, UserRepository userRepository) {
+    public UserController(UserService userService, UserRepository userRepository, Mapper<User, UserDto> userMapper) {
         this.userService = userService;
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     @GetMapping
@@ -77,13 +81,12 @@ public class UserController {
             if (userDto == null) {
                 return ResponseEntity.badRequest().build();
             }
-
-            User user = ValueConverters.convertDtoToUser(userDto);
-
+            User user = userMapper.mapFrom(userDto);
             User createdUser = userService.createUser(user);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-        } catch (Exception e) {
+        } catch (MappingException mappingException) {
+            System.out.println(mappingException);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

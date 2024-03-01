@@ -1,7 +1,8 @@
-package com.ibrahimokic.ordermanagement.controller;
+package com.ibrahimokic.ordermanagement.controller.api;
 
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
+import com.ibrahimokic.ordermanagement.mapper.Mapper;
 import com.ibrahimokic.ordermanagement.repository.AddressRepository;
 import com.ibrahimokic.ordermanagement.service.AddressService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,11 +30,13 @@ public class AddressController {
 
     private final AddressService addressService;
     private final AddressRepository addressRepository;
+    private Mapper<Address, AddressDto> addressMapper;
 
     @Autowired
-    public AddressController(AddressService addressService, AddressRepository addressRepository) {
+    public AddressController(AddressService addressService, AddressRepository addressRepository, Mapper<Address, AddressDto> addressMapper) {
         this.addressService = addressService;
         this.addressRepository = addressRepository;
+        this.addressMapper = addressMapper;
     }
 
     @GetMapping
@@ -85,12 +88,7 @@ public class AddressController {
             @RequestBody @Valid AddressDto addressDto
     ) {
         try {
-            Address newAddress = new Address();
-            newAddress.setCity(addressDto.getCity());
-            newAddress.setZip(addressDto.getZip());
-            newAddress.setCountry(addressDto.getCountry());
-            newAddress.setStreet(addressDto.getStreet());
-
+            Address newAddress = addressMapper.mapFrom(addressDto);
             Address createdAddress = addressService.createAddress(newAddress);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdAddress);
         } catch (Exception e) {

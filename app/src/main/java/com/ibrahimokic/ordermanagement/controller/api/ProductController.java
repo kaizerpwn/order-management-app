@@ -1,7 +1,8 @@
-package com.ibrahimokic.ordermanagement.controller;
+package com.ibrahimokic.ordermanagement.controller.api;
 
 import com.ibrahimokic.ordermanagement.domain.entity.Product;
 import com.ibrahimokic.ordermanagement.domain.dto.ProductDto;
+import com.ibrahimokic.ordermanagement.mapper.Mapper;
 import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,11 +29,13 @@ import java.util.Optional;
 public class ProductController {
     private final ProductRepository productRepository;
     private final ProductService productService;
+    private final Mapper<Product, ProductDto> productMapper;
 
     @Autowired
-    public ProductController(ProductRepository productRepository, ProductService productService){
+    public ProductController(ProductRepository productRepository, ProductService productService, Mapper<Product, ProductDto> productMapper){
         this.productService = productService;
         this.productRepository = productRepository;
+        this.productMapper = productMapper;
     }
 
     @GetMapping
@@ -82,14 +85,9 @@ public class ProductController {
     })
     public ResponseEntity<?> createProduct(@RequestBody @Valid ProductDto productDto) {
         try {
-            Product newProduct = new Product();
-            newProduct.setProductName(productDto.getProductName());
-            newProduct.setPrice(productDto.getPrice());
-            newProduct.setAvailableQuantity(productDto.getAvailableQuantity());
-            newProduct.setAvailableUntil(productDto.getAvailableUntil());
-            newProduct.setAvailableFrom(productDto.getAvailableFrom());
-
+            Product newProduct = productMapper.mapFrom(productDto);
             Product createdProduct = productService.createProduct(newProduct);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
