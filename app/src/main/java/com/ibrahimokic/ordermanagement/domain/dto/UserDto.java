@@ -1,5 +1,6 @@
 package com.ibrahimokic.ordermanagement.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class UserDto {
+    @JsonProperty("user_id")
+    @JsonIgnore
+    private Long userId;
+
     @JsonProperty("username")
     @NotNull
     private String username;

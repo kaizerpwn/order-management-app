@@ -79,7 +79,6 @@ public class OrderController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create Order", description = "Create a new order based on the request body")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Order created successfully",
@@ -88,6 +87,17 @@ public class OrderController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     public ResponseEntity<?> createOrder(@RequestBody @Valid OrderDto orderDto) {
-        return orderService.createNewOrder(orderDto);
+        ResponseEntity<?> responseEntity = orderService.createNewOrder(orderDto);
+
+        if (responseEntity.getStatusCode() == HttpStatus.CREATED) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(responseEntity.getBody());
+        } else {
+            return ResponseEntity.status(responseEntity.getStatusCode())
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(responseEntity.getBody());
+        }
     }
+
 }

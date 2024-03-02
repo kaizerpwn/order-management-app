@@ -1,5 +1,6 @@
 package com.ibrahimokic.ordermanagement.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -17,6 +18,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class ProductDto {
+    @JsonProperty("product_id")
+    private Long productId;
+
     @JsonProperty("product_name")
     @NotNull
     private String productName;

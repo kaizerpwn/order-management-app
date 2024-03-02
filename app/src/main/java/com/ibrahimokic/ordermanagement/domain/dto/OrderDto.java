@@ -29,10 +29,10 @@ public class OrderDto {
     @JsonProperty("total_amount")
     private BigDecimal totalAmount;
 
-    @JsonProperty("delivery_address_id")
+    @JsonProperty("delivery_address")
     private AddressDto deliveryAddress;
 
-    @JsonProperty("source_address_id")
+    @JsonProperty("source_address")
     private AddressDto sourceAddress;
 
     @JsonProperty("items")
