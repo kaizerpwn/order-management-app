@@ -5,7 +5,6 @@ import com.ibrahimokic.ordermanagement.controller.dto.CreateOrderItemDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +16,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class OrderDto {
     @JsonProperty("user_id")
     @NotNull
@@ -39,4 +37,3 @@ public class OrderDto {
     @Valid
     private List<CreateOrderItemDto> orderItems = new ArrayList<>();
 }
-

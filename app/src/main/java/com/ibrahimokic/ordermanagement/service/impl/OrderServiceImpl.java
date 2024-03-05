@@ -12,7 +12,6 @@ import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.service.OrderService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,12 +28,11 @@ public class OrderServiceImpl implements OrderService {
     private final Mapper<Address, AddressDto> addressMapper;
     private final AddressRepository addressRepository;
 
-    @Autowired
     public OrderServiceImpl(OrderRepository orderRepository,
-                            UserRepository userRepository,
-                            Mapper<Order, OrderDto> orderMapper,
-                            Mapper<Address, AddressDto> addressMapper,
-                            AddressRepository addressRepository) {
+            UserRepository userRepository,
+            Mapper<Order, OrderDto> orderMapper,
+            Mapper<Address, AddressDto> addressMapper,
+            AddressRepository addressRepository) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.orderMapper = orderMapper;
@@ -90,7 +88,8 @@ public class OrderServiceImpl implements OrderService {
                 System.out.println("aaa");
                 order.setUser(optionalUser.get());
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with ID " + orderDto.getUserId() + " not found.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("User with ID " + orderDto.getUserId() + " not found.");
             }
 
             Address deliveryAddress = addressMapper.mapFrom(orderDto.getDeliveryAddress());
