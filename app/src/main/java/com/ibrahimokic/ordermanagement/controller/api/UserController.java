@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.hibernate.MappingException;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +31,6 @@ public class UserController {
     private final UserRepository userRepository;
     private final Mapper<User, UserDto> userMapper;
 
-    @Autowired
     public UserController(UserService userService, UserRepository userRepository, Mapper<User, UserDto> userMapper) {
         this.userService = userService;
         this.userRepository = userRepository;
@@ -71,8 +69,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new user", description = "Create new user based on request body")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User created",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "201", description = "User created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })

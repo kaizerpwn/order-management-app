@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ import java.util.List;
 @Tag(name = "Order", description = "Operations related to orders")
 public class OrderController {
     private final OrderService orderService;
-    @Autowired
+
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
@@ -42,8 +41,7 @@ public class OrderController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get Order by ID", description = "Get details of an order based on the provided order ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Order details retrieved successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDto.class))),
+            @ApiResponse(responseCode = "200", description = "Order details retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDto.class))),
             @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)
     })
     public ResponseEntity<?> getOrderById(@PathVariable Long orderId) {
@@ -66,23 +64,22 @@ public class OrderController {
             @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)
     })
     public ResponseEntity<?> deleteOrderById(@PathVariable Long orderId) {
-            boolean deleted = orderService.deleteOrderById(orderId);
-            if(deleted) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .contentType(MediaType.TEXT_PLAIN)
-                        .body("Order deleted successfully");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .contentType(MediaType.TEXT_PLAIN)
-                        .body("Order not found");
-            }
+        boolean deleted = orderService.deleteOrderById(orderId);
+        if (deleted) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Order deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Order not found");
+        }
     }
 
     @PostMapping
     @Operation(summary = "Create Order", description = "Create a new order based on the request body")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Order created successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDto.class))),
+            @ApiResponse(responseCode = "201", description = "Order created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDto.class))),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })

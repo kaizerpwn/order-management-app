@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,14 +24,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/product")
-@Tag(name="Product", description = "Operations related to products")
+@Tag(name = "Product", description = "Operations related to products")
 public class ProductController {
     private final ProductRepository productRepository;
     private final ProductService productService;
     private final Mapper<Product, ProductDto> productMapper;
 
-    @Autowired
-    public ProductController(ProductRepository productRepository, ProductService productService, Mapper<Product, ProductDto> productMapper){
+    public ProductController(ProductRepository productRepository, ProductService productService,
+            Mapper<Product, ProductDto> productMapper) {
         this.productService = productService;
         this.productRepository = productRepository;
         this.productMapper = productMapper;
@@ -43,7 +42,7 @@ public class ProductController {
     @ApiResponse(responseCode = "200", description = "List of addresses", content = {
             @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Product.class)))
     })
-    public ResponseEntity<List<Product>> getAllProducts(){
+    public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> addresses = productService.getAllProducts();
         return ResponseEntity.ok(addresses);
     }
@@ -51,17 +50,15 @@ public class ProductController {
     @GetMapping("/{productId}")
     @Operation(summary = "Get a product by ID", description = "Get a product by providing its ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product found", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "200", description = "Product found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Product.class))),
             @ApiResponse(responseCode = "404", description = "Product not found.")
     })
-    public ResponseEntity<?> getProductById(@PathVariable Long productId){
+    public ResponseEntity<?> getProductById(@PathVariable Long productId) {
         Optional<Product> product = productService.getProductById(productId);
 
-        if(product.isPresent()){
+        if (product.isPresent()) {
             return ResponseEntity.ok(product);
-        }
-        else {
+        } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .contentType(MediaType.TEXT_PLAIN)
                     .body("Product not found.");
@@ -72,14 +69,7 @@ public class ProductController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new product", description = "Create new product based on request body")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "Product created",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = Product.class)
-                    )
-            ),
+            @ApiResponse(responseCode = "201", description = "Product created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Product.class))),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
@@ -102,13 +92,13 @@ public class ProductController {
     public ResponseEntity<?> updateProduct(@PathVariable Long productId, @RequestBody ProductDto updatedProductDto) {
         Optional<Product> optionalExistingProduct = productService.getProductById(productId);
 
-        if(optionalExistingProduct.isPresent()){
+        if (optionalExistingProduct.isPresent()) {
             Product existingProduct = optionalExistingProduct.get();
             BeanUtils.copyProperties(updatedProductDto, existingProduct);
             try {
                 productRepository.save(existingProduct);
                 return ResponseEntity.ok(existingProduct);
-            } catch (Exception e){
+            } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .contentType(MediaType.TEXT_PLAIN)
                         .body("Internal server error");
@@ -123,7 +113,7 @@ public class ProductController {
     @DeleteMapping("/{productId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete product", description = "Delete product with provided product id")
-    public void deleteProduct(@PathVariable Long productId){
+    public void deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
     }
 }
