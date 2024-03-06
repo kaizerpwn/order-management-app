@@ -15,11 +15,9 @@ import java.math.BigDecimal;
 @Builder
 public class OrderItemDto {
     @JsonProperty("order_id")
-    @NotNull
     private Long orderId;
 
     @JsonProperty("product_id")
-    @NotNull
     private Long productId;
 
     @JsonProperty("quantity")
