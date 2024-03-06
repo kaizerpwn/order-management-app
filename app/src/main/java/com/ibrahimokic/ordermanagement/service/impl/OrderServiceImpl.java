@@ -1,6 +1,8 @@
 package com.ibrahimokic.ordermanagement.service.impl;
 
+import com.ibrahimokic.ordermanagement.controller.dto.CreateOrderItemDto;
 import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
+import com.ibrahimokic.ordermanagement.domain.dto.OrderItemDto;
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.domain.entity.Order;
 import com.ibrahimokic.ordermanagement.domain.dto.OrderDto;
@@ -85,7 +87,6 @@ public class OrderServiceImpl implements OrderService {
             Optional<User> optionalUser = userRepository.findById(orderDto.getUserId());
 
             if (optionalUser.isPresent()) {
-                System.out.println("aaa");
                 order.setUser(optionalUser.get());
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -101,6 +102,12 @@ public class OrderServiceImpl implements OrderService {
             order.setDeliveryAddress(deliveryAddress);
             order.setSourceAddress(sourceAddress);
 
+            System.out.println(orderDto);
+/*
+            for(CreateOrderItemDto orderItem : orderDto.getOrderItems()) {
+                System.out.println(orderItem.getProductId());
+            }
+*/
             orderRepository.save(order);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(orderMapper.mapTo(order));
