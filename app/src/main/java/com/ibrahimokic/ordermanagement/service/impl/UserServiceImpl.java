@@ -3,6 +3,9 @@ package com.ibrahimokic.ordermanagement.service.impl;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.service.UserService;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,22 +25,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUserById(Long userId){
+    public Optional<User> getUserById(Long userId) {
         return userRepository.findById(userId);
     }
 
     @Override
-    public User createUser(User user){
+    @Transactional
+    public User createUser(User user) {
         return userRepository.save(user);
     }
 
     @Override
-    public User updateUser(Long userId, User newUser){
-        if(userRepository.existsById(userId)){
+    public User updateUser(Long userId, User newUser) {
+        if (userRepository.existsById(userId)) {
             newUser.setUserId(userId);
             return userRepository.save(newUser);
-        }
-        else {
+        } else {
             return null;
         }
     }
