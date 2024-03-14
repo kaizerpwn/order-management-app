@@ -1,19 +1,15 @@
 package com.ibrahimokic.ordermanagement.service.impl;
 
-import com.ibrahimokic.ordermanagement.controller.dto.CreateOrderItemDto;
 import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
 import com.ibrahimokic.ordermanagement.domain.dto.OrderItemDto;
-import com.ibrahimokic.ordermanagement.domain.entity.Address;
-import com.ibrahimokic.ordermanagement.domain.entity.Order;
+import com.ibrahimokic.ordermanagement.domain.entity.*;
 import com.ibrahimokic.ordermanagement.domain.dto.OrderDto;
-import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.mapper.Mapper;
-import com.ibrahimokic.ordermanagement.repository.AddressRepository;
-import com.ibrahimokic.ordermanagement.repository.OrderRepository;
-import com.ibrahimokic.ordermanagement.repository.UserRepository;
+import com.ibrahimokic.ordermanagement.repository.*;
 import com.ibrahimokic.ordermanagement.service.OrderService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,20 +21,30 @@ import java.util.Optional;
 @Service
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
     private final Mapper<Order, OrderDto> orderMapper;
     private final Mapper<Address, AddressDto> addressMapper;
+    private final Mapper<OrderItem, OrderItemDto> orderItemMapper;
     private final AddressRepository addressRepository;
+    private final ProductRepository productRepository;
 
+    @Autowired
     public OrderServiceImpl(OrderRepository orderRepository,
             UserRepository userRepository,
+            ProductRepository productRepository,
+            OrderItemRepository orderItemRepository,
             Mapper<Order, OrderDto> orderMapper,
             Mapper<Address, AddressDto> addressMapper,
+            Mapper<OrderItem, OrderItemDto> orderItemMapper,
             AddressRepository addressRepository) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
+        this.productRepository = productRepository;
+        this.orderItemRepository = orderItemRepository;
         this.orderMapper = orderMapper;
         this.addressMapper = addressMapper;
+        this.orderItemMapper = orderItemMapper;
         this.addressRepository = addressRepository;
     }
 
@@ -102,12 +108,25 @@ public class OrderServiceImpl implements OrderService {
             order.setDeliveryAddress(deliveryAddress);
             order.setSourceAddress(sourceAddress);
 
-            System.out.println(orderDto);
-/*
-            for(CreateOrderItemDto orderItem : orderDto.getOrderItems()) {
-                System.out.println(orderItem.getProductId());
+            order.setOrderItems(null);
+
+            orderRepository.save(order);
+
+            List<OrderItem> orderItems = new ArrayList<>();
+            for(OrderItemDto orderItemDto : orderDto.getOrderItems()) {
+                OrderItem orderItem = orderItemMapper.mapFrom(orderItemDto);
+                orderItem.setOrder(order);
+
+                Optional<Product> productItem = productRepository.findById(orderItemDto.getProductId());
+
+                if(productItem.isPresent()) {
+                    orderItem.setProduct(productItem.get());
+                    orderItemRepository.save(orderItem);
+                    orderItems.add(orderItem);
+                }
             }
-*/
+
+            order.setOrderItems(orderItems);
             orderRepository.save(order);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(orderMapper.mapTo(order));
