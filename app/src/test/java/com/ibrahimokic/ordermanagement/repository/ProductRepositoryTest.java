@@ -19,14 +19,14 @@ public class ProductRepositoryTest {
     private ProductRepository productRepository;
 
     @Test
-    void testGetProductById(){
-        Product newProduct = new Product();
-        newProduct.setProductName("Chair");
-        newProduct.setPrice(new BigDecimal(120));
-        newProduct.setAvailableQuantity(10);
-
-        newProduct.setAvailableFrom(LocalDate.now());
-        newProduct.setAvailableUntil(LocalDate.now().plusDays(1));
+    void testGetProductById() {
+        Product newProduct = Product.builder()
+                .productName("Chair")
+                .price(new BigDecimal(120))
+                .availableQuantity(10)
+                .availableFrom(LocalDate.now())
+                .availableUntil(LocalDate.now().plusDays(1))
+                .build();
 
         productRepository.save(newProduct);
 
@@ -38,21 +38,23 @@ public class ProductRepositoryTest {
 
     @Test
     void testGetAllProducts() {
-        Product productOne = new Product();
-        productOne.setProductName("Chair");
-        productOne.setPrice(new BigDecimal(120));
-        productOne.setAvailableQuantity(10);
-        productOne.setAvailableFrom(LocalDate.now());
-        productOne.setAvailableUntil(LocalDate.now().plusDays(1));
+        Product productOne = Product.builder()
+                .productName("Chair")
+                .price(new BigDecimal(120))
+                .availableQuantity(10)
+                .availableFrom(LocalDate.now())
+                .availableUntil(LocalDate.now().plusDays(1))
+                .build();
 
         productRepository.save(productOne);
 
-        Product productTwo = new Product();
-        productTwo.setProductName("Table");
-        productTwo.setPrice(new BigDecimal(160));
-        productTwo.setAvailableQuantity(5);
-        productTwo.setAvailableFrom(LocalDate.now());
-        productTwo.setAvailableUntil(LocalDate.now().plusDays(1));
+        Product productTwo = Product.builder()
+                .productName("Table")
+                .price(new BigDecimal(160))
+                .availableQuantity(5)
+                .availableFrom(LocalDate.now())
+                .availableUntil(LocalDate.now().plusDays(1))
+                .build();
 
         productRepository.save(productTwo);
 
@@ -63,14 +65,14 @@ public class ProductRepositoryTest {
     }
 
     @Test
-    void testDeleteProduct()
-    {
-        Product testProduct = new Product();
-        testProduct.setProductName("Table");
-        testProduct.setPrice(new BigDecimal(160));
-        testProduct.setAvailableQuantity(5);
-        testProduct.setAvailableFrom(LocalDate.now());
-        testProduct.setAvailableUntil(LocalDate.now().plusDays(1));
+    void testDeleteProduct() {
+        Product testProduct = Product.builder()
+                .productName("Table")
+                .price(new BigDecimal(160))
+                .availableQuantity(5)
+                .availableFrom(LocalDate.now())
+                .availableUntil(LocalDate.now().plusDays(1))
+                .build();
 
         productRepository.save(testProduct);
 

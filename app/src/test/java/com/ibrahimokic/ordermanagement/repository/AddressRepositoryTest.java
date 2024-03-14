@@ -17,13 +17,13 @@ public class AddressRepositoryTest {
     private AddressRepository addressRepository;
 
     @Test
-    void testGetAddressById()
-    {
-        Address newAddress = new Address();
-        newAddress.setCity("Sarajevo");
-        newAddress.setZip("71000");
-        newAddress.setCountry("Bosnia and Herzegovina");
-        newAddress.setStreet("Dzemala Bijedica");
+    void testGetAddressById() {
+        Address newAddress = Address.builder()
+                .city("Sarajevo")
+                .zip("71000")
+                .country("Bosnia and Herzegovina")
+                .street("Dzemala Bijedica")
+                .build();
 
         addressRepository.save(newAddress);
 
@@ -34,20 +34,22 @@ public class AddressRepositoryTest {
     }
 
     @Test
-    void testGetAllAddresses(){
-        Address addressOne = new Address();
-        addressOne.setCity("Sarajevo");
-        addressOne.setZip("71000");
-        addressOne.setCountry("Bosnia and Herzegovina");
-        addressOne.setStreet("Dzemala Bijedica");
+    void testGetAllAddresses() {
+        Address addressOne = Address.builder()
+                .city("Sarajevo")
+                .zip("71000")
+                .country("Bosnia and Herzegovina")
+                .street("Dzemala Bijedica")
+                .build();
 
         addressRepository.save(addressOne);
 
-        Address addressTwo = new Address();
-        addressTwo.setCity("Tuzla");
-        addressTwo.setZip("75000");
-        addressTwo.setCountry("Bosnia and Herzegovina");
-        addressTwo.setStreet("Skojevska");
+        Address addressTwo = Address.builder()
+                .city("Tuzla")
+                .zip("75000")
+                .country("Bosnia and Herzegovina")
+                .street("Skojevska")
+                .build();
 
         addressRepository.save(addressTwo);
 
@@ -60,11 +62,12 @@ public class AddressRepositoryTest {
 
     @Test
     void testDeleteAddress() {
-        Address newAddress = new Address();
-        newAddress.setCity("Tuzla");
-        newAddress.setZip("75000");
-        newAddress.setCountry("Bosnia and Herzegovina");
-        newAddress.setStreet("Skojevska");
+        Address newAddress = Address.builder()
+                .city("Tuzla")
+                .zip("75000")
+                .country("Bosnia and Herzegovina")
+                .street("Skojevska")
+                .build();
 
         addressRepository.save(newAddress);
 
