@@ -10,8 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,10 +27,10 @@ public class ProductServiceImplTest {
 
     @Test
     void testGetAllProducts() {
-        List<Product> productList = new ArrayList<>();
-        productList.add(new Product(1L, "Table", new BigDecimal(100.0), LocalDate.now(), LocalDate.now().plusDays(30), 100));
-        productList.add(new Product(2L, "Chair", new BigDecimal(150.0), LocalDate.now(), LocalDate.now().plusDays(30), 150));
-
+        List<Product> productList = List.of(
+                Product.builder().productId(1L).productName("Table").price(new BigDecimal("100.0")).build(),
+                Product.builder().productId(2L).productName("Chair").price(new BigDecimal("150.0")).build()
+        );
         when(productRepository.findAll()).thenReturn(productList);
 
         List<Product> result = productService.getAllProducts();
@@ -43,8 +41,7 @@ public class ProductServiceImplTest {
     @Test
     void testGetProductById() {
         Long productId = 1L;
-        Product product = new Product(productId, "Chair", new BigDecimal(150.0), LocalDate.now(), LocalDate.now().plusDays(30), 100);
-
+        Product product = Product.builder().productId(productId).productName("Chair").price(new BigDecimal("150.0")).build();
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
 
         Optional<Product> result = productService.getProductById(productId);
@@ -54,8 +51,7 @@ public class ProductServiceImplTest {
 
     @Test
     void testCreateProduct() {
-        Product product = new Product(1L, "Chair", new BigDecimal(150.0), LocalDate.now(), LocalDate.now().plusDays(30), 100);
-
+        Product product = Product.builder().productId(1L).productName("Chair").price(new BigDecimal("150.0")).build();
         when(productRepository.save(product)).thenReturn(product);
 
         Product result = productService.createProduct(product);
@@ -66,8 +62,7 @@ public class ProductServiceImplTest {
     @Test
     void testUpdateProduct() {
         Long productId = 1L;
-        Product updatedProduct = new Product(productId, "Table", BigDecimal.valueOf(150.0), LocalDate.now(), LocalDate.now().plusDays(30), 100);
-
+        Product updatedProduct = Product.builder().productId(productId).productName("Table").price(new BigDecimal("150.0")).build();
         when(productRepository.existsById(productId)).thenReturn(true);
         when(productRepository.save(updatedProduct)).thenReturn(updatedProduct);
 
@@ -79,8 +74,7 @@ public class ProductServiceImplTest {
     @Test
     void testUpdateProductWhenProductNotExists() {
         Long productId = 1L;
-        Product updatedProduct = new Product(productId, "Chair", BigDecimal.valueOf(150.0),
-                LocalDate.now(), LocalDate.now().plusDays(30), 100);
+        Product updatedProduct = Product.builder().productId(productId).productName("Chair").price(new BigDecimal("150.0")).build();
         when(productRepository.existsById(productId)).thenReturn(false);
 
         Product result = productService.updateProduct(productId, updatedProduct);
@@ -94,7 +88,8 @@ public class ProductServiceImplTest {
         Long productId = 1L;
 
         productService.deleteProduct(productId);
-
+ 
         verify(productRepository, times(1)).deleteById(productId);
     }
 }
+
