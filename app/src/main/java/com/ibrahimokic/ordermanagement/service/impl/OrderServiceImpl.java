@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -89,7 +90,15 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public ResponseEntity<?> createNewOrder(@Valid OrderDto orderDto) {
         try {
-            Order order = orderMapper.mapFrom(orderDto);
+            Order order = Order.builder()
+                    .user(User.builder().userId(orderDto.getUserId()).build())
+                    .deliveryAddress(addressMapper.mapFrom(orderDto.getDeliveryAddress()))
+                    .sourceAddress(addressMapper.mapFrom(orderDto.getSourceAddress()))
+                    .orderDate(orderDto.getOrderDate())
+                    .orderItems(null)
+                    .totalAmount(new BigDecimal(0))
+                    .build();
+
             Optional<User> optionalUser = userRepository.findById(orderDto.getUserId());
 
             if (optionalUser.isPresent()) {
@@ -99,33 +108,30 @@ public class OrderServiceImpl implements OrderService {
                         .body("User with ID " + orderDto.getUserId() + " not found.");
             }
 
-            Address deliveryAddress = addressMapper.mapFrom(orderDto.getDeliveryAddress());
-            Address sourceAddress = addressMapper.mapFrom(orderDto.getSourceAddress());
-
-            addressRepository.save(deliveryAddress);
-            addressRepository.save(sourceAddress);
-
-            order.setDeliveryAddress(deliveryAddress);
-            order.setSourceAddress(sourceAddress);
-
-            order.setOrderItems(null);
+            addressRepository.save(order.getDeliveryAddress());
+            addressRepository.save(order.getSourceAddress());
 
             orderRepository.save(order);
 
             List<OrderItem> orderItems = new ArrayList<>();
-            for(OrderItemDto orderItemDto : orderDto.getOrderItems()) {
-                OrderItem orderItem = orderItemMapper.mapFrom(orderItemDto);
-                orderItem.setOrder(order);
+            for (OrderItemDto orderItemDto : orderDto.getOrderItems()) {
+                OrderItem orderItem = OrderItem.builder()
+                        .order(order)
+                        .product(productRepository.findById(orderItemDto.getProductId()).orElse(null))
+                        .quantity(orderItemDto.getQuantity())
+                        .itemPrice(orderItemDto.getItemPrice())
+                        .build();
 
                 Optional<Product> productItem = productRepository.findById(orderItemDto.getProductId());
 
-                if(productItem.isPresent() && productItem.get().getAvailableQuantity() >= orderItem.getQuantity()) {
-                    orderItem.setProduct(productItem.get());
+                if (productItem.isPresent() && productItem.get().getAvailableQuantity() >= orderItem.getQuantity()) {
                     orderItemRepository.save(orderItem);
                     orderItems.add(orderItem);
 
                     productItem.get().setAvailableQuantity(productItem.get().getAvailableQuantity() - orderItem.getQuantity());
                     productRepository.save(productItem.get());
+
+                    order.setTotalAmount(order.getTotalAmount().add(productItem.get().getPrice()));
                 }
             }
 
@@ -134,7 +140,6 @@ public class OrderServiceImpl implements OrderService {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(orderMapper.mapTo(order));
         } catch (Exception e) {
-            System.out.println(e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error creating order: " + e.getMessage());
         }
     }

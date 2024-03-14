@@ -62,7 +62,7 @@ public class UserServiceImplTest {
         when(userRepository.save(any(User.class))).thenReturn(mockUser);
 
         User createdUser = userService.createUser(mockUser);
- 
+
         verify(userRepository, times(1)).save(any(User.class));
         assertEquals(mockUser, createdUser);
     }
