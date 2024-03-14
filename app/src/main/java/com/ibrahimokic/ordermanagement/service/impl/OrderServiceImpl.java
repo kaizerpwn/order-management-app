@@ -7,6 +7,7 @@ import com.ibrahimokic.ordermanagement.domain.dto.OrderDto;
 import com.ibrahimokic.ordermanagement.mapper.Mapper;
 import com.ibrahimokic.ordermanagement.repository.*;
 import com.ibrahimokic.ordermanagement.service.OrderService;
+import com.ibrahimokic.ordermanagement.utils.Utils;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,12 +131,12 @@ public class OrderServiceImpl implements OrderService {
 
                     productItem.get().setAvailableQuantity(productItem.get().getAvailableQuantity() - orderItem.getQuantity());
                     productRepository.save(productItem.get());
-
-                    order.setTotalAmount(order.getTotalAmount().add(productItem.get().getPrice()));
                 }
             }
 
             order.setOrderItems(orderItems);
+            order.setTotalAmount(Utils.calculateTotalProductsPriceAmount(orderItems));
+
             orderRepository.save(order);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(orderMapper.mapTo(order));
