@@ -119,10 +119,13 @@ public class OrderServiceImpl implements OrderService {
 
                 Optional<Product> productItem = productRepository.findById(orderItemDto.getProductId());
 
-                if(productItem.isPresent()) {
+                if(productItem.isPresent() && productItem.get().getAvailableQuantity() >= orderItem.getQuantity()) {
                     orderItem.setProduct(productItem.get());
                     orderItemRepository.save(orderItem);
                     orderItems.add(orderItem);
+
+                    productItem.get().setAvailableQuantity(productItem.get().getAvailableQuantity() - orderItem.getQuantity());
+                    productRepository.save(productItem.get());
                 }
             }
 
