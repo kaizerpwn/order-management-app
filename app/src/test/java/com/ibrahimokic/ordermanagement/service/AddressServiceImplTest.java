@@ -1,5 +1,4 @@
 package com.ibrahimokic.ordermanagement.service;
-
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.repository.AddressRepository;
 import com.ibrahimokic.ordermanagement.service.impl.AddressServiceImpl;
@@ -15,10 +14,12 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AddressServiceImplTest {
+
     @Mock
     private AddressRepository addressRepository;
 
@@ -26,44 +27,42 @@ public class AddressServiceImplTest {
     private AddressServiceImpl addressService;
 
     @Test
-    void testGetAllAddresses(){
-        Address newAddress = new Address();
-        newAddress.setStreet("Dzemala Bijedica bb");
-        newAddress.setCountry("Bosnia and Herzegovina");
-        newAddress.setZip("75000");
-        newAddress.setCity("Sarajevo");
+    void testGetAllAddresses() {
+        Address address = Address.builder()
+                .street("Dzemala Bijedica bb")
+                .country("Bosnia and Herzegovina")
+                .zip("75000")
+                .city("Sarajevo")
+                .build();
 
-        when(addressRepository.findAll()).thenReturn(Collections.singletonList(newAddress));
+        when(addressRepository.findAll()).thenReturn(Collections.singletonList(address));
 
         List<Address> retrievedAddresses = addressService.getAllAddresses();
 
         verify(addressRepository, times(1)).findAll();
-
         assertEquals(1, retrievedAddresses.size());
-        assertEquals(newAddress.getStreet(), retrievedAddresses.get(0).getStreet());
+        assertEquals(address.getStreet(), retrievedAddresses.get(0).getStreet());
     }
 
     @Test
-    void testGetUserById(){
-        Address mockAddress = mock(Address.class);
-        when(mockAddress.getStreet()).thenReturn("Sarajevo");
-
+    void testGetUserById() {
+        Address mockAddress = Address.builder().street("Sarajevo").build();
         when(addressRepository.findById(anyLong())).thenReturn(Optional.of(mockAddress));
 
         Optional<Address> retrievedAddress = addressService.getAddressById(1L);
 
         verify(addressRepository, times(1)).findById(1L);
-
         assertTrue(retrievedAddress.isPresent());
         assertEquals(mockAddress.getStreet(), retrievedAddress.get().getStreet());
     }
 
     @Test
-    void testCreateAddress(){
-        Address mockAddress = mock(Address.class);
+    void testCreateAddress() {
+        Address mockAddress = Address.builder().build();
         when(addressRepository.save(any(Address.class))).thenReturn(mockAddress);
 
         Address createdAddress = addressService.createAddress(mockAddress);
+
         verify(addressRepository, times(1)).save(any(Address.class));
         assertEquals(mockAddress, createdAddress);
     }

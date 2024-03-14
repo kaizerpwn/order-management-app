@@ -1,4 +1,5 @@
 package com.ibrahimokic.ordermanagement.service;
+
 import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.service.impl.UserServiceImpl;
@@ -27,45 +28,42 @@ public class UserServiceImplTest {
 
     @Test
     void testGetAllUsers() {
-        User newUser = new User();
-        newUser.setEmail("ibrahim@gmail.com");
-        newUser.setRole("admin");
-        newUser.setPassword("123123");
-        newUser.setUsername("ibrahim");
+        User user = User.builder()
+                .email("ibrahim@gmail.com")
+                .role("admin")
+                .password("123123")
+                .username("ibrahim")
+                .build();
 
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(newUser));
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
 
         List<User> retrievedUsers = userService.getAllUsers();
 
         verify(userRepository, times(1)).findAll();
-
         assertEquals(1, retrievedUsers.size());
-        assertEquals(newUser.getEmail(), retrievedUsers.get(0).getEmail());
+        assertEquals(user.getEmail(), retrievedUsers.get(0).getEmail());
     }
+
     @Test
     void testGetUserById() {
-        User mockUser = mock(User.class);
-        when(mockUser.getEmail()).thenReturn("ibrahim@gmail.com");
-
+        User mockUser = User.builder().email("ibrahim@gmail.com").build();
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(mockUser));
 
         Optional<User> retrievedUser = userService.getUserById(1L);
 
         verify(userRepository, times(1)).findById(1L);
-
         assertTrue(retrievedUser.isPresent());
         assertEquals(mockUser.getEmail(), retrievedUser.get().getEmail());
     }
+
     @Test
     void testCreateUser() {
-        User mockUser = mock(User.class);
-
+        User mockUser = User.builder().build();
         when(userRepository.save(any(User.class))).thenReturn(mockUser);
 
         User createdUser = userService.createUser(mockUser);
-
+ 
         verify(userRepository, times(1)).save(any(User.class));
-
         assertEquals(mockUser, createdUser);
     }
 }
