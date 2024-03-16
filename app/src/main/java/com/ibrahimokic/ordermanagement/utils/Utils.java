@@ -58,4 +58,9 @@ public class Utils {
         return differentOrderItems;
     }
 
+    public static void clearConsole(int lines) {
+        for(int i = 0; i < lines; i++) {
+            System.out.println("\n");
+        }
+    }
 }

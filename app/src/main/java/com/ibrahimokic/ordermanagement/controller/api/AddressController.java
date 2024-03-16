@@ -24,12 +24,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/address")
-@Tag(name = "Address", description = "Oprations related to addresses")
+@Tag(name = "Address", description = "Operations related to addresses")
 public class AddressController {
 
     private final AddressService addressService;
     private final AddressRepository addressRepository;
-    private Mapper<Address, AddressDto> addressMapper;
+    private final Mapper<Address, AddressDto> addressMapper;
 
     public AddressController(AddressService addressService, AddressRepository addressRepository,
             Mapper<Address, AddressDto> addressMapper) {

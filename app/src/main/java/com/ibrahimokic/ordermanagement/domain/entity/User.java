@@ -47,4 +47,8 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> orders;
+
+    public boolean checkUserPassword(String password) {
+        return password.equals(this.password);
+    }
 }
