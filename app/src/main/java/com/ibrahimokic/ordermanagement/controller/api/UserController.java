@@ -83,7 +83,6 @@ public class UserController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
         } catch (MappingException mappingException) {
-            System.out.println(mappingException);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
