@@ -81,6 +81,7 @@ public class OrderController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Order created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDto.class))),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Order with ID '4' does not exist.", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     public ResponseEntity<?> createOrder(@RequestBody @Valid OrderDto orderDto) {
@@ -97,4 +98,24 @@ public class OrderController {
         }
     }
 
+    @PatchMapping("/{orderId}")
+    @Operation(summary = "Edit Order", description = "Edit an order based on the request body")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Order edited successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDto.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    })
+    public ResponseEntity<?> updateOrder(@PathVariable Long orderId, @RequestBody @Valid OrderDto orderDto) {
+        ResponseEntity<?> responseEntity = orderService.updateOrder(orderId, orderDto);
+
+        if (responseEntity.getStatusCode() == HttpStatus.CREATED) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(responseEntity.getBody());
+        } else {
+            return ResponseEntity.status(responseEntity.getStatusCode())
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(responseEntity.getBody());
+        }
+    }
 }

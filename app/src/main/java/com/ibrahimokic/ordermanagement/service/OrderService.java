@@ -13,4 +13,5 @@ public interface OrderService {
     boolean deleteOrderById(Long orderId);
 
     ResponseEntity<?> createNewOrder(OrderDto orderDto);
+    ResponseEntity<?> updateOrder(Long orderId, OrderDto orderDto);
 }
