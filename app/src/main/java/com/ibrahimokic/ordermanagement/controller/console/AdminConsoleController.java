@@ -89,6 +89,7 @@ public class AdminConsoleController extends ConsoleUserInterface {
         switch (choice) {
             case 1 -> adminUserListForm();
             case 2 -> createNewUserForm();
+            case 3 -> deleteUserForm();
             case 4 -> {
                 UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository);
                 userConsoleController.userMainForm();
@@ -214,6 +215,30 @@ public class AdminConsoleController extends ConsoleUserInterface {
 
         UserServiceImpl userService = new UserServiceImpl(userRepository);
         userService.createUser(newUserAccount);
+
+        Utils.returnBackToTheMainMenu(scanner);
+        adminUserManagementOptions();
+    }
+
+    public void deleteUserForm() {
+        Utils.clearConsole(20);
+        consoleHeader();
+        scanner.nextLine();
+
+        UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository);
+        userConsoleController.showAllUsersTable();
+
+        System.out.println(">> Please enter 'ID' of the user you want to delete.");
+        Long userId = scanner.nextLong();
+
+        UserServiceImpl userService = new UserServiceImpl(userRepository);
+
+        if(userRepository.findById(userId) != null) {
+            userService.deleteUser(userId);
+            System.out.println("Successfully deleted user with ID: "+ userId);
+        } else {
+            System.out.println("User with that ID does not exist.");
+        }
 
         Utils.returnBackToTheMainMenu(scanner);
         adminUserManagementOptions();
