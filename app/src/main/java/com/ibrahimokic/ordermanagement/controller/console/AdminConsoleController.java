@@ -25,17 +25,16 @@ public class AdminConsoleController extends ConsoleUserInterface {
         Utils.clearConsole(20);
         consoleHeader();
         displayAdminDashboardMenu();
-        int choice = getValidInput(1, 4);
+        int choice = getValidInput(  4);
         processAdminDashboardChoice(choice);
     }
 
     private void displayAdminDashboardMenu() {
-        System.out.println(String.format("""
-                [OM-APP]: Welcome, %s! Take a moment to choose your next step:
-                1.) Manage users
-                2.) Manage products
-                3.) Manage orders
-                4.) Log out""", loggedUser.getFirstName()));
+        System.out.println("[OM-APP]: Welcome, " + loggedUser.getFirstName() + "! Take a moment to choose your next step:");
+        System.out.println("1.) Manage users");
+        System.out.println("2.) Manage products");
+        System.out.println("3.) Manage orders");
+        System.out.println("4.) Log out");
     }
 
     private void processAdminDashboardChoice(int choice) {
@@ -52,19 +51,19 @@ public class AdminConsoleController extends ConsoleUserInterface {
         Utils.clearConsole(20);
         consoleHeader();
         displayAdminUserManagementMenu();
-        
-        int choice = getValidInput(1, 4);
+
+        int choice = getValidInput(  4);
         processAdminUserManagementChoice(choice);
     }
 
     private void displayAdminUserManagementMenu() {
-        System.out.println(String.format("""
-                [OM-APP]: Welcome, %s! Take a moment to choose your next step:
-                1.) List of the users
-                2.) Create new user
-                3.) Delete a user
-                4.) Log out""", loggedUser.getFirstName()));
+        System.out.println("[OM-APP]: Welcome, " + loggedUser.getFirstName() + "! Take a moment to choose your next step:");
+        System.out.println("1.) List of the users");
+        System.out.println("2.) Create new user");
+        System.out.println("3.) Delete a user");
+        System.out.println("4.) Log out");
     }
+
 
     private void processAdminUserManagementChoice(int choice) {
         switch (choice) {
@@ -191,7 +190,7 @@ public class AdminConsoleController extends ConsoleUserInterface {
     }
 
     private String promptUserInput(String fieldName) {
-        System.out.print(String.format(">> Please enter the %s: ", fieldName));
+        System.out.print(">> Please enter the "+ fieldName +": ");
         return scanner.nextLine();
     }
 
@@ -203,19 +202,20 @@ public class AdminConsoleController extends ConsoleUserInterface {
         adminUserManagementOptions();
     }
 
-    private int getValidInput(int min, int max) {
+    private int getValidInput(int max) {
+        final int MIN_CHOICE = 1;
         int choice;
         do {
             System.out.print(">> Please enter your choice: ");
             while (!scanner.hasNextInt()) {
-                System.out.println("Invalid input. Please use options "+ min +" - "+ max +".");
-                System.out.print("Enter your choice ("+ min +" - "+ max +"): ");
+                System.out.println("Invalid input. Please use options " + MIN_CHOICE + " - " + max + ".");
+                System.out.print("Enter your choice (" + MIN_CHOICE + " - " + max + "): ");
                 scanner.next();
             }
             choice = scanner.nextInt();
-            if (choice < min || choice > max)
-                System.out.println("Invalid choice. Please enter "+ min +" - "+ max +".");
-        } while (choice < min || choice > max);
+            if (choice < MIN_CHOICE || choice > max)
+                System.out.println("Invalid choice. Please enter " + MIN_CHOICE + " - " + max + ".");
+        } while (choice < MIN_CHOICE || choice > max);
         return choice;
     }
 }
