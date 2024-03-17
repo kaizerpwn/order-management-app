@@ -51,4 +51,5 @@ public class User {
     public boolean checkUserPassword(String password) {
         return password.equals(this.password);
     }
+    public boolean checkEmailAlreadyExists(String email) { return email.equals(this.email); }
 }

@@ -9,6 +9,7 @@ import com.ibrahimokic.ordermanagement.domain.entity.User;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Scanner;
 
 public class Utils {
     public static BigDecimal calculateTotalProductsPriceAmount(List<OrderItem> orderItems) {
@@ -62,5 +63,12 @@ public class Utils {
         for(int i = 0; i < lines; i++) {
             System.out.println("\n");
         }
+    }
+
+    public static void returnBackToTheMainMenu(Scanner scanner) {
+        System.out.print(">> To return back to the main menu press 'ENTER': ");
+
+        scanner.nextLine();
+        scanner.nextLine();
     }
 }
