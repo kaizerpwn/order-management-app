@@ -27,8 +27,10 @@ public class OrderManagementApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String ...args) {
-		UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository);
-		userConsoleController.userMainForm();
+		if (!"github-actions".equals(System.getenv("ENVIRONMENT"))) {
+			UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository);
+			userConsoleController.userMainForm();
+		}
 	}
 
 }
