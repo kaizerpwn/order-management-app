@@ -2,18 +2,23 @@ package com.ibrahimokic.ordermanagement.controller.console;
 
 import com.ibrahimokic.ordermanagement.controller.console.ui.ConsoleUserInterface;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
+import com.ibrahimokic.ordermanagement.repository.AddressRepository;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class UserConsoleController extends ConsoleUserInterface {
     private final UserRepository userRepository;
+    private final AddressRepository addressRepository;
 
     @Autowired
-    public UserConsoleController(UserRepository userRepository){
+    public UserConsoleController(UserRepository userRepository, AddressRepository addressRepository){
         this.userRepository = userRepository;
+        this.addressRepository = addressRepository;
     }
 
     public void userMainForm() {
@@ -22,8 +27,8 @@ public class UserConsoleController extends ConsoleUserInterface {
 
         System.out.println("""
                 [OM-APP]: Welcome! Take a moment to choose your next step:
-                1.) Login
-                2.) Register""");
+                1.) Log in
+                2.) Exit""");
 
         int choice;
         do {
@@ -44,7 +49,7 @@ public class UserConsoleController extends ConsoleUserInterface {
                 scanner.nextLine();
                 userLoginForm();
             }
-            case 2 -> userRegisterForm();
+            case 2 -> System.exit(0);
         }
 
         scanner.close();
@@ -58,35 +63,56 @@ public class UserConsoleController extends ConsoleUserInterface {
             Utils.clearConsole(20);
             consoleHeader();
 
-            System.out.print(">> Please enter your e-mail: ");
-            String email = scanner.nextLine();
+            System.out.print(">> Please enter your username: ");
+            String username = scanner.nextLine();
 
             System.out.print(">> Please enter your password: ");
             String password = scanner.nextLine();
 
-            User retrievedUser = userRepository.findByEmail(email);
+            User retrievedUser = userRepository.findByUsername(username);
 
             if (retrievedUser != null && retrievedUser.checkUserPassword(password)) {
-                System.out.println("Successfully logged in");
                 loggedIn = true;
+                AdminConsoleController adminConsoleController = new AdminConsoleController(retrievedUser, userRepository, addressRepository);
+
+                switch (retrievedUser.getRole()) {
+                    case "user" -> userMainForm();
+                    case "admin" -> adminConsoleController.adminDashboard();
+                }
             } else {
-                System.out.println("Incorrect email or password");
+                System.out.println("Incorrect username or password");
+                System.out.println(">> Would you like to go back to the main form? (Y/N)");
 
-                System.out.println("Would you like to go back to the main form? (Y/N)");
                 String choice = scanner.nextLine().trim().toUpperCase();
-
-                System.out.println("choice made: "+ choice);
-
                 goToMainForm = choice.equals("Y");
 
-                System.out.println(loggedIn);
-                System.out.println(goToMainForm);
+                if(goToMainForm) {
+                    userMainForm();
+                    return;
+                }
             }
         } while (!loggedIn && !goToMainForm);
     }
 
-    public static void userRegisterForm() {
-        Utils.clearConsole(20);
-        consoleHeader(); 
+    public List<User> showAllUsersTable() {
+        List<User> userList = userRepository.findAll();
+
+        System.out.println("|-------------|--------------|------------------------|----------|----------------|---------------|----------------|");
+        System.out.println("|   User ID   |   Username   |         Email          |   Role   |   First Name   |   Last Name   |   Birth Date   |");
+        System.out.println("|-------------|--------------|------------------------|----------|----------------|---------------|----------------|");
+
+        for (User user : userList) {
+            System.out.printf("| %-12s| %-13s| %-23s| %-9s| %-15s| %-14s| %-15s|%n",
+                    user.getUserId(),
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getRole(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getBirthDate());
+        }
+
+        System.out.println("|-------------|--------------|------------------------|----------|----------------|---------------|----------------|");
+        return userList;
     }
 }
