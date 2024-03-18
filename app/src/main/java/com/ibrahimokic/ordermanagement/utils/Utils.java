@@ -71,4 +71,9 @@ public class Utils {
         scanner.nextLine();
         scanner.nextLine();
     }
+
+    public static String promptUserInput(Scanner scanner, String fieldName) {
+        System.out.print(">> Please enter the "+ fieldName +": ");
+        return scanner.nextLine();
+    }
 }

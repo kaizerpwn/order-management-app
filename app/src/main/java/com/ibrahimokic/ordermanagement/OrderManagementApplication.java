@@ -2,6 +2,7 @@ package com.ibrahimokic.ordermanagement;
 
 import com.ibrahimokic.ordermanagement.controller.console.UserConsoleController;
 import com.ibrahimokic.ordermanagement.repository.AddressRepository;
+import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -14,11 +15,15 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class OrderManagementApplication implements CommandLineRunner {
 	private final UserRepository userRepository;
 	private final AddressRepository addressRepository;
+	private final ProductRepository productRepository;
 
 	@Autowired
-	public OrderManagementApplication(UserRepository userRepository, AddressRepository addressRepository) {
+	public OrderManagementApplication(UserRepository userRepository,
+									  AddressRepository addressRepository,
+									  ProductRepository productRepository) {
 		this.userRepository = userRepository;
 		this.addressRepository = addressRepository;
+		this.productRepository = productRepository;
 	}
 
 	public static void main(String[] args) {
@@ -28,7 +33,7 @@ public class OrderManagementApplication implements CommandLineRunner {
 	@Override
 	public void run(String ...args) {
 		if (!"github-actions".equals(System.getenv("ENVIRONMENT"))) {
-			UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository);
+			UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository, productRepository);
 			userConsoleController.userMainForm();
 		}
 	}

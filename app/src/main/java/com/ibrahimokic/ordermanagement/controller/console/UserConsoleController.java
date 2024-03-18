@@ -3,6 +3,7 @@ package com.ibrahimokic.ordermanagement.controller.console;
 import com.ibrahimokic.ordermanagement.controller.console.ui.ConsoleUserInterface;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.repository.AddressRepository;
+import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,15 @@ import java.util.List;
 public class UserConsoleController extends ConsoleUserInterface {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public UserConsoleController(UserRepository userRepository, AddressRepository addressRepository){
+    public UserConsoleController(UserRepository userRepository,
+                                 AddressRepository addressRepository,
+                                 ProductRepository productRepository){
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
+        this.productRepository = productRepository;
     }
 
     public void userMainForm() {
@@ -73,7 +78,7 @@ public class UserConsoleController extends ConsoleUserInterface {
 
             if (retrievedUser != null && retrievedUser.checkUserPassword(password)) {
                 loggedIn = true;
-                AdminConsoleController adminConsoleController = new AdminConsoleController(retrievedUser, userRepository, addressRepository);
+                AdminConsoleController adminConsoleController = new AdminConsoleController(retrievedUser, userRepository, addressRepository, productRepository);
 
                 switch (retrievedUser.getRole()) {
                     case "user" -> userMainForm();
