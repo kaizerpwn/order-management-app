@@ -53,7 +53,15 @@ public class ProductConsoleController extends ConsoleUserInterface {
     }
 
     public void createNewProduct() {
+        System.out.println(">> Create a new product");
+        System.out.println(">> To cancel and go back to the main menu just press 'ENTER'");
+
         String productName = Utils.promptUserInput(scanner,"product name");
+
+        if(productName.length() == 0) {
+            return;
+        }
+
         BigDecimal price = new BigDecimal(Utils.promptUserInput(scanner,"price"));
         LocalDate availableFrom = LocalDate.parse(Utils.promptUserInput(scanner,"available from (yyyy-MM-dd)"));
         LocalDate availableUntil = LocalDate.parse(Utils.promptUserInput(scanner,"available until (yyyy-MM-dd)"));
@@ -68,6 +76,8 @@ public class ProductConsoleController extends ConsoleUserInterface {
 
         productRepository.save(newProduct);
         System.out.println("Product '"+productName+"' successfully created.");
+
+        Utils.returnBackToTheMainMenu(scanner);
     }
 
     public void deleteProductForm() {
@@ -78,15 +88,27 @@ public class ProductConsoleController extends ConsoleUserInterface {
         List<Product> productList = showAllProductsTable();
 
         System.out.println(">> Please enter the 'ID' of the product you want to delete.");
+        System.out.println(">> Press 'ENTER ' if you want to go back to the main menu.");
 
-        Long productId = scanner.nextLong();
-        ProductServiceImpl productService = new ProductServiceImpl(productRepository);
+        String productIdInput = scanner.nextLine();
 
-        if (productList.stream().anyMatch(product -> product.getProductId().equals(productId))) {
-            productService.deleteProduct(productId);
-            System.out.println("Successfully deleted product with ID: " + productId);
-        } else {
-            System.out.println("Product with that ID does not exist.");
+        long productId;
+        try {
+            productId = Long.parseLong(productIdInput);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid product ID.");
+            return;
+        }
+
+        if (productId != 0) {
+            ProductServiceImpl productService = new ProductServiceImpl(productRepository);
+
+            if (productList.stream().anyMatch(product -> product.getProductId().equals(productId))) {
+                productService.deleteProduct(productId);
+                System.out.println("Successfully deleted product with ID: " + productId);
+            } else {
+                System.out.println("Product with that ID does not exist.");
+            }
         }
 
         Utils.returnBackToTheMainMenu(scanner);

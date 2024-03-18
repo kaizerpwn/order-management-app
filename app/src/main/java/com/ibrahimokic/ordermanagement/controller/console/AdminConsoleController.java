@@ -94,6 +94,7 @@ public class AdminConsoleController extends ConsoleUserInterface {
             case 4 -> adminDashboard();
         }
     }
+
     private void processAdminProductManagementChoice(int choice) {
         switch (choice) {
             case 1 -> adminProductListForm();
@@ -133,7 +134,6 @@ public class AdminConsoleController extends ConsoleUserInterface {
         ProductConsoleController productConsoleController = new ProductConsoleController(loggedUser, productRepository);
         productConsoleController.createNewProduct();
 
-        Utils.returnBackToTheMainMenu(scanner);
         adminProductManagementOptions();
     }
 
@@ -225,8 +225,29 @@ public class AdminConsoleController extends ConsoleUserInterface {
         userConsoleController.showAllUsersTable();
 
         System.out.println(">> Please enter 'ID' of the user you want to delete.");
+        System.out.println(">> Press 'ENTER ' if you want to go back to the main menu.");
 
-        Long userId = scanner.nextLong();
+        String userIdInput = scanner.nextLine();
+
+        if (userIdInput.isEmpty()) {
+            adminUserManagementOptions();
+            return;
+        }
+
+        Long userId;
+
+        try {
+            userId = Long.parseLong(userIdInput);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid user ID.");
+            return;
+        }
+
+        if(userId == null){
+            adminUserManagementOptions();
+            return;
+        }
+
         UserServiceImpl userService = new UserServiceImpl(userRepository);
 
         if (userRepository.findById(userId).isPresent()) {
@@ -242,7 +263,9 @@ public class AdminConsoleController extends ConsoleUserInterface {
 
     private void adminProductDeletionForm() {
         ProductConsoleController productConsoleController = new ProductConsoleController(loggedUser, productRepository);
+
         productConsoleController.deleteProductForm();
+        adminProductManagementOptions();
     }
 
     private void saveUserAndReturnToMenu(User user) {
