@@ -4,6 +4,7 @@ import com.ibrahimokic.ordermanagement.controller.console.ui.ConsoleUserInterfac
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.repository.AddressRepository;
+import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.service.impl.UserServiceImpl;
 import com.ibrahimokic.ordermanagement.utils.Utils;
@@ -15,16 +16,24 @@ public class AdminConsoleController extends ConsoleUserInterface {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
 
-    public AdminConsoleController(User user, UserRepository userRepository, AddressRepository addressRepository) {
+    private final ProductRepository productRepository;
+
+    public AdminConsoleController(User user,
+                                    UserRepository userRepository,
+                                    AddressRepository addressRepository,
+                                    ProductRepository productRepository) {
         this.loggedUser = user;
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
+        this.productRepository = productRepository;
     }
 
     public void adminDashboard() {
         Utils.clearConsole(20);
         consoleHeader();
+
         displayAdminDashboardMenu();
+
         int choice = getValidInput(  4);
         processAdminDashboardChoice(choice);
     }
@@ -40,15 +49,28 @@ public class AdminConsoleController extends ConsoleUserInterface {
     private void processAdminDashboardChoice(int choice) {
         switch (choice) {
             case 1 -> adminUserManagementOptions();
+            case 2 -> adminProductManagementOptions();
             case 4 -> {
-                UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository);
+                UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository, productRepository);
                 userConsoleController.userMainForm();
             }
         }
     }
 
+    public void adminProductManagementOptions() {
+        Utils.clearConsole(20);
+        consoleHeader();
+
+        ProductConsoleController productConsoleController = new ProductConsoleController(loggedUser, productRepository);
+        productConsoleController.displayAdminProductManagementMenu();
+
+        int choice = getValidInput(  4);
+        processAdminProductManagementChoice(choice);
+    }
+
     public void adminUserManagementOptions() {
         Utils.clearConsole(20);
+
         consoleHeader();
         displayAdminUserManagementMenu();
 
@@ -61,40 +83,69 @@ public class AdminConsoleController extends ConsoleUserInterface {
         System.out.println("1.) List of the users");
         System.out.println("2.) Create new user");
         System.out.println("3.) Delete a user");
-        System.out.println("4.) Log out");
+        System.out.println("4.) Return to the main menu");
     }
-
 
     private void processAdminUserManagementChoice(int choice) {
         switch (choice) {
             case 1 -> adminUserListForm();
             case 2 -> createNewUserForm();
             case 3 -> deleteUserForm();
-            case 4 -> {
-                UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository);
-                userConsoleController.userMainForm();
-            }
+            case 4 -> adminDashboard();
+        }
+    }
+    private void processAdminProductManagementChoice(int choice) {
+        switch (choice) {
+            case 1 -> adminProductListForm();
+            case 2 -> adminProductCreationForm();
+            case 3 -> adminProductDeletionForm();
+            case 4 -> adminDashboard();
         }
     }
 
     public void adminUserListForm() {
         Utils.clearConsole(20);
         consoleHeader();
-        scanner.nextLine();
 
-        UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository);
+        UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository, productRepository);
         userConsoleController.showAllUsersTable();
 
         Utils.returnBackToTheMainMenu(scanner);
         adminUserManagementOptions();
     }
 
+    public void adminProductListForm() {
+        Utils.clearConsole(20);
+        consoleHeader();
+
+        ProductConsoleController productConsoleController = new ProductConsoleController(loggedUser, productRepository);
+        productConsoleController.showAllProductsTable();
+
+        Utils.returnBackToTheMainMenu(scanner);
+        adminProductManagementOptions();
+    }
+
+    public void adminProductCreationForm() {
+        Utils.clearConsole(20);
+        consoleHeader();
+        scanner.nextLine();
+
+        ProductConsoleController productConsoleController = new ProductConsoleController(loggedUser, productRepository);
+        productConsoleController.createNewProduct();
+
+        Utils.returnBackToTheMainMenu(scanner);
+        adminProductManagementOptions();
+    }
+
     public void createNewUserForm() {
         Utils.clearConsole(20);
         consoleHeader();
+
         displayUserCreationOptions();
+
         String role = scanner.next().toLowerCase();
         scanner.nextLine();
+
         switch (role) {
             case "admin" -> createAdminAccountForm();
             case "user" -> createUserAccountForm();
@@ -110,9 +161,9 @@ public class AdminConsoleController extends ConsoleUserInterface {
     }
 
     private void createAdminAccountForm() {
-        String username = promptUserInput("username");
-        String password = promptUserInput("password");
-        String email = promptUserInput("email");
+        String username = Utils.promptUserInput(scanner,"username");
+        String password = Utils.promptUserInput(scanner,"password");
+        String email = Utils.promptUserInput(scanner,"email");
 
         User newAdminAccount = User.builder()
                 .username(username)
@@ -125,24 +176,24 @@ public class AdminConsoleController extends ConsoleUserInterface {
     }
 
     private void createUserAccountForm() {
-        String username = promptUserInput("username");
-        String password = promptUserInput("password");
+        String username = Utils.promptUserInput(scanner,"username");
+        String password = Utils.promptUserInput(scanner,"password");
         String email;
 
         do {
-            email = promptUserInput("email");
+            email = Utils.promptUserInput(scanner,"email");
             if (userRepository.findByEmail(email) != null) {
                 System.out.println("User with this email already exists. Please try a different email address.");
             }
         } while (userRepository.findByEmail(email) != null);
 
-        String name = promptUserInput("first name");
-        String surname = promptUserInput("last name");
-        LocalDate birthDate = LocalDate.parse(promptUserInput("birth date (yyyy-MM-dd)"));
-        String streetName = promptUserInput("street address");
-        String zipCode = promptUserInput("postal code");
-        String city = promptUserInput("city");
-        String country = promptUserInput("country");
+        String name = Utils.promptUserInput(scanner,"first name");
+        String surname = Utils.promptUserInput(scanner,"last name");
+        LocalDate birthDate = LocalDate.parse(Utils.promptUserInput(scanner,"birth date (yyyy-MM-dd)"));
+        String streetName = Utils.promptUserInput(scanner,"street address");
+        String zipCode = Utils.promptUserInput(scanner,"postal code");
+        String city = Utils.promptUserInput(scanner,"city");
+        String country = Utils.promptUserInput(scanner,"country");
 
         Address newAddress = Address.builder()
                 .country(country)
@@ -170,7 +221,7 @@ public class AdminConsoleController extends ConsoleUserInterface {
         consoleHeader();
         scanner.nextLine();
 
-        UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository);
+        UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository, productRepository);
         userConsoleController.showAllUsersTable();
 
         System.out.println(">> Please enter 'ID' of the user you want to delete.");
@@ -189,9 +240,9 @@ public class AdminConsoleController extends ConsoleUserInterface {
         adminUserManagementOptions();
     }
 
-    private String promptUserInput(String fieldName) {
-        System.out.print(">> Please enter the "+ fieldName +": ");
-        return scanner.nextLine();
+    private void adminProductDeletionForm() {
+        ProductConsoleController productConsoleController = new ProductConsoleController(loggedUser, productRepository);
+        productConsoleController.deleteProductForm();
     }
 
     private void saveUserAndReturnToMenu(User user) {
