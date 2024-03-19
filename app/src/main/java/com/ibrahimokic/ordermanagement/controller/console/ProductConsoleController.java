@@ -6,19 +6,16 @@ import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.service.impl.ProductServiceImpl;
 import com.ibrahimokic.ordermanagement.utils.Utils;
+import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+@AllArgsConstructor
 public class ProductConsoleController extends ConsoleUserInterface {
     private final User loggedUser;
     private final ProductRepository productRepository;
-
-    public ProductConsoleController(User loggedUser, ProductRepository productRepository) {
-        this.loggedUser = loggedUser;
-        this.productRepository = productRepository;
-    }
 
     public void displayAdminProductManagementMenu() {
         Utils.clearConsole(20);
