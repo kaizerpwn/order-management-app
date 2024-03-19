@@ -76,4 +76,8 @@ public class Utils {
         System.out.print(">> Please enter the "+ fieldName +": ");
         return scanner.nextLine();
     }
+
+    public static String formatAddress(Address address) {
+        return String.format("%s, %s, %s, %s", address.getStreet(), address.getZip(), address.getCity(), address.getCountry());
+    }
 }

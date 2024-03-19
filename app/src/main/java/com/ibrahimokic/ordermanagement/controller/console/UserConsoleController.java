@@ -3,28 +3,22 @@ package com.ibrahimokic.ordermanagement.controller.console;
 import com.ibrahimokic.ordermanagement.controller.console.ui.ConsoleUserInterface;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.repository.AddressRepository;
+import com.ibrahimokic.ordermanagement.repository.OrderRepository;
 import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.utils.Utils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Component
 public class UserConsoleController extends ConsoleUserInterface {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final ProductRepository productRepository;
-
-    @Autowired
-    public UserConsoleController(UserRepository userRepository,
-                                 AddressRepository addressRepository,
-                                 ProductRepository productRepository){
-        this.userRepository = userRepository;
-        this.addressRepository = addressRepository;
-        this.productRepository = productRepository;
-    }
+    private final OrderRepository orderRepository;
 
     public void userMainForm() {
         Utils.clearConsole(20);
@@ -78,7 +72,7 @@ public class UserConsoleController extends ConsoleUserInterface {
 
             if (retrievedUser != null && retrievedUser.checkUserPassword(password)) {
                 loggedIn = true;
-                AdminConsoleController adminConsoleController = new AdminConsoleController(retrievedUser, userRepository, addressRepository, productRepository);
+                AdminConsoleController adminConsoleController = new AdminConsoleController(retrievedUser, userRepository, addressRepository, productRepository, orderRepository);
 
                 switch (retrievedUser.getRole()) {
                     case "user" -> userMainForm();
