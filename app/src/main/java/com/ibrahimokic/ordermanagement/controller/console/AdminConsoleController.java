@@ -58,7 +58,7 @@ public class AdminConsoleController extends ConsoleUserInterface {
         OrderConsoleController orderConsoleController = new OrderConsoleController(loggedUser, orderRepository);
         orderConsoleController.displayAdminOrderManagementMenu();
 
-        int choice = getValidInput(  2);
+        int choice = getValidInput(  3);
         processAdminOrderManagementChoice(choice);
     }
 
@@ -112,7 +112,8 @@ public class AdminConsoleController extends ConsoleUserInterface {
     private void processAdminOrderManagementChoice(int choice) {
         switch (choice) {
             case 1 -> adminOrderListForm();
-            case 2 -> adminDashboard();
+            case 2 -> adminOrderExportForm();
+            case 3 -> adminDashboard();
         }
     }
 
@@ -142,8 +143,20 @@ public class AdminConsoleController extends ConsoleUserInterface {
         Utils.clearConsole(20);
         consoleHeader();
 
-        OrderConsoleController productConsoleController = new OrderConsoleController(loggedUser, orderRepository);
-        productConsoleController.showAllOrdersList();
+        OrderConsoleController orderConsoleController = new OrderConsoleController(loggedUser, orderRepository);
+        orderConsoleController.showAllOrdersList();
+
+        Utils.returnBackToTheMainMenu(scanner);
+        adminOrderManagementOptions();
+    }
+
+    public void adminOrderExportForm() {
+        Utils.clearConsole(20);
+        consoleHeader();
+        scanner.nextLine();
+
+        OrderConsoleController orderConsoleController = new OrderConsoleController(loggedUser, orderRepository);
+        orderConsoleController.exportOrdersAsExcelFile();
 
         Utils.returnBackToTheMainMenu(scanner);
         adminOrderManagementOptions();
