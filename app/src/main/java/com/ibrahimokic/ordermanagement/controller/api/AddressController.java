@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,19 +25,13 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/address")
+@RequiredArgsConstructor
 @Tag(name = "Address", description = "Operations related to addresses")
 public class AddressController {
 
     private final AddressService addressService;
     private final AddressRepository addressRepository;
     private final Mapper<Address, AddressDto> addressMapper;
-
-    public AddressController(AddressService addressService, AddressRepository addressRepository,
-            Mapper<Address, AddressDto> addressMapper) {
-        this.addressService = addressService;
-        this.addressRepository = addressRepository;
-        this.addressMapper = addressMapper;
-    }
 
     @GetMapping
     @Operation(summary = "Get all addresses", description = "Get list of all addresses")

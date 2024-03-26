@@ -9,11 +9,11 @@ import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.service.impl.UserServiceImpl;
 import com.ibrahimokic.ordermanagement.utils.Utils;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AdminConsoleController extends ConsoleUserInterface {
     private final User loggedUser;
     private final UserRepository userRepository;
