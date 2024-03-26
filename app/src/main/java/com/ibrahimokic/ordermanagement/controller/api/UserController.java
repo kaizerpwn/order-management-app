@@ -76,7 +76,7 @@ public class UserController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new user", description = "Create new user based on request body")
     @ApiResponses(value = {
@@ -84,13 +84,27 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<User> createUser(@RequestBody(required = false) @Valid UserDto userDto) {
+    public ResponseEntity<User> createUser(@RequestBody(required = false) @Valid UserDto userDto, HttpServletResponse response) {
         try {
             if (userDto == null) {
                 return ResponseEntity.badRequest().build();
             }
+
+
             User user = userMapper.mapFrom(userDto);
             User createdUser = userService.createUser(user);
+
+            String accessToken = jwtIssuer.issue(
+                    user.getUserId(),
+                    user.getUsername(),
+                    user.getRole()
+            );
+
+            Cookie cookie = new Cookie("accessToken", accessToken);
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(24 * 60 * 60);
+            cookie.setPath("/");
+            response.addCookie(cookie);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
         } catch (MappingException mappingException) {
