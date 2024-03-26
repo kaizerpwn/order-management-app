@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,18 +25,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/product")
+@RequiredArgsConstructor
 @Tag(name = "Product", description = "Operations related to products")
 public class ProductController {
     private final ProductRepository productRepository;
     private final ProductService productService;
     private final Mapper<Product, ProductDto> productMapper;
-
-    public ProductController(ProductRepository productRepository, ProductService productService,
-            Mapper<Product, ProductDto> productMapper) {
-        this.productService = productService;
-        this.productRepository = productRepository;
-        this.productMapper = productMapper;
-    }
 
     @GetMapping
     @Operation(summary = "Get all products", description = "Get list of all products")
