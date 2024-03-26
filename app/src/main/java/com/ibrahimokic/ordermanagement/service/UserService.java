@@ -1,5 +1,6 @@
 package com.ibrahimokic.ordermanagement.service;
 
+import com.ibrahimokic.ordermanagement.domain.dto.api.LoginRequest;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
 
 import java.util.List;
@@ -11,6 +12,8 @@ public interface UserService {
     Optional<User> getUserById(Long userId);
 
     User createUser(User user);
+
+    User loginUser(LoginRequest request);
 
     User updateUser(Long userId, User newUser);
 
