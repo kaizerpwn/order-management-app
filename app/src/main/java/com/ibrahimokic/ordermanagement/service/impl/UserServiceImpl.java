@@ -1,5 +1,6 @@
 package com.ibrahimokic.ordermanagement.service.impl;
 
+import com.ibrahimokic.ordermanagement.domain.dto.api.LoginRequest;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.service.UserService;
@@ -48,5 +49,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
+    }
+
+    @Override
+    public User loginUser(LoginRequest request) {
+        Optional<User> retrievedUser = Optional.ofNullable(userRepository.findByUsername(request.getUsername()));
+
+        if(retrievedUser.isPresent()) {
+            if(request.getPassword().equals(retrievedUser.get().getPassword()))
+                return retrievedUser.get();
+
+            else return null;
+        }
+        else {
+            return null;
+        }
     }
 }
