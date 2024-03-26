@@ -1,12 +1,10 @@
 package com.ibrahimokic.ordermanagement.controller.api;
 
 import com.ibrahimokic.ordermanagement.domain.dto.api.LoginRequest;
-import com.ibrahimokic.ordermanagement.domain.dto.api.LoginResponse;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.domain.dto.UserDto;
-import com.ibrahimokic.ordermanagement.mapper.Mapper;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
-import com.ibrahimokic.ordermanagement.security.JwtIssuer;
+import com.ibrahimokic.ordermanagement.service.AuthService;
 import com.ibrahimokic.ordermanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -15,11 +13,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.MappingException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,9 +32,8 @@ import java.util.Optional;
 @Tag(name = "User", description = "Operations related to users")
 public class UserController {
     private final UserService userService;
+    private final AuthService authService;
     private final UserRepository userRepository;
-    private final Mapper<User, UserDto> userMapper;
-    private final JwtIssuer jwtIssuer;
 
     @GetMapping
     @Operation(summary = "Get all users", description = "Get list of all users")
@@ -76,32 +71,8 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<User> createUser(@RequestBody(required = false) @Valid UserDto userDto, HttpServletResponse response) {
-        try {
-            if (userDto == null) {
-                return ResponseEntity.badRequest().build();
-            }
-
-
-            User user = userMapper.mapFrom(userDto);
-            User createdUser = userService.createUser(user);
-
-            String accessToken = jwtIssuer.issue(
-                    user.getUserId(),
-                    user.getUsername(),
-                    user.getRole()
-            );
-
-            Cookie cookie = new Cookie("accessToken", accessToken);
-            cookie.setHttpOnly(true);
-            cookie.setMaxAge(24 * 60 * 60);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-        } catch (MappingException mappingException) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<User> registerUser(@RequestBody(required = false) @Valid UserDto userDto, HttpServletResponse response) {
+        return authService.registerUser(userDto, response);
     }
 
     @PostMapping("/login")
@@ -113,28 +84,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     public ResponseEntity<?> loginUser(@Validated @RequestBody LoginRequest request, HttpServletResponse response) {
-        User user = userService.loginUser(request);
-        if (user != null) {
-            String accessToken = jwtIssuer.issue(
-                    user.getUserId(),
-                    request.getUsername(),
-                    user.getRole()
-            );
-
-            Cookie cookie = new Cookie("accessToken", accessToken);
-            cookie.setHttpOnly(true);
-            cookie.setMaxAge(24 * 60 * 60);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-
-            return ResponseEntity.status(HttpStatus.OK)
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .body("Successfully logged in");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .body("Username and password does not match any user in the database");
-        }
+        return authService.loginUser(request, response);
     }
 
     @PatchMapping("/{userId}")
