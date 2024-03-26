@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.MappingException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -31,22 +32,13 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 @Tag(name = "User", description = "Operations related to users")
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final Mapper<User, UserDto> userMapper;
     private final JwtIssuer jwtIssuer;
-
-    public UserController(UserService userService,
-                          UserRepository userRepository,
-                          Mapper<User, UserDto> userMapper,
-                          JwtIssuer jwtIssuer) {
-        this.userService = userService;
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-        this.jwtIssuer = jwtIssuer;
-    }
 
     @GetMapping
     @Operation(summary = "Get all users", description = "Get list of all users")

@@ -8,12 +8,13 @@ import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.utils.Utils;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@AllArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class UserConsoleController extends ConsoleUserInterface {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;

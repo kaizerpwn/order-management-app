@@ -7,6 +7,7 @@ import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.repository.OrderRepository;
 import com.ibrahimokic.ordermanagement.utils.Utils;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -14,15 +15,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class OrderConsoleController extends ConsoleUserInterface {
-
     private final User loggedUser;
     private final OrderRepository orderRepository;
-
-    public OrderConsoleController(User loggedUser, OrderRepository orderRepository) {
-        this.loggedUser = loggedUser;
-        this.orderRepository = orderRepository;
-    }
 
     public List<Order> showAllOrdersList() {
         List<Order> orderList = orderRepository.findAll();
