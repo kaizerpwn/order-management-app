@@ -8,13 +8,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,13 +48,19 @@ public class UserServiceImplTest {
     @Test
     void testGetUserById() {
         User mockUser = User.builder().email("ibrahim@gmail.com").build();
+
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(mockUser));
 
-        Optional<User> retrievedUser = userService.getUserById(1L);
+        ResponseEntity<?> responseEntity = userService.getUserById(1L);
 
         verify(userRepository, times(1)).findById(1L);
-        assertTrue(retrievedUser.isPresent());
-        assertEquals(mockUser.getEmail(), retrievedUser.get().getEmail());
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertTrue(responseEntity.hasBody());
+
+        User retrievedUser = (User) responseEntity.getBody();
+        assertNotNull(retrievedUser);
+        assertEquals(mockUser.getEmail(), retrievedUser.getEmail());
     }
 
     @Test
