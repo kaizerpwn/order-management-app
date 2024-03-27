@@ -1,5 +1,6 @@
 package com.ibrahimokic.ordermanagement.service.impl;
 
+import com.ibrahimokic.ordermanagement.domain.dto.UserDto;
 import com.ibrahimokic.ordermanagement.domain.dto.api.LoginRequest;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
@@ -7,6 +8,10 @@ import com.ibrahimokic.ordermanagement.service.UserService;
 
 import jakarta.transaction.Transactional;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,8 +31,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUserById(Long userId) {
-        return userRepository.findById(userId);
+    public ResponseEntity<?> getUserById(Long userId) {
+
+        Optional<User> user = userRepository.findById(userId);
+
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("User not found.");
+        }
     }
 
     @Override
@@ -37,18 +51,50 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(Long userId, User newUser) {
-        if (userRepository.existsById(userId)) {
-            newUser.setUserId(userId);
-            return userRepository.save(newUser);
+    public ResponseEntity<?> updateUser(Long userId, UserDto updatedUserDto) {
+        Optional<User> optionalExistingUser = userRepository.findById(userId);
+
+        if (optionalExistingUser.isPresent()) {
+            User existingUser = optionalExistingUser.get();
+            BeanUtils.copyProperties(updatedUserDto, existingUser);
+
+            try {
+                userRepository.save(existingUser);
+                return ResponseEntity.status(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(existingUser);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("Internal server error.");
+            }
         } else {
-            return null;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("User not found.");
         }
     }
 
     @Override
-    public void deleteUser(Long userId) {
-        userRepository.deleteById(userId);
+    public ResponseEntity<?> deleteUser(Long userId) {
+        try {
+            Optional<User> userOptional = userRepository.findById(userId);
+
+            if (userOptional.isPresent()) {
+                userRepository.deleteById(userId);
+                return ResponseEntity.status(HttpStatus.OK)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("User successfully deleted.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("User not found.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Internal server error.");
+        }
     }
 
     @Override

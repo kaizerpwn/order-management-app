@@ -2,8 +2,7 @@ package com.ibrahimokic.ordermanagement.controller.api;
 
 import com.ibrahimokic.ordermanagement.domain.dto.api.LoginRequest;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
-import com.ibrahimokic.ordermanagement.domain.dto.UserDto;
-import com.ibrahimokic.ordermanagement.repository.UserRepository;
+import com.ibrahimokic.ordermanagement.domain.dto.UserDto; 
 import com.ibrahimokic.ordermanagement.service.AuthService;
 import com.ibrahimokic.ordermanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,15 +15,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -33,7 +29,6 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
     private final AuthService authService;
-    private final UserRepository userRepository;
 
     @GetMapping
     @Operation(summary = "Get all users", description = "Get list of all users")
@@ -52,15 +47,7 @@ public class UserController {
     })
     @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     public ResponseEntity<?> getUserById(@PathVariable Long userId) {
-        Optional<User> user = userService.getUserById(userId);
-
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .body("User not found.");
-        }
+        return userService.getUserById(userId);
     }
 
     @PostMapping("/register")
@@ -98,27 +85,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     public ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody UserDto updatedUserDto) {
-        Optional<User> optionalExistingUser = userService.getUserById(userId);
-
-        if (optionalExistingUser.isPresent()) {
-            User existingUser = optionalExistingUser.get();
-            BeanUtils.copyProperties(updatedUserDto, existingUser);
-
-            try {
-                userRepository.save(existingUser);
-                return ResponseEntity.status(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(existingUser);
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .contentType(MediaType.TEXT_PLAIN)
-                        .body("Internal server error.");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .body("User not found.");
-        }
+        return userService.updateUser(userId, updatedUserDto);
     }
 
     @DeleteMapping("/{userId}")
@@ -131,23 +98,6 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
-        try {
-            Optional<User> userOptional = userService.getUserById(userId);
-
-            if (userOptional.isPresent()) {
-                userService.deleteUser(userId);
-                return ResponseEntity.status(HttpStatus.OK)
-                        .contentType(MediaType.TEXT_PLAIN)
-                        .body("User successfully deleted.");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .contentType(MediaType.TEXT_PLAIN)
-                        .body("User not found.");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .body("Internal server error.");
-        }
+        return userService.deleteUser(userId);
     }
 }
