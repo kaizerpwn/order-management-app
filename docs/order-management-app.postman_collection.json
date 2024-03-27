@@ -144,13 +144,13 @@
 					"response": []
 				},
 				{
-					"name": "Create new user",
+					"name": "Register new user",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"username\": \"string\",\r\n  \"password\": \"string\",\r\n  \"email\": \"string\",\r\n  \"role\": \"string\",\r\n  \"first_name\": \"string\",\r\n  \"last_name\": \"string\",\r\n  \"birth_date\": \"2024-03-22\",\r\n  \"address\": { \r\n    \"street\": \"string\",\r\n    \"zip_code\": \"string\",\r\n    \"city\": \"string\",\r\n    \"country\": \"string\"\r\n  }\r\n}",
+							"raw": "{\r\n  \"username\": \"test\",\r\n  \"password\": \"123123\",\r\n  \"email\": \"test@gmail.com\",\r\n  \"role\": \"user\",\r\n  \"first_name\": \"string\",\r\n  \"last_name\": \"string\",\r\n  \"birth_date\": \"2024-03-22\",\r\n  \"address\": { \r\n    \"street\": \"string\",\r\n    \"zip_code\": \"string\",\r\n    \"city\": \"string\",\r\n    \"country\": \"string\"\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -158,13 +158,42 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/users",
+							"raw": "{{baseUrl}}/api/users/register",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
-								"users"
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"test\",\r\n  \"password\": \"123123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"login"
 							]
 						}
 					},
