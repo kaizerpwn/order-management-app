@@ -2,7 +2,7 @@ package com.ibrahimokic.ordermanagement.controller.api;
 
 import com.ibrahimokic.ordermanagement.domain.dto.api.LoginRequest;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
-import com.ibrahimokic.ordermanagement.domain.dto.UserDto; 
+import com.ibrahimokic.ordermanagement.domain.dto.UserDto;
 import com.ibrahimokic.ordermanagement.service.AuthService;
 import com.ibrahimokic.ordermanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;

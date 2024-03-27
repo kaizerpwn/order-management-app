@@ -58,7 +58,9 @@ public class UserServiceImplTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertTrue(responseEntity.hasBody());
 
-        User retrievedUser = (User) responseEntity.getBody();
+        Optional<User> userOptional = (Optional<User>) responseEntity.getBody();
+        User retrievedUser = userOptional.get();
+
         assertNotNull(retrievedUser);
         assertEquals(mockUser.getEmail(), retrievedUser.getEmail());
     }
