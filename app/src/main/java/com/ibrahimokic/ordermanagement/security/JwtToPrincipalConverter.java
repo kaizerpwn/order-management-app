@@ -12,7 +12,6 @@ public class JwtToPrincipalConverter {
     public UserPrincipal convert(DecodedJWT jwt) {
         List<SimpleGrantedAuthority> authorities = extractAuthoritiesFromClaim(jwt);
 
-        System.out.println("Roles: " + authorities);
         return UserPrincipal.builder()
                 .userId(Long.valueOf(jwt.getSubject()))
                 .email(jwt.getClaim("email").asString())
