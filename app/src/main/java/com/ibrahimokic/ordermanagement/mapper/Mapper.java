@@ -1,7 +1,6 @@
 package com.ibrahimokic.ordermanagement.mapper;
 
 import com.ibrahimokic.ordermanagement.domain.dto.OrderItemDto;
-import jakarta.validation.Valid;
 
 import java.util.Collections;
 import java.util.List;

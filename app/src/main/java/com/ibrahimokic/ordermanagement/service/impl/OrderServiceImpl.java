@@ -10,7 +10,8 @@ import com.ibrahimokic.ordermanagement.service.OrderService;
 import com.ibrahimokic.ordermanagement.utils.Utils;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
@@ -31,25 +33,6 @@ public class OrderServiceImpl implements OrderService {
     private final Mapper<OrderItem, OrderItemDto> orderItemMapper;
     private final AddressRepository addressRepository;
     private final ProductRepository productRepository;
-
-    @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository,
-            UserRepository userRepository,
-            ProductRepository productRepository,
-            OrderItemRepository orderItemRepository,
-            Mapper<Order, OrderDto> orderMapper,
-            Mapper<Address, AddressDto> addressMapper,
-            Mapper<OrderItem, OrderItemDto> orderItemMapper,
-            AddressRepository addressRepository) {
-        this.orderRepository = orderRepository;
-        this.userRepository = userRepository;
-        this.productRepository = productRepository;
-        this.orderItemRepository = orderItemRepository;
-        this.orderMapper = orderMapper;
-        this.addressMapper = addressMapper;
-        this.orderItemMapper = orderItemMapper;
-        this.addressRepository = addressRepository;
-    }
 
     @Override
     public List<OrderDto> getAllOrdersWithDetails() {
