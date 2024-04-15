@@ -3,7 +3,6 @@ package com.ibrahimokic.ordermanagement.controller.api;
 import com.ibrahimokic.ordermanagement.domain.entity.Product;
 import com.ibrahimokic.ordermanagement.domain.dto.ProductDto;
 import com.ibrahimokic.ordermanagement.mapper.Mapper;
-import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -14,8 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +27,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Tag(name = "Product", description = "Operations related to products")
 public class ProductController {
-    private final ProductRepository productRepository;
     private final ProductService productService;
     private final Mapper<Product, ProductDto> productMapper;
 
@@ -37,9 +35,8 @@ public class ProductController {
     @ApiResponse(responseCode = "200", description = "List of addresses", content = {
             @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Product.class)))
     })
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> addresses = productService.getAllProducts();
-        return ResponseEntity.ok(addresses);
+    public ResponseEntity<?> getAllProducts() {
+        return productService.getAllProducts();
     }
 
     @GetMapping("/{productId}")
@@ -85,24 +82,7 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Edit product", description = "Edit product based on request body and product ID")
     public ResponseEntity<?> updateProduct(@PathVariable Long productId, @RequestBody ProductDto updatedProductDto) {
-        Optional<Product> optionalExistingProduct = productService.getProductById(productId);
-
-        if (optionalExistingProduct.isPresent()) {
-            Product existingProduct = optionalExistingProduct.get();
-            BeanUtils.copyProperties(updatedProductDto, existingProduct);
-            try {
-                productRepository.save(existingProduct);
-                return ResponseEntity.ok(existingProduct);
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .contentType(MediaType.TEXT_PLAIN)
-                        .body("Internal server error");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .body("Product with that ID does not exist in database");
-        }
+        return productService.updateProduct(productId, updatedProductDto);
     }
 
     @DeleteMapping("/{productId}")
