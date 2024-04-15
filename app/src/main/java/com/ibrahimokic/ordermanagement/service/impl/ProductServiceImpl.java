@@ -3,18 +3,18 @@ package com.ibrahimokic.ordermanagement.service.impl;
 import com.ibrahimokic.ordermanagement.domain.entity.Product;
 import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.service.ProductService;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
-
-    public ProductServiceImpl(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
 
     @Override
     public List<Product> getAllProducts() {
@@ -27,23 +27,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product createProduct(Product product){
+    public Product createProduct(Product product) {
         return productRepository.save(product);
     }
 
     @Override
     public Product updateProduct(Long productId, Product newProduct) {
-        if(productRepository.existsById(productId)) {
+        if (productRepository.existsById(productId)) {
             newProduct.setProductId(productId);
             return productRepository.save(newProduct);
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     @Override
-    public void deleteProduct(Long productId){
+    public void deleteProduct(Long productId) {
         productRepository.deleteById(productId);
     }
 }

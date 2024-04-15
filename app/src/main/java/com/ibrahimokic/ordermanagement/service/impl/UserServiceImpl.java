@@ -7,6 +7,7 @@ import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.service.UserService;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     public List<User> getAllUsers() {
@@ -101,13 +99,13 @@ public class UserServiceImpl implements UserService {
     public User loginUser(LoginRequest request) {
         Optional<User> retrievedUser = Optional.ofNullable(userRepository.findByUsername(request.getUsername()));
 
-        if(retrievedUser.isPresent()) {
-            if(request.getPassword().equals(retrievedUser.get().getPassword()))
+        if (retrievedUser.isPresent()) {
+            if (request.getPassword().equals(retrievedUser.get().getPassword()))
                 return retrievedUser.get();
 
-            else return null;
-        }
-        else {
+            else
+                return null;
+        } else {
             return null;
         }
     }
