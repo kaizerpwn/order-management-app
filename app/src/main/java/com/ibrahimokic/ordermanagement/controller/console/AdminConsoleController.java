@@ -279,11 +279,6 @@ public class AdminConsoleController extends ConsoleUserInterface {
             return;
         }
 
-        if(userId == null){
-            adminUserManagementOptions();
-            return;
-        }
-
         UserServiceImpl userService = new UserServiceImpl(userRepository);
 
         if (userRepository.findById(userId).isPresent()) {
