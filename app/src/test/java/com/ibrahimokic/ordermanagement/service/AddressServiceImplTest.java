@@ -46,7 +46,7 @@ public class AddressServiceImplTest {
 
     @Test
     void testGetUserById() {
-        Address mockAddress = Address.builder().street("Sarajevo").build();
+        Address mockAddress = Address.builder().street("Dzemala Bijedica").build();
         when(addressRepository.findById(anyLong())).thenReturn(Optional.of(mockAddress));
 
         Optional<Address> retrievedAddress = addressService.getAddressById(1L);

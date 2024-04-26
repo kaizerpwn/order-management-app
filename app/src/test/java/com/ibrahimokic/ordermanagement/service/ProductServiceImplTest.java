@@ -25,19 +25,6 @@ public class ProductServiceImplTest {
     @InjectMocks
     private ProductServiceImpl productService;
 
-    // @Test
-    // void testGetAllProducts() {
-    //     List<Product> productList = List.of(
-    //             Product.builder().productId(1L).productName("Table").price(new BigDecimal("100.0")).build(),
-    //             Product.builder().productId(2L).productName("Chair").price(new BigDecimal("150.0")).build()
-    //     );
-    //     when(productRepository.findAll()).thenReturn(productList);
-
-    //     List<Product> result = productService.getAllProducts();
-
-    //     assertEquals(2, result.size());
-    // }
-
     @Test
     void testGetProductById() {
         Long productId = 1L;
@@ -57,31 +44,7 @@ public class ProductServiceImplTest {
         Product result = productService.createProduct(product);
 
         assertEquals(product, result);
-    }
-
-    // @Test
-    // void testUpdateProduct() {
-    //     Long productId = 1L;
-    //     Product updatedProduct = Product.builder().productId(productId).productName("Table").price(new BigDecimal("150.0")).build();
-    //     when(productRepository.existsById(productId)).thenReturn(true);
-    //     when(productRepository.save(updatedProduct)).thenReturn(updatedProduct);
-
-    //     Product result = productService.updateProduct(productId, updatedProduct);
-
-    //     assertEquals(updatedProduct, result);
-    // }
-
-    // @Test
-    // void testUpdateProductWhenProductNotExists() {
-    //     Long productId = 1L;
-    //     Product updatedProduct = Product.builder().productId(productId).productName("Chair").price(new BigDecimal("150.0")).build();
-    //     when(productRepository.existsById(productId)).thenReturn(false);
-
-    //     Product result = productService.updateProduct(productId, updatedProduct);
-
-    //     assertFalse(productRepository.existsById(productId));
-    //     assertNull(result);
-    // }
+    } 
 
     @Test
     void testDeleteProduct() {
