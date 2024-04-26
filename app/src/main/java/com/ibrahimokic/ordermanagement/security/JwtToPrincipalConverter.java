@@ -9,10 +9,7 @@ import java.util.List;
 
 @Component
 public class JwtToPrincipalConverter {
-    public UserPrincipal convert(DecodedJWT jwt) {
-        List<SimpleGrantedAuthority> authorities = extractAuthoritiesFromClaim(jwt);
-
-        System.out.println("Roles: " + authorities);
+    public UserPrincipal convert(DecodedJWT jwt) { 
         return UserPrincipal.builder()
                 .userId(Long.valueOf(jwt.getSubject()))
                 .email(jwt.getClaim("email").asString())
@@ -23,9 +20,7 @@ public class JwtToPrincipalConverter {
     private List<SimpleGrantedAuthority> extractAuthoritiesFromClaim(DecodedJWT jwt) {
         var claim = jwt.getClaim("role");
 
-        System.out.println(claim);
-
-        if(claim.isNull() || claim.isMissing())
+        if (claim.isNull() || claim.isMissing())
             return List.of();
 
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();

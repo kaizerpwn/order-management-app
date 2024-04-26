@@ -3,18 +3,18 @@ package com.ibrahimokic.ordermanagement.service.impl;
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.repository.AddressRepository;
 import com.ibrahimokic.ordermanagement.service.AddressService;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AddressServiceImpl implements AddressService {
     private final AddressRepository addressRepository;
-
-    public AddressServiceImpl(AddressRepository addressRepository){
-        this.addressRepository = addressRepository;
-    }
 
     @Override
     public List<Address> getAllAddresses() {
@@ -22,7 +22,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Optional<Address> getAddressById(Long addressId){
+    public Optional<Address> getAddressById(Long addressId) {
         return addressRepository.findById(addressId);
     }
 
@@ -33,11 +33,10 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address updateAddress(Long addressId, Address newAddress) {
-        if(addressRepository.existsById(addressId)){
+        if (addressRepository.existsById(addressId)) {
             newAddress.setAddressId(addressId);
             return addressRepository.save(newAddress);
-        }
-        else {
+        } else {
             return null;
         }
     }

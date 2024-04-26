@@ -5,7 +5,7 @@ import com.ibrahimokic.ordermanagement.domain.dto.OrderItemDto;
 import java.util.Collections;
 import java.util.List;
 
-public interface Mapper<A,B> {
+public interface Mapper<A, B> {
     B mapTo(A a);
 
     A mapFrom(B b);

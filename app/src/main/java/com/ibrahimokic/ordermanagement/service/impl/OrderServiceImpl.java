@@ -114,7 +114,8 @@ public class OrderServiceImpl implements OrderService {
                     orderItemRepository.save(orderItem);
                     orderItems.add(orderItem);
 
-                    productItem.get().setAvailableQuantity(productItem.get().getAvailableQuantity() - orderItem.getQuantity());
+                    productItem.get()
+                            .setAvailableQuantity(productItem.get().getAvailableQuantity() - orderItem.getQuantity());
                     productRepository.save(productItem.get());
                 }
             }
@@ -136,30 +137,30 @@ public class OrderServiceImpl implements OrderService {
         try {
             Optional<Order> retrievedOrderFromDatabase = orderRepository.findById(orderId);
 
-            if(retrievedOrderFromDatabase.isPresent()) {
+            if (retrievedOrderFromDatabase.isPresent()) {
                 Optional<User> optionalUser = userRepository.findById(orderDto.getUserId());
 
                 if (optionalUser.isPresent()) {
-                    if(Utils.checkIfUserIdIsDifferent(optionalUser.get(), retrievedOrderFromDatabase.get()))
-                    {
+                    if (Utils.checkIfUserIdIsDifferent(optionalUser.get(), retrievedOrderFromDatabase.get())) {
                         retrievedOrderFromDatabase.get().setUser(optionalUser.get());
                     }
 
-                    if(Utils.checkIfAddressIsDifferent(retrievedOrderFromDatabase.get().getDeliveryAddress(), orderDto.getDeliveryAddress()))
-                    {
+                    if (Utils.checkIfAddressIsDifferent(retrievedOrderFromDatabase.get().getDeliveryAddress(),
+                            orderDto.getDeliveryAddress())) {
                         Address newAddress = addressMapper.mapFrom(orderDto.getDeliveryAddress());
                         addressRepository.save(newAddress);
                         retrievedOrderFromDatabase.get().setDeliveryAddress(newAddress);
                     }
 
-                    if(Utils.checkIfAddressIsDifferent(retrievedOrderFromDatabase.get().getSourceAddress(), orderDto.getSourceAddress()))
-                    {
+                    if (Utils.checkIfAddressIsDifferent(retrievedOrderFromDatabase.get().getSourceAddress(),
+                            orderDto.getSourceAddress())) {
                         Address newAddress = addressMapper.mapFrom(orderDto.getSourceAddress());
                         addressRepository.save(newAddress);
                         retrievedOrderFromDatabase.get().setSourceAddress(newAddress);
                     }
 
-                    if (Utils.checkIfOrderItemsAreDifferent(retrievedOrderFromDatabase.get().getOrderItems(), orderItemMapper.mapListToEntityList(orderDto.getOrderItems()))) {
+                    if (Utils.checkIfOrderItemsAreDifferent(retrievedOrderFromDatabase.get().getOrderItems(),
+                            orderItemMapper.mapListToEntityList(orderDto.getOrderItems()))) {
 
                         List<OrderItem> orderItems = new ArrayList<>();
 
@@ -173,21 +174,24 @@ public class OrderServiceImpl implements OrderService {
 
                             Optional<Product> productItem = productRepository.findById(orderItemDto.getProductId());
 
-                            if (productItem.isPresent() && productItem.get().getAvailableQuantity() >= orderItem.getQuantity()) {
+                            if (productItem.isPresent()
+                                    && productItem.get().getAvailableQuantity() >= orderItem.getQuantity()) {
                                 orderItemRepository.save(orderItem);
                                 orderItems.add(orderItem);
 
                                 retrievedOrderFromDatabase.get().getOrderItems().add(orderItem);
                                 orderItem.setOrder(retrievedOrderFromDatabase.get());
 
-                                productItem.get().setAvailableQuantity(productItem.get().getAvailableQuantity() - orderItem.getQuantity());
+                                productItem.get().setAvailableQuantity(
+                                        productItem.get().getAvailableQuantity() - orderItem.getQuantity());
                                 productRepository.save(productItem.get());
                             }
                         }
 
                         retrievedOrderFromDatabase.get().getOrderItems().clear();
                         retrievedOrderFromDatabase.get().getOrderItems().addAll(orderItems);
-                        retrievedOrderFromDatabase.get().setTotalAmount(Utils.calculateTotalProductsPriceAmount(orderItems));
+                        retrievedOrderFromDatabase.get()
+                                .setTotalAmount(Utils.calculateTotalProductsPriceAmount(orderItems));
                     }
 
                     orderRepository.save(retrievedOrderFromDatabase.get());
@@ -202,10 +206,11 @@ public class OrderServiceImpl implements OrderService {
             }
 
             else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Order with ID '"+orderId+"' does not exist.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Order with ID '" + orderId + "' does not exist.");
             }
 
-        }  catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error creating order: " + e.getMessage());
         }
     }
