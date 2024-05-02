@@ -44,7 +44,7 @@ public class ProductServiceImplTest {
         Product result = productService.createProduct(product);
 
         assertEquals(product, result);
-    } 
+    }
 
     @Test
     void testDeleteProduct() {

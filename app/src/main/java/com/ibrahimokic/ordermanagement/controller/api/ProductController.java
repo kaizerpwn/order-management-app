@@ -36,7 +36,7 @@ public class ProductController {
             @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Product.class)))
     })
     public ResponseEntity<?> getAllProducts() {
-        return productService.getAllProducts();
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @GetMapping("/{productId}")

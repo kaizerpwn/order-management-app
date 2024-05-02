@@ -39,8 +39,7 @@ public class AddressController {
             @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Address.class)))
     })
     public ResponseEntity<List<Address>> getAllAddresses() {
-        List<Address> addresses = addressService.getAllAddresses();
-        return ResponseEntity.ok(addresses);
+        return ResponseEntity.ok(addressService.getAllAddresses());
     }
 
     @GetMapping("/{addressId}")
