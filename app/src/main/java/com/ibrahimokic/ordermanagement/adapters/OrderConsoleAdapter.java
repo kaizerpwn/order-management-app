@@ -1,6 +1,6 @@
 package com.ibrahimokic.ordermanagement.adapters;
 
-import com.ibrahimokic.ordermanagement.controller.console.ui.ConsoleUserInterface;
+import com.ibrahimokic.ordermanagement.adapters.ui.ConsoleUserInterface;
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.domain.entity.Order;
 import com.ibrahimokic.ordermanagement.domain.entity.User; 
@@ -23,6 +23,10 @@ public class OrderConsoleAdapter extends ConsoleUserInterface {
     public List<Order> showAllOrdersList() {
         List<Order> orderList = orderService.getAllOrders();
 
+        return getOrders(orderList);
+    }
+
+    static List<Order> getOrders(List<Order> orderList) {
         System.out.println("|-------------|---------------------|---------------|---------------------|-------------------------------------------------------------|-------------------------------------------------------|");
         System.out.println("|   Order ID  |        User         |  Order Date   |    Total Amount     |                      Delivery Address                       |                     Source Address                    |");
         System.out.println("|-------------|---------------------|---------------|---------------------|-------------------------------------------------------------|-------------------------------------------------------|");

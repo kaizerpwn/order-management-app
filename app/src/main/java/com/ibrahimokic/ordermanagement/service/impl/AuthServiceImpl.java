@@ -28,17 +28,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userService.loginUser(request);
 
         if (user != null) {
-            String accessToken = jwtIssuer.issue(
-                    user.getUserId(),
-                    request.getUsername(),
-                    user.getRole()
-            );
-
-            Cookie cookie = new Cookie("accessToken", accessToken);
-            cookie.setHttpOnly(true);
-            cookie.setMaxAge(24 * 60 * 60);
-            cookie.setPath("/");
-            response.addCookie(cookie);
+            issueNewJwt(response, user, request.getUsername());
 
             return ResponseEntity.status(HttpStatus.OK)
                     .contentType(MediaType.TEXT_PLAIN)
@@ -61,21 +51,25 @@ public class AuthServiceImpl implements AuthService {
             User user = userMapper.mapFrom(userDto);
             User createdUser = userService.createUser(user);
 
-            String accessToken = jwtIssuer.issue(
-                    user.getUserId(),
-                    user.getUsername(),
-                    user.getRole()
-            );
-
-            Cookie cookie = new Cookie("accessToken", accessToken);
-            cookie.setHttpOnly(true);
-            cookie.setMaxAge(24 * 60 * 60);
-            cookie.setPath("/");
-            response.addCookie(cookie);
+            issueNewJwt(response, user, user.getUsername());
 
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
         } catch (MappingException mappingException) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    private void issueNewJwt(HttpServletResponse response, User user, String username) {
+        String accessToken = jwtIssuer.issue(
+                user.getUserId(),
+                username,
+                user.getRole()
+        );
+
+        Cookie cookie = new Cookie("accessToken", accessToken);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(24 * 60 * 60);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 }

@@ -1,12 +1,10 @@
 package com.ibrahimokic.ordermanagement.utils;
 
 import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
-import com.ibrahimokic.ordermanagement.domain.entity.Address;
-import com.ibrahimokic.ordermanagement.domain.entity.Order;
-import com.ibrahimokic.ordermanagement.domain.entity.OrderItem;
-import com.ibrahimokic.ordermanagement.domain.entity.User;
+import com.ibrahimokic.ordermanagement.domain.entity.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -79,5 +77,31 @@ public class Utils {
 
     public static String formatAddress(Address address) {
         return String.format("%s, %s, %s, %s", address.getStreet(), address.getZip(), address.getCity(), address.getCountry());
+    }
+
+    public static boolean checkProductAvailability(Product product) {
+        return product.getAvailableUntil().isAfter(LocalDate.now());
+    }
+
+    public static boolean checkProductQuantity(Product product) {
+        if (product.getAvailableQuantity() == 0) return false;
+        return true;
+    }
+
+    public static int getValidInput(Scanner scanner, int max) {
+        final int MIN_CHOICE = 1;
+        int choice;
+        do {
+            System.out.print(">> Please enter your choice: ");
+            while (!scanner.hasNextInt()) {
+                System.out.println("Invalid input. Please use options " + MIN_CHOICE + " - " + max + ".");
+                System.out.print("Enter your choice (" + MIN_CHOICE + " - " + max + "): ");
+                scanner.next();
+            }
+            choice = scanner.nextInt();
+            if (choice < MIN_CHOICE || choice > max)
+                System.out.println("Invalid choice. Please enter " + MIN_CHOICE + " - " + max + ".");
+        } while (choice < MIN_CHOICE || choice > max);
+        return choice;
     }
 }

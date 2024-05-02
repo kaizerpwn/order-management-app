@@ -1,4 +1,4 @@
-package com.ibrahimokic.ordermanagement.controller.console.ui;
+package com.ibrahimokic.ordermanagement.adapters.ui;
 
 import java.util.Scanner;
 
@@ -11,6 +11,6 @@ public abstract class ConsoleUserInterface {
         System.out.println("██║   ██║██╔══██╗██║  ██║██╔══╝  ██╔══██╗    ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝  ██║╚██╔╝██║██╔══╝  ██║╚██╗██║   ██║   ");
         System.out.println("╚██████╔╝██║  ██║██████╔╝███████╗██║  ██║    ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║ ╚═╝ ██║███████╗██║ ╚████║   ██║   ");
         System.out.println(" ╚═════╝ ╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝   ╚═╝   ");
-        System.out.println("                                                                                                                     Author: Ibrahim Okic");
+        System.out.println("                                                                                                                     Author: Ibrahim Okić");
     }
 }

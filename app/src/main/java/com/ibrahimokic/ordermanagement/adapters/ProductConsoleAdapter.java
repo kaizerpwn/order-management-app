@@ -1,6 +1,6 @@
 package com.ibrahimokic.ordermanagement.adapters;
 
-import com.ibrahimokic.ordermanagement.controller.console.ui.ConsoleUserInterface;
+import com.ibrahimokic.ordermanagement.adapters.ui.ConsoleUserInterface;
 import com.ibrahimokic.ordermanagement.domain.entity.Product;
 import com.ibrahimokic.ordermanagement.domain.entity.User; 
 import com.ibrahimokic.ordermanagement.service.ProductService;

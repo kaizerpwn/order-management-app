@@ -1,6 +1,6 @@
 package com.ibrahimokic.ordermanagement.adapters;
 
-import com.ibrahimokic.ordermanagement.controller.console.ui.ConsoleUserInterface;
+import com.ibrahimokic.ordermanagement.adapters.ui.ConsoleUserInterface;
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.domain.entity.User;  
 import com.ibrahimokic.ordermanagement.service.AddressService;
@@ -26,7 +26,7 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
 
         displayAdminDashboardMenu();
 
-        int choice = getValidInput(  4);
+        int choice = Utils.getValidInput(scanner,  4);
         processAdminDashboardChoice(choice);
     }
 
@@ -57,7 +57,7 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
         OrderConsoleAdapter orderConsoleAdapter = new OrderConsoleAdapter(loggedUser, orderService);
         orderConsoleAdapter.displayAdminOrderManagementMenu();
 
-        int choice = getValidInput(  3);
+        int choice = Utils.getValidInput(scanner,  3);
         processAdminOrderManagementChoice(choice);
     }
 
@@ -68,7 +68,7 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
         ProductConsoleAdapter productConsoleAdapter = new ProductConsoleAdapter(loggedUser, productService);
         productConsoleAdapter.displayAdminProductManagementMenu();
 
-        int choice = getValidInput(  4);
+        int choice = Utils.getValidInput(scanner,  4);
         processAdminProductManagementChoice(choice);
     }
 
@@ -78,7 +78,7 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
         consoleHeader();
         displayAdminUserManagementMenu();
 
-        int choice = getValidInput(  4);
+        int choice = Utils.getValidInput(scanner,  4);
         processAdminUserManagementChoice(choice);
     }
 
@@ -217,10 +217,10 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
 
         do {
             email = Utils.promptUserInput(scanner,"email");
-            if (userService.findByEmail(email) != null) {
+            if (userService.findByEmail(email).isPresent()) {
                 System.out.println("User with this email already exists. Please try a different email address.");
             }
-        } while (userService.findByEmail(email) != null);
+        } while (userService.findByEmail(email).isPresent());
 
         String name = Utils.promptUserInput(scanner,"first name");
         String surname = Utils.promptUserInput(scanner,"last name");
@@ -301,22 +301,5 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
 
         Utils.returnBackToTheMainMenu(scanner);
         adminUserManagementOptions();
-    }
-
-    private int getValidInput(int max) {
-        final int MIN_CHOICE = 1;
-        int choice;
-        do {
-            System.out.print(">> Please enter your choice: ");
-            while (!scanner.hasNextInt()) {
-                System.out.println("Invalid input. Please use options " + MIN_CHOICE + " - " + max + ".");
-                System.out.print("Enter your choice (" + MIN_CHOICE + " - " + max + "): ");
-                scanner.next();
-            }
-            choice = scanner.nextInt();
-            if (choice < MIN_CHOICE || choice > max)
-                System.out.println("Invalid choice. Please enter " + MIN_CHOICE + " - " + max + ".");
-        } while (choice < MIN_CHOICE || choice > max);
-        return choice;
     }
 }

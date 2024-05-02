@@ -48,6 +48,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<Order> getAllUsersOrders(User user) {
+        return orderRepository.getAllUsersOrders(user);
+    }
+
+    @Override
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }

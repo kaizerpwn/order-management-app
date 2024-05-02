@@ -1,6 +1,7 @@
 package com.ibrahimokic.ordermanagement.adapters;
 
-import com.ibrahimokic.ordermanagement.controller.console.ui.ConsoleUserInterface;
+import com.ibrahimokic.ordermanagement.adapters.ui.ConsoleUserInterface;
+import com.ibrahimokic.ordermanagement.domain.entity.Order;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.service.AddressService;
 import com.ibrahimokic.ordermanagement.service.OrderService;
@@ -8,9 +9,10 @@ import com.ibrahimokic.ordermanagement.service.ProductService;
 import com.ibrahimokic.ordermanagement.service.UserService;
 import com.ibrahimokic.ordermanagement.utils.Utils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import static com.ibrahimokic.ordermanagement.adapters.OrderConsoleAdapter.getOrders;
 
 @RequiredArgsConstructor
 public class UserConsoleAdapter extends ConsoleUserInterface {
@@ -18,6 +20,7 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
     private final AddressService addressService;
     private final ProductService productService;
     private final OrderService orderService;
+    private User loggedUser;
 
     public void userMainForm() {
         Utils.clearConsole(20);
@@ -55,7 +58,7 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
 
     public void userLoginForm() {
         boolean loggedIn = false;
-        boolean goToMainForm = false;
+        boolean goToMainForm;
 
         do {
             Utils.clearConsole(20);
@@ -69,12 +72,13 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
 
             User retrievedUser = userService.findByUsername(username).get();
 
-            if (retrievedUser != null && retrievedUser.checkUserPassword(password)) {
+            if (retrievedUser.checkUserPassword(password)) {
                 loggedIn = true;
+                loggedUser = retrievedUser;
                 AdminConsoleAdapter adminConsoleAdapter = new AdminConsoleAdapter(retrievedUser, userService, addressService, productService, orderService);
 
                 switch (retrievedUser.getRole()) {
-                    case "user" -> userMainForm();
+                    case "user" -> showUserOptions();
                     case "admin" -> adminConsoleAdapter.adminDashboard();
                 }
             } else {
@@ -89,10 +93,10 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
                     return;
                 }
             }
-        } while (!loggedIn && !goToMainForm);
+        } while (!loggedIn);
     }
 
-    public List<User> showAllUsersTable() {
+    public void showAllUsersTable() {
         List<User> userList = userService.getAllUsers();
 
         System.out.println("|-------------|--------------|------------------------|----------|----------------|---------------|----------------|");
@@ -111,6 +115,47 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
         }
 
         System.out.println("|-------------|--------------|------------------------|----------|----------------|---------------|----------------|");
-        return userList;
+    }
+
+    public void displayUserMenu() {
+        Utils.clearConsole(20);
+        consoleHeader();
+
+        System.out.println("[OM-APP]: Welcome, " + loggedUser.getFirstName() + "! Take a moment to choose your next step:");
+        System.out.println("1.) List of all orders");
+        System.out.println("2.) Order new products");
+        System.out.println("3.) Log out");
+    }
+
+    public void showUserOptions() {
+        Utils.clearConsole(20);
+        consoleHeader();
+
+        displayUserMenu();
+
+        int choice = Utils.getValidInput(scanner,  3);
+        processUserMenuChoice(choice);
+    }
+
+    private void processUserMenuChoice(int choice) {
+        switch (choice) {
+            case 1: {
+                showAllUsersOrders();
+                Utils.returnBackToTheMainMenu(scanner);
+                showUserOptions();
+            }
+            case 3:
+            {
+                loggedUser = null;
+                userMainForm();
+                break;
+            }
+        }
+    }
+
+    public List<Order> showAllUsersOrders() {
+        List<Order> orderList = orderService.getAllUsersOrders(loggedUser);
+
+        return getOrders(orderList);
     }
 }

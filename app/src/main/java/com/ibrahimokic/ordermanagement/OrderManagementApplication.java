@@ -28,8 +28,7 @@ public class OrderManagementApplication implements CommandLineRunner {
 	public void run(String... args) {
 		String environment = System.getenv("ENVIRONMENT");
 		if (!"github-actions".equals(environment)) {
-			UserConsoleAdapter userConsoleAdapter = new UserConsoleAdapter(userService, addressService,
-					productService, orderService);
+			UserConsoleAdapter userConsoleAdapter = new UserConsoleAdapter(userService, addressService, productService, orderService);
 			userConsoleAdapter.userMainForm();
 		}
 	}
