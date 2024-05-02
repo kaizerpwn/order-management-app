@@ -15,8 +15,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories
 @RequiredArgsConstructor
 public class OrderManagementApplication implements CommandLineRunner {
-	private final UserService userService;
 	private final AddressService addressService;
+	private final UserService userService;
 	private final ProductService productService;
 	private final OrderService orderService;
 
@@ -27,7 +27,7 @@ public class OrderManagementApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		String environment = System.getenv("ENVIRONMENT");
-		if (environment == null || !"github-actions".equals(environment)) {
+		if (!"github-actions".equals(environment)) {
 			UserConsoleAdapter userConsoleAdapter = new UserConsoleAdapter(userService, addressService,
 					productService, orderService);
 			userConsoleAdapter.userMainForm();
