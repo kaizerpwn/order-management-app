@@ -1,25 +1,24 @@
-package com.ibrahimokic.ordermanagement.controller.console;
+package com.ibrahimokic.ordermanagement.adapters;
 
 import com.ibrahimokic.ordermanagement.controller.console.ui.ConsoleUserInterface;
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
-import com.ibrahimokic.ordermanagement.domain.entity.User;
-import com.ibrahimokic.ordermanagement.repository.AddressRepository;
-import com.ibrahimokic.ordermanagement.repository.OrderRepository;
-import com.ibrahimokic.ordermanagement.repository.ProductRepository;
-import com.ibrahimokic.ordermanagement.repository.UserRepository;
-import com.ibrahimokic.ordermanagement.service.impl.UserServiceImpl;
+import com.ibrahimokic.ordermanagement.domain.entity.User;  
+import com.ibrahimokic.ordermanagement.service.AddressService;
+import com.ibrahimokic.ordermanagement.service.OrderService;
+import com.ibrahimokic.ordermanagement.service.ProductService;
+import com.ibrahimokic.ordermanagement.service.UserService;
 import com.ibrahimokic.ordermanagement.utils.Utils;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 
 @RequiredArgsConstructor
-public class AdminConsoleController extends ConsoleUserInterface {
+public class AdminConsoleAdapter extends ConsoleUserInterface {
     private final User loggedUser;
-    private final UserRepository userRepository;
-    private final AddressRepository addressRepository;
-    private final ProductRepository productRepository;
-    private final OrderRepository orderRepository;
+    private final UserService userService;
+    private final AddressService addressService;
+    private final ProductService productService;
+    private final OrderService orderService;
 
     public void adminDashboard() {
         Utils.clearConsole(20);
@@ -45,8 +44,8 @@ public class AdminConsoleController extends ConsoleUserInterface {
             case 2 -> adminProductManagementOptions();
             case 3 -> adminOrderManagementOptions();
             case 4 -> {
-                UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository, productRepository, orderRepository);
-                userConsoleController.userMainForm();
+                UserConsoleAdapter userConsoleAdapter = new UserConsoleAdapter(userService, addressService, productService, orderService);
+                userConsoleAdapter.userMainForm();
             }
         }
     }
@@ -55,8 +54,8 @@ public class AdminConsoleController extends ConsoleUserInterface {
         Utils.clearConsole(20);
         consoleHeader();
 
-        OrderConsoleController orderConsoleController = new OrderConsoleController(loggedUser, orderRepository);
-        orderConsoleController.displayAdminOrderManagementMenu();
+        OrderConsoleAdapter orderConsoleAdapter = new OrderConsoleAdapter(loggedUser, orderService);
+        orderConsoleAdapter.displayAdminOrderManagementMenu();
 
         int choice = getValidInput(  3);
         processAdminOrderManagementChoice(choice);
@@ -66,8 +65,8 @@ public class AdminConsoleController extends ConsoleUserInterface {
         Utils.clearConsole(20);
         consoleHeader();
 
-        ProductConsoleController productConsoleController = new ProductConsoleController(loggedUser, productRepository);
-        productConsoleController.displayAdminProductManagementMenu();
+        ProductConsoleAdapter productConsoleAdapter = new ProductConsoleAdapter(loggedUser, productService);
+        productConsoleAdapter.displayAdminProductManagementMenu();
 
         int choice = getValidInput(  4);
         processAdminProductManagementChoice(choice);
@@ -121,8 +120,8 @@ public class AdminConsoleController extends ConsoleUserInterface {
         Utils.clearConsole(20);
         consoleHeader();
 
-        UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository, productRepository, orderRepository);
-        userConsoleController.showAllUsersTable();
+        UserConsoleAdapter userConsoleAdapter = new UserConsoleAdapter(userService, addressService, productService, orderService);
+        userConsoleAdapter.showAllUsersTable();
 
         Utils.returnBackToTheMainMenu(scanner);
         adminUserManagementOptions();
@@ -132,8 +131,8 @@ public class AdminConsoleController extends ConsoleUserInterface {
         Utils.clearConsole(20);
         consoleHeader();
 
-        ProductConsoleController productConsoleController = new ProductConsoleController(loggedUser, productRepository);
-        productConsoleController.showAllProductsTable();
+        ProductConsoleAdapter productConsoleAdapter = new ProductConsoleAdapter(loggedUser, productService);
+        productConsoleAdapter.showAllProductsTable();
 
         Utils.returnBackToTheMainMenu(scanner);
         adminProductManagementOptions();
@@ -143,8 +142,8 @@ public class AdminConsoleController extends ConsoleUserInterface {
         Utils.clearConsole(20);
         consoleHeader();
 
-        OrderConsoleController orderConsoleController = new OrderConsoleController(loggedUser, orderRepository);
-        orderConsoleController.showAllOrdersList();
+        OrderConsoleAdapter orderConsoleAdapter = new OrderConsoleAdapter(loggedUser, orderService);
+        orderConsoleAdapter.showAllOrdersList();
 
         Utils.returnBackToTheMainMenu(scanner);
         adminOrderManagementOptions();
@@ -155,8 +154,8 @@ public class AdminConsoleController extends ConsoleUserInterface {
         consoleHeader();
         scanner.nextLine();
 
-        OrderConsoleController orderConsoleController = new OrderConsoleController(loggedUser, orderRepository);
-        orderConsoleController.exportOrdersAsExcelFile();
+        OrderConsoleAdapter orderConsoleAdapter = new OrderConsoleAdapter(loggedUser, orderService);
+        orderConsoleAdapter.exportOrdersAsExcelFile();
 
         Utils.returnBackToTheMainMenu(scanner);
         adminOrderManagementOptions();
@@ -167,8 +166,8 @@ public class AdminConsoleController extends ConsoleUserInterface {
         consoleHeader();
         scanner.nextLine();
 
-        ProductConsoleController productConsoleController = new ProductConsoleController(loggedUser, productRepository);
-        productConsoleController.createNewProduct();
+        ProductConsoleAdapter productConsoleAdapter = new ProductConsoleAdapter(loggedUser, productService);
+        productConsoleAdapter.createNewProduct();
 
         adminProductManagementOptions();
     }
@@ -218,10 +217,10 @@ public class AdminConsoleController extends ConsoleUserInterface {
 
         do {
             email = Utils.promptUserInput(scanner,"email");
-            if (userRepository.findByEmail(email) != null) {
+            if (userService.findByEmail(email) != null) {
                 System.out.println("User with this email already exists. Please try a different email address.");
             }
-        } while (userRepository.findByEmail(email) != null);
+        } while (userService.findByEmail(email) != null);
 
         String name = Utils.promptUserInput(scanner,"first name");
         String surname = Utils.promptUserInput(scanner,"last name");
@@ -257,8 +256,8 @@ public class AdminConsoleController extends ConsoleUserInterface {
         consoleHeader();
         scanner.nextLine();
 
-        UserConsoleController userConsoleController = new UserConsoleController(userRepository, addressRepository, productRepository, orderRepository);
-        userConsoleController.showAllUsersTable();
+        UserConsoleAdapter userConsoleAdapter = new UserConsoleAdapter(userService, addressService, productService, orderService);
+        userConsoleAdapter.showAllUsersTable();
 
         System.out.println(">> Please enter 'ID' of the user you want to delete.");
         System.out.println(">> Press 'ENTER ' if you want to go back to the main menu.");
@@ -279,9 +278,7 @@ public class AdminConsoleController extends ConsoleUserInterface {
             return;
         }
 
-        UserServiceImpl userService = new UserServiceImpl(userRepository);
-
-        if (userRepository.findById(userId).isPresent()) {
+        if (userService.findById(userId).isPresent()) {
             userService.deleteUser(userId);
             System.out.println("Successfully deleted user with ID: " + userId);
         } else {
@@ -293,14 +290,13 @@ public class AdminConsoleController extends ConsoleUserInterface {
     }
 
     private void adminProductDeletionForm() {
-        ProductConsoleController productConsoleController = new ProductConsoleController(loggedUser, productRepository);
+        ProductConsoleAdapter productConsoleAdapter = new ProductConsoleAdapter(loggedUser, productService);
 
-        productConsoleController.deleteProductForm();
+        productConsoleAdapter.deleteProductForm();
         adminProductManagementOptions();
     }
 
     private void saveUserAndReturnToMenu(User user) {
-        UserServiceImpl userService = new UserServiceImpl(userRepository);
         userService.createUser(user);
 
         Utils.returnBackToTheMainMenu(scanner);

@@ -1,11 +1,11 @@
-package com.ibrahimokic.ordermanagement.controller.console;
+package com.ibrahimokic.ordermanagement.adapters;
 
 import com.ibrahimokic.ordermanagement.controller.console.ui.ConsoleUserInterface;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
-import com.ibrahimokic.ordermanagement.repository.AddressRepository;
-import com.ibrahimokic.ordermanagement.repository.OrderRepository;
-import com.ibrahimokic.ordermanagement.repository.ProductRepository;
-import com.ibrahimokic.ordermanagement.repository.UserRepository;
+import com.ibrahimokic.ordermanagement.service.AddressService;
+import com.ibrahimokic.ordermanagement.service.OrderService;
+import com.ibrahimokic.ordermanagement.service.ProductService;
+import com.ibrahimokic.ordermanagement.service.UserService;
 import com.ibrahimokic.ordermanagement.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,11 +14,11 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class UserConsoleController extends ConsoleUserInterface {
-    private final UserRepository userRepository;
-    private final AddressRepository addressRepository;
-    private final ProductRepository productRepository;
-    private final OrderRepository orderRepository;
+public class UserConsoleAdapter extends ConsoleUserInterface {
+    private final UserService userService;
+    private final AddressService addressService;
+    private final ProductService productService;
+    private final OrderService orderService;
 
     public void userMainForm() {
         Utils.clearConsole(20);
@@ -68,15 +68,15 @@ public class UserConsoleController extends ConsoleUserInterface {
             System.out.print(">> Please enter your password: ");
             String password = scanner.nextLine();
 
-            User retrievedUser = userRepository.findByUsername(username);
+            User retrievedUser = userService.findByUsername(username).get();
 
             if (retrievedUser != null && retrievedUser.checkUserPassword(password)) {
                 loggedIn = true;
-                AdminConsoleController adminConsoleController = new AdminConsoleController(retrievedUser, userRepository, addressRepository, productRepository, orderRepository);
+                AdminConsoleAdapter adminConsoleAdapter = new AdminConsoleAdapter(retrievedUser, userService, addressService, productService, orderService);
 
                 switch (retrievedUser.getRole()) {
                     case "user" -> userMainForm();
-                    case "admin" -> adminConsoleController.adminDashboard();
+                    case "admin" -> adminConsoleAdapter.adminDashboard();
                 }
             } else {
                 System.out.println("Incorrect username or password");
@@ -94,7 +94,7 @@ public class UserConsoleController extends ConsoleUserInterface {
     }
 
     public List<User> showAllUsersTable() {
-        List<User> userList = userRepository.findAll();
+        List<User> userList = userService.getAllUsers();
 
         System.out.println("|-------------|--------------|------------------------|----------|----------------|---------------|----------------|");
         System.out.println("|   User ID   |   Username   |         Email          |   Role   |   First Name   |   Last Name   |   Birth Date   |");

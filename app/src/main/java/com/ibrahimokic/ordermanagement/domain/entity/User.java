@@ -46,6 +46,7 @@ public class User {
     private Address address;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Order> orders;
 
     public boolean checkUserPassword(String password) {

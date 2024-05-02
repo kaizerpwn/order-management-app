@@ -1,10 +1,9 @@
-package com.ibrahimokic.ordermanagement.controller.console;
+package com.ibrahimokic.ordermanagement.adapters;
 
 import com.ibrahimokic.ordermanagement.controller.console.ui.ConsoleUserInterface;
 import com.ibrahimokic.ordermanagement.domain.entity.Product;
-import com.ibrahimokic.ordermanagement.domain.entity.User;
-import com.ibrahimokic.ordermanagement.repository.ProductRepository;
-import com.ibrahimokic.ordermanagement.service.impl.ProductServiceImpl;
+import com.ibrahimokic.ordermanagement.domain.entity.User; 
+import com.ibrahimokic.ordermanagement.service.ProductService;
 import com.ibrahimokic.ordermanagement.utils.Utils;
 import lombok.RequiredArgsConstructor;
 
@@ -13,9 +12,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class ProductConsoleController extends ConsoleUserInterface {
+public class ProductConsoleAdapter extends ConsoleUserInterface {
     private final User loggedUser;
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
     public void displayAdminProductManagementMenu() {
         Utils.clearConsole(20);
@@ -29,7 +28,7 @@ public class ProductConsoleController extends ConsoleUserInterface {
     }
 
     public List<Product> showAllProductsTable() {
-        List<Product> productList = productRepository.findAll();
+        List<Product> productList = productService.getAllProducts();
 
         System.out.println("|-------------|---------------------|---------------|---------------------|---------------------|---------------------|");
         System.out.println("|  Product ID |     Product Name    |     Price     |    Available From   |    Available Until  |  Available Quantity |");
@@ -71,7 +70,7 @@ public class ProductConsoleController extends ConsoleUserInterface {
         newProduct.setAvailableUntil(availableUntil);
         newProduct.setAvailableQuantity(availableQuantity);
 
-        productRepository.save(newProduct);
+        productService.createProduct(newProduct);
         System.out.println("Product '"+productName+"' successfully created.");
 
         Utils.returnBackToTheMainMenu(scanner);
@@ -98,8 +97,6 @@ public class ProductConsoleController extends ConsoleUserInterface {
         }
 
         if (productId != 0) {
-            ProductServiceImpl productService = new ProductServiceImpl(productRepository);
-
             if (productList.stream().anyMatch(product -> product.getProductId().equals(productId))) {
                 productService.deleteProduct(productId);
                 System.out.println("Successfully deleted product with ID: " + productId);

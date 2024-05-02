@@ -36,8 +36,7 @@ public class UserController {
             @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))
     })
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{userId}")

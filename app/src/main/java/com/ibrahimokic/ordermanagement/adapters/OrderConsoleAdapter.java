@@ -1,10 +1,10 @@
-package com.ibrahimokic.ordermanagement.controller.console;
+package com.ibrahimokic.ordermanagement.adapters;
 
 import com.ibrahimokic.ordermanagement.controller.console.ui.ConsoleUserInterface;
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.domain.entity.Order;
-import com.ibrahimokic.ordermanagement.domain.entity.User;
-import com.ibrahimokic.ordermanagement.repository.OrderRepository;
+import com.ibrahimokic.ordermanagement.domain.entity.User; 
+import com.ibrahimokic.ordermanagement.service.OrderService;
 import com.ibrahimokic.ordermanagement.utils.Utils;
 
 import lombok.RequiredArgsConstructor;
@@ -16,12 +16,12 @@ import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class OrderConsoleController extends ConsoleUserInterface {
+public class OrderConsoleAdapter extends ConsoleUserInterface {
     private final User loggedUser;
-    private final OrderRepository orderRepository;
+    private final OrderService orderService;
 
     public List<Order> showAllOrdersList() {
-        List<Order> orderList = orderRepository.findAll();
+        List<Order> orderList = orderService.getAllOrders();
 
         System.out.println("|-------------|---------------------|---------------|---------------------|-------------------------------------------------------------|-------------------------------------------------------|");
         System.out.println("|   Order ID  |        User         |  Order Date   |    Total Amount     |                      Delivery Address                       |                     Source Address                    |");
