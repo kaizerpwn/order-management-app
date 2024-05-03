@@ -13,7 +13,10 @@ public class Utils {
     public static BigDecimal calculateTotalProductsPriceAmount(List<OrderItem> orderItems) {
         BigDecimal totalAmount = BigDecimal.ZERO;
         for (OrderItem orderItem : orderItems) {
-            totalAmount = totalAmount.add(orderItem.getProduct().getPrice());
+            BigDecimal itemPrice = orderItem.getItemPrice();
+            int quantity = orderItem.getQuantity();
+            BigDecimal itemTotal = itemPrice.multiply(BigDecimal.valueOf(quantity));
+            totalAmount = totalAmount.add(itemTotal);
         }
         return totalAmount;
     }
@@ -83,8 +86,8 @@ public class Utils {
         return product.getAvailableUntil().isAfter(LocalDate.now());
     }
 
-    public static boolean checkProductQuantity(Product product) {
-        if (product.getAvailableQuantity() == 0) return false;
+    public static boolean checkProductQuantity(Product product, int quantity) {
+        if (product.getAvailableQuantity() < quantity) return false;
         return true;
     }
 

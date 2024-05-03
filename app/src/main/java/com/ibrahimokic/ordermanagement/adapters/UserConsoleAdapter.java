@@ -1,16 +1,24 @@
 package com.ibrahimokic.ordermanagement.adapters;
 
 import com.ibrahimokic.ordermanagement.adapters.ui.ConsoleUserInterface;
+import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
+import com.ibrahimokic.ordermanagement.domain.dto.OrderDto;
+import com.ibrahimokic.ordermanagement.domain.dto.OrderItemDto;
 import com.ibrahimokic.ordermanagement.domain.entity.Order;
+import com.ibrahimokic.ordermanagement.domain.entity.OrderItem;
+import com.ibrahimokic.ordermanagement.domain.entity.Product;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
+import com.ibrahimokic.ordermanagement.mapper.impl.OrderItemMapperImpl;
 import com.ibrahimokic.ordermanagement.service.AddressService;
 import com.ibrahimokic.ordermanagement.service.OrderService;
 import com.ibrahimokic.ordermanagement.service.ProductService;
 import com.ibrahimokic.ordermanagement.service.UserService;
 import com.ibrahimokic.ordermanagement.utils.Utils;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 import static com.ibrahimokic.ordermanagement.adapters.OrderConsoleAdapter.getOrders;
 
@@ -21,7 +29,7 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
     private final ProductService productService;
     private final OrderService orderService;
     private User loggedUser;
-
+    private final List<Product> currentOrder = new ArrayList<>();
     public void userMainForm() {
         Utils.clearConsole(20);
         consoleHeader();
@@ -144,6 +152,11 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
                 Utils.returnBackToTheMainMenu(scanner);
                 showUserOptions();
             }
+            case 2: {
+                createNewOrder();
+                Utils.returnBackToTheMainMenu(scanner);
+                showUserOptions();
+            }
             case 3:
             {
                 loggedUser = null;
@@ -153,9 +166,153 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
         }
     }
 
-    public List<Order> showAllUsersOrders() {
+    private void createNewOrder() {
+        List<Product> productList = productService.getAllProducts();
+        ProductConsoleAdapter.showProductsInTable(productList);
+
+        System.out.println(">> To add a product to your order, please type 'ID of the product and quantity', example: 5 10.");
+        System.out.println(">> If you want to remove a product from the cart, type 'REMOVE and ID of the product'..");
+        System.out.println(">> You can also view all selected products, simply type 'VIEW CART'..");
+        System.out.println(">> If you want to finish your order, type 'FINISH ORDER'..");
+        System.out.println(">> Also, you can cancel your order by typing 'CANCEL ORDER'..");
+
+        boolean finishedOrder = false;
+
+        while (!finishedOrder) {
+            String usersInput = scanner.nextLine().trim();
+
+            switch (usersInput.toUpperCase()) {
+                case "CANCEL ORDER" -> {
+                    currentOrder.clear();
+                    finishedOrder = true;
+                }
+                case "VIEW CART" -> {
+                    System.out.println("|---------------------------------------------------------------------------------------------------------------------|");
+                    System.out.println("|                                       [ CURRENTLY ADDED PRODUCTS TO THE CART ]                                      |");
+                    System.out.println("|---------------------------------------------------------------------------------------------------------------------|");
+                    ProductConsoleAdapter.showProductsInTable(currentOrder);
+                }
+                case "FINISH ORDER" -> {
+                    finishOrder();
+                    finishedOrder = true;
+                }
+                default -> processUserInput(usersInput);
+            }
+        }
+    }
+
+    private void finishOrder() {
+        Long unavailableProduct = null;
+        OrderItemMapperImpl orderItemMapper = new OrderItemMapperImpl(new ModelMapper());
+        OrderDto newOrder = new OrderDto();
+        AddressDto deliveryAddress = AddressDto.builder()
+                .city(loggedUser.getAddress().getCity())
+                .street(loggedUser.getAddress().getStreet())
+                .country(loggedUser.getAddress().getCountry())
+                .zip(loggedUser.getAddress().getZip())
+                .build();
+        AddressDto sourceAddress = AddressDto.builder()
+                .zip("71000")
+                .country("Bosnia and Herzegovina")
+                .street("Džemala Bijedića Bb")
+                .city("Sarajevo")
+                .build();
+
+        List<OrderItemDto> orderItemsList = new ArrayList<>();
+        for (Product product : currentOrder) {
+            Optional<Product> retrievedProduct = productService.getProductById(product.getProductId());
+
+            if (retrievedProduct.isPresent()) {
+                if (retrievedProduct.get().getAvailableQuantity() >= product.getAvailableQuantity()) {
+                    OrderItemDto orderItem = new OrderItemDto();
+                    orderItem.setProductId(product.getProductId());
+                    orderItem.setItemPrice(product.getPrice());
+                    orderItem.setQuantity(product.getAvailableQuantity());
+
+                    orderItemsList.add(orderItem);
+                } else {
+                    unavailableProduct = retrievedProduct.get().getProductId();
+                }
+            }
+        }
+
+        if (unavailableProduct != null) {
+            System.out.println("ERROR: Product with ID: '" + unavailableProduct + "' does not have the quantity you ordered.");
+            System.out.println("ERROR: Please use 'REMOVE " + unavailableProduct + "' to remove that product from the cart to continue the order.");
+        } else {
+            List<OrderItem> mappedOrderItems = orderItemMapper.mapListToEntityList(orderItemsList);
+
+            newOrder.setUserId(loggedUser.getUserId());
+            newOrder.setDeliveryAddress(deliveryAddress);
+            newOrder.setSourceAddress(sourceAddress);
+            newOrder.setOrderDate(LocalDate.now());
+            newOrder.setOrderItems(orderItemsList);
+            newOrder.setTotalAmount(Utils.calculateTotalProductsPriceAmount(mappedOrderItems));
+
+            orderService.createNewOrder(newOrder);
+            System.out.println("|---------------------------------------------------------------------------------------------------------------------|");
+            System.out.println("|                                          [ NEW ORDER CREATED SUCCESSFULLY ]                                         |");
+            System.out.println("|---------------------------------------------------------------------------------------------------------------------|");
+            ProductConsoleAdapter.showProductsInTable(currentOrder);
+        }
+    }
+
+    private void processUserInput(String userInput) {
+        String[] inputParts = userInput.split(" ");
+        if (inputParts.length < 2) {
+            return;
+        }
+
+        String productId = inputParts[0];
+        int quantity;
+        try {
+            quantity = Integer.parseInt(inputParts[1]);
+        } catch (NumberFormatException e) {
+            System.out.println("ERROR: Invalid quantity format. Please enter a valid number for the quantity.");
+            return;
+        }
+
+        Optional<Product> product = productService.getProductById(Long.parseLong(productId));
+        if (product.isEmpty()) {
+            System.out.println("ERROR: Product with ID '" + productId + "' does not exist.");
+            return;
+        }
+
+        if (!Utils.checkProductQuantity(product.get(), quantity)) {
+            System.out.println("ERROR: Quantity available for that product is '" + product.get().getAvailableQuantity() + "', not '" + quantity + "'.");
+            return;
+        }
+
+        if (!Utils.checkProductAvailability(product.get())) {
+            System.out.println("ERROR: That product is not currently available, its availability date expired '" + product.get().getAvailableUntil() + "'.");
+            return;
+        }
+
+        boolean found = false;
+        for (Product p : currentOrder) {
+            if (p.getProductId().equals(product.get().getProductId())) {
+                found = true;
+                int updatedQuantity = p.getAvailableQuantity() + quantity;
+                if (updatedQuantity <= product.get().getAvailableQuantity()) {
+                    p.setAvailableQuantity(updatedQuantity);
+                    System.out.println("ORDER-LIST: Quantity of Product with ID '" + productId + "' updated to " + updatedQuantity);
+                } else {
+                    System.out.println("ERROR: Quantity available for that product is '" + product.get().getAvailableQuantity() + "', not '" + updatedQuantity + "'.");
+                }
+                break;
+            }
+        }
+
+        if (!found) {
+            product.get().setAvailableQuantity(quantity);
+            currentOrder.add(product.get());
+            System.out.println("ORDER-LIST: " + quantity + "x Product with ID '" + productId + "' successfully added to list.");
+        }
+    }
+
+    public void showAllUsersOrders() {
         List<Order> orderList = orderService.getAllUsersOrders(loggedUser);
 
-        return getOrders(orderList);
+        getOrders(orderList);
     }
 }

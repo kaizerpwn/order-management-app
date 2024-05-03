@@ -29,23 +29,29 @@ public class ProductConsoleAdapter extends ConsoleUserInterface {
 
     public List<Product> showAllProductsTable() {
         List<Product> productList = productService.getAllProducts();
+        showProductsInTable(productList);
+        return productList;
+    }
 
+    public static void showProductsInTable(List<Product> productList) {
         System.out.println("|-------------|---------------------|---------------|---------------------|---------------------|---------------------|");
         System.out.println("|  Product ID |     Product Name    |     Price     |    Available From   |    Available Until  |  Available Quantity |");
         System.out.println("|-------------|---------------------|---------------|---------------------|---------------------|---------------------|");
-
-        for (Product product : productList) {
-            System.out.printf("| %-12s| %-20s| $%-13s| %-20s| %-20s| %-20s|%n",
-                    product.getProductId(),
-                    product.getProductName(),
-                    product.getPrice(),
-                    product.getAvailableFrom(),
-                    product.getAvailableUntil(),
-                    product.getAvailableQuantity());
+        if(productList.size() == 0) {
+            System.out.println("|                                    Your cart is currently empty!                                                |");
+        } else {
+            for (Product product : productList) {
+                System.out.printf("| %-12s| %-20s| $%-13s| %-20s| %-20s| %-20s|%n",
+                        product.getProductId(),
+                        product.getProductName(),
+                        product.getPrice(),
+                        product.getAvailableFrom(),
+                        product.getAvailableUntil(),
+                        product.getAvailableQuantity());
+            }
         }
 
         System.out.println("|-------------|---------------------|---------------|---------------------|---------------------|---------------------|");
-        return productList;
     }
 
     public void createNewProduct() {
