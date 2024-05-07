@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface ProductService {
     List<Product> getAllProducts();
+    List<Product> getAllAvailableProducts();
     Optional<Product> getProductById(Long productId);
     Product createProduct(Product product);
     ResponseEntity<?> updateProduct(Long productId, ProductDto updateProductDto);

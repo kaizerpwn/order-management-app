@@ -83,7 +83,11 @@ public class Utils {
     }
 
     public static boolean checkProductAvailability(Product product) {
-        return product.getAvailableUntil().isAfter(LocalDate.now());
+        LocalDate currentDate = LocalDate.now();
+        LocalDate availableFrom = product.getAvailableFrom();
+        LocalDate availableUntil = product.getAvailableUntil();
+
+        return currentDate.isAfter(availableFrom) && currentDate.isBefore(availableUntil);
     }
 
     public static boolean checkProductQuantity(Product product, int quantity) {

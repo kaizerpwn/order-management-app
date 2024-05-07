@@ -38,7 +38,7 @@ public class ProductConsoleAdapter extends ConsoleUserInterface {
         System.out.println("|  Product ID |     Product Name    |     Price     |    Available From   |    Available Until  |  Available Quantity |");
         System.out.println("|-------------|---------------------|---------------|---------------------|---------------------|---------------------|");
         if(productList.size() == 0) {
-            System.out.println("|                                    Your cart is currently empty!                                                |");
+            System.out.println("|                                    There are no products available!                                                |");
         } else {
             for (Product product : productList) {
                 System.out.printf("| %-12s| %-20s| $%-13s| %-20s| %-20s| %-20s|%n",

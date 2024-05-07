@@ -167,7 +167,7 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
     }
 
     private void createNewOrder() {
-        List<Product> productList = productService.getAllProducts();
+        List<Product> productList = productService.getAllAvailableProducts();
         ProductConsoleAdapter.showProductsInTable(productList);
 
         System.out.println(">> To add a product to your order, please type 'ID of the product and quantity', example: 5 10.");
@@ -304,6 +304,11 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
             return;
         }
 
+        if(quantity == 0) {
+            System.out.println("ERROR: Quantity can't be zero, please choose different value.");
+            return;
+        }
+
         Optional<Product> product = productService.getProductById(Long.parseLong(productId));
         if (product.isEmpty()) {
             System.out.println("ERROR: Product with ID '" + productId + "' does not exist.");
@@ -316,7 +321,7 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
         }
 
         if (!Utils.checkProductAvailability(product.get())) {
-            System.out.println("ERROR: That product is not currently available, its availability date expired '" + product.get().getAvailableUntil() + "'.");
+            System.out.println("ERROR: That product is not currently available, it is available from the date " + product.get().getAvailableFrom() + " to "+ product.get().getAvailableUntil() + ".");
             return;
         }
 
