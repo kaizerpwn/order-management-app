@@ -41,6 +41,6 @@ public class Order {
     @JoinColumn(name = "source_address_id", referencedColumnName = "address_id")
     private Address sourceAddress;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 }

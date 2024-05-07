@@ -3,7 +3,8 @@ package com.ibrahimokic.ordermanagement.adapters;
 import com.ibrahimokic.ordermanagement.adapters.ui.ConsoleUserInterface;
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.domain.entity.Order;
-import com.ibrahimokic.ordermanagement.domain.entity.User; 
+import com.ibrahimokic.ordermanagement.domain.entity.OrderItem;
+import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.service.OrderService;
 import com.ibrahimokic.ordermanagement.utils.Utils;
 
@@ -59,7 +60,7 @@ public class OrderConsoleAdapter extends ConsoleUserInterface {
 
             Row headerRow = sheet.createRow(0);
             String[] headers = {"Order ID", "User ID", "First Name", "Last Name", "Order Date", "Total Amount",
-                    "Delivery Address", "Source Address"};
+                    "Delivery Address", "Source Address", "Products"};
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(headers[i]);
@@ -71,6 +72,16 @@ public class OrderConsoleAdapter extends ConsoleUserInterface {
                 Address sourceAddress = order.getSourceAddress();
 
                 Row row = sheet.createRow(rowNum++);
+                StringBuilder productsBuilder = new StringBuilder();
+                for (OrderItem item : order.getOrderItems()) {
+                    productsBuilder.append(item.getQuantity())
+                            .append("x ")
+                            .append(item.getProduct().getProductName())
+                            .append(" ($")
+                            .append(item.getItemPrice())
+                            .append(")\n");
+                }
+                row.createCell(8).setCellValue(productsBuilder.toString());
 
                 row.createCell(0).setCellValue(order.getOrderId());
                 row.createCell(1).setCellValue(order.getUser().getUserId());
