@@ -32,5 +32,4 @@ public class OrderManagementApplication implements CommandLineRunner {
 			userConsoleAdapter.userMainForm();
 		}
 	}
-
 }

@@ -196,8 +196,40 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
                     finishOrder();
                     finishedOrder = true;
                 }
-                default -> processUserInput(usersInput);
+                default -> {
+                    if (usersInput.toUpperCase().startsWith("REMOVE")) {
+                        String[] inputParts = usersInput.split(" ");
+                        if (inputParts.length < 2) {
+                            System.out.println("ERROR: Invalid input format. Please enter the product ID after 'REMOVE'.");
+                        } else {
+                            String productIdToRemove = inputParts[1];
+                            removeProductFromCart(productIdToRemove);
+                        }
+                    } else {
+                        processUserInput(usersInput);
+                    }
+                }
             }
+        }
+    }
+
+    private void removeProductFromCart(String productIdToRemove) {
+        try {
+            long productId = Long.parseLong(productIdToRemove);
+            boolean found = false;
+            for (Product product : currentOrder) {
+                if (product.getProductId() == productId) {
+                    currentOrder.remove(product);
+                    System.out.println("Product with ID '" + productIdToRemove + "' removed from the cart.");
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                System.out.println("ERROR: Product with ID '" + productIdToRemove + "' not found in the cart.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("ERROR: Invalid product ID format.");
         }
     }
 

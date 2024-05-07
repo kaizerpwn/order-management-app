@@ -68,8 +68,7 @@ public class AddressController {
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<?> createAddress(
-            @RequestBody @Valid AddressDto addressDto) {
+    public ResponseEntity<?> createAddress(@RequestBody @Valid AddressDto addressDto) {
         try {
             Address newAddress = addressMapper.mapFrom(addressDto);
             Address createdAddress = addressService.createAddress(newAddress);

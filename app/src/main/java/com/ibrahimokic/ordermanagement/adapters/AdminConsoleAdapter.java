@@ -298,6 +298,7 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
 
     private void saveUserAndReturnToMenu(User user) {
         userService.createUser(user);
+        System.out.println("OM-APP: New account '" + user.getFirstName() + " " + user.getLastName() + "' with role '"+user.getRole()+"' has been successfully created.");
 
         Utils.returnBackToTheMainMenu(scanner);
         adminUserManagementOptions();
