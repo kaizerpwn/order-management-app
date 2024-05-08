@@ -12,7 +12,5 @@ public interface AddressService {
 
     Address createAddress(Address address);
 
-    Address updateAddress(Long addressId, Address newAddress);
-
     void deleteAddress(Long addressId);
 }

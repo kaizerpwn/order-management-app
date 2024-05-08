@@ -14,12 +14,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -82,13 +80,29 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Edit product", description = "Edit product based on request body and product ID")
     public ResponseEntity<?> updateProduct(@PathVariable Long productId, @RequestBody ProductDto updatedProductDto) {
-        return productService.updateProduct(productId, updatedProductDto);
+        Optional<Product> updatedProduct = productService.updateProduct(productId, updatedProductDto);
+
+        if (updatedProduct.isPresent()) {
+            return ResponseEntity.ok().body(updatedProduct.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting a product.");
+        }
     }
 
     @DeleteMapping("/{productId}")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Delete product", description = "Delete product with provided product id")
-    public void deleteProduct(@PathVariable Long productId) {
-        productService.deleteProduct(productId);
+    @Operation(summary = "Delete a product by ID", description = "Delete a product by providing its ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Product deleted"),
+            @ApiResponse(responseCode = "404", description = "Product not found")
+    })
+    public ResponseEntity<String> deleteProduct(@PathVariable Long productId) {
+        boolean deletionResult = productService.deleteProduct(productId);
+
+        if (deletionResult) {
+            return ResponseEntity.ok().body("Product deleted successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting product " + productId + ".");
+        }
     }
+
 }

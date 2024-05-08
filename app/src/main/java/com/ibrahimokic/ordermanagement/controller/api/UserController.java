@@ -21,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -46,7 +47,13 @@ public class UserController {
     })
     @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     public ResponseEntity<?> getUserById(@PathVariable Long userId) {
-        return userService.getUserById(userId);
+        Optional<User> userOptional = userService.getUserById(userId);
+
+        if (userOptional.isPresent()) {
+            return ResponseEntity.ok().body(userOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with ID " + userId + " not found.");
+        }
     }
 
     @PostMapping("/register")
@@ -81,10 +88,16 @@ public class UserController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))
             }),
             @ApiResponse(responseCode = "404", description = "User not found"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            @ApiResponse(responseCode = "500", description = "An error occurred while deleting user")
     })
     public ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody UserDto updatedUserDto) {
-        return userService.updateUser(userId, updatedUserDto);
+        Optional<User> updatedUser = userService.updateUser(userId, updatedUserDto);
+
+        if (updatedUser.isPresent()) {
+            return ResponseEntity.ok().body(updatedUser.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting user " + userId + ".");
+        }
     }
 
     @DeleteMapping("/{userId}")
@@ -94,9 +107,14 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "User deleted"),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+            @ApiResponse(responseCode = "500", description = "An error occurred while deleting user", content = @Content)
     })
     public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
-        return userService.deleteUser(userId);
+        if(userService.deleteUser(userId)) {
+            return ResponseEntity.status(HttpStatus.OK).body("User with ID " + userId + " successfully deleted.");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting user " + userId + ".");
+        }
     }
 }

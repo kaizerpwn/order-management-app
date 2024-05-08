@@ -8,9 +8,6 @@ import com.ibrahimokic.ordermanagement.service.ProductService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -43,8 +40,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-
-    public ResponseEntity<?> updateProduct(Long productId, ProductDto updatedProductDto) {
+    public Optional<Product> updateProduct(Long productId, ProductDto updatedProductDto) {
         Optional<Product> optionalExistingProduct = productRepository.findById(productId);
 
         if (optionalExistingProduct.isPresent()) {
@@ -52,21 +48,22 @@ public class ProductServiceImpl implements ProductService {
             BeanUtils.copyProperties(updatedProductDto, existingProduct);
             try {
                 productRepository.save(existingProduct);
-                return ResponseEntity.ok(existingProduct);
+                return Optional.of(existingProduct);
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .contentType(MediaType.TEXT_PLAIN)
-                        .body("Internal server error");
+                return Optional.empty();
             }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .body("Product with that ID does not exist in database");
+            return Optional.empty();
         }
     }
 
     @Override
-    public void deleteProduct(Long productId) {
-        productRepository.deleteById(productId);
+    public boolean deleteProduct(Long productId) {
+        try {
+            productRepository.deleteById(productId);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

@@ -32,16 +32,6 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Address updateAddress(Long addressId, Address newAddress) {
-        if (addressRepository.existsById(addressId)) {
-            newAddress.setAddressId(addressId);
-            return addressRepository.save(newAddress);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     public void deleteAddress(Long addressId) {
         addressRepository.deleteById(addressId);
     }

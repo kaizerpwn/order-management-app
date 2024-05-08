@@ -8,8 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.List;
@@ -51,15 +49,12 @@ public class UserServiceImplTest {
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(mockUser));
 
-        ResponseEntity<?> responseEntity = userService.getUserById(1L);
+        Optional<User> responseEntity = userService.getUserById(1L);
 
         verify(userRepository, times(1)).findById(1L);
+        assertTrue(responseEntity.isPresent());
 
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertTrue(responseEntity.hasBody());
-
-        Optional<User> userOptional = (Optional<User>) responseEntity.getBody();
-        User retrievedUser = userOptional.get();
+        User retrievedUser = responseEntity.get();
 
         assertNotNull(retrievedUser);
         assertEquals(mockUser.getEmail(), retrievedUser.getEmail());
