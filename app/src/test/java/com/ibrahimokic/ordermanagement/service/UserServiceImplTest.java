@@ -1,5 +1,6 @@
 package com.ibrahimokic.ordermanagement.service;
 
+import com.ibrahimokic.ordermanagement.domain.dto.UserDto;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.repository.UserRepository;
 import com.ibrahimokic.ordermanagement.service.impl.UserServiceImpl;
@@ -70,4 +71,68 @@ public class UserServiceImplTest {
         verify(userRepository, times(1)).save(any(User.class));
         assertEquals(mockUser, createdUser);
     }
+
+    @Test
+    void testFindByUsername() {
+        String username = "ibrahim";
+        User mockUser = User.builder().username(username).build();
+
+        when(userRepository.findByUsername(username)).thenReturn(mockUser);
+
+        Optional<User> foundUser = userService.findByUsername(username);
+
+        verify(userRepository, times(1)).findByUsername(username);
+
+        assertTrue(foundUser.isPresent());
+        assertEquals(username, foundUser.get().getUsername());
+    }
+
+    @Test
+    void testFindById() {
+        Long userId = 1L;
+        User mockUser = User.builder().userId(userId).build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
+
+        Optional<User> foundUser = userService.findById(userId);
+
+        verify(userRepository, times(1)).findById(userId);
+
+        assertTrue(foundUser.isPresent());
+        assertEquals(userId, foundUser.get().getUserId());
+    }
+
+    @Test
+    void testFindByEmail() {
+        String email = "ibrahim@gmail.com";
+        User mockUser = User.builder().email(email).build();
+
+        when(userRepository.findByEmail(email)).thenReturn(mockUser);
+
+        Optional<User> foundUser = userService.findByEmail(email);
+
+        verify(userRepository, times(1)).findByEmail(email);
+
+        assertTrue(foundUser.isPresent());
+        assertEquals(email, foundUser.get().getEmail());
+    }
+
+    @Test
+    void testUpdateUser() {
+        Long userId = 1L;
+        UserDto updatedUserDto = new UserDto();
+        User mockUser = User.builder().build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
+        when(userRepository.save(any(User.class))).thenReturn(mockUser);
+
+        Optional<User> updatedUser = userService.updateUser(userId, updatedUserDto);
+
+        verify(userRepository, times(1)).findById(userId);
+        verify(userRepository, times(1)).save(any(User.class));
+
+        assertTrue(updatedUser.isPresent());
+        assertEquals(mockUser, updatedUser.get());
+    }
+
 }
