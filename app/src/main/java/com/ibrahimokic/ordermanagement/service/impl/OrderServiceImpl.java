@@ -35,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
 
     @Override
-    public List<OrderDto> getAllOrdersWithDetails() { 
+    public List<OrderDto> getAllOrdersWithDetails() {
         try {
             List<Order> orders = orderRepository.findAll();
             List<OrderDto> orderDtoList = new ArrayList<>();
@@ -103,7 +103,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> createNewOrder(@Valid OrderDto orderDto) {
+    public Optional<OrderDto> createNewOrder(@Valid OrderDto orderDto) {
         try {
             Order order = Order.builder()
                     .user(User.builder().userId(orderDto.getUserId()).build())
@@ -119,8 +119,7 @@ public class OrderServiceImpl implements OrderService {
             if (optionalUser.isPresent()) {
                 order.setUser(optionalUser.get());
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("User with ID " + orderDto.getUserId() + " not found.");
+                throw new RuntimeException("User with ID " + orderDto.getUserId() + " not found.");
             }
 
             addressRepository.save(order.getDeliveryAddress());
@@ -155,15 +154,15 @@ public class OrderServiceImpl implements OrderService {
 
             orderRepository.save(order);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(orderMapper.mapTo(order));
+            return Optional.ofNullable(orderMapper.mapTo(order));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error creating order: " + e.getMessage());
+            throw new RuntimeException("Error creating order: " + e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public ResponseEntity<?> updateOrder(Long orderId, OrderDto orderDto) {
+    public boolean updateOrder(Long orderId, OrderDto orderDto) {
         try {
             Optional<Order> retrievedOrderFromDatabase = orderRepository.findById(orderId);
 
@@ -226,22 +225,17 @@ public class OrderServiceImpl implements OrderService {
 
                     orderRepository.save(retrievedOrderFromDatabase.get());
 
-                    return ResponseEntity.status(HttpStatus.OK)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .body("Order edited successfully");
+                    return true;
                 } else {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body("User with ID " + orderDto.getUserId() + " not found.");
+                    throw new RuntimeException("User with ID " + orderDto.getUserId() + " not found.");
                 }
             }
-
             else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Order with ID '" + orderId + "' does not exist.");
+                throw new RuntimeException("Order with ID '" + orderId + "' does not exist.");
             }
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error creating order: " + e.getMessage());
+            throw new RuntimeException("Error creating order: " + e.getMessage());
         }
     }
 }

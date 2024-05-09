@@ -10,7 +10,6 @@ import javax.sql.DataSource;
 
 @TestConfiguration
 public class TestConfig {
-
     @Bean
     @Primary
     public DataSource dataSource() {

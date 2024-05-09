@@ -7,10 +7,7 @@ import java.util.Optional;
 
 public interface AddressService {
     List<Address> getAllAddresses();
-
     Optional<Address> getAddressById(Long addressId);
-
     Address createAddress(Address address);
-
     boolean deleteAddress(Long addressId);
 }

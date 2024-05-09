@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -83,16 +84,16 @@ public class OrderController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     public ResponseEntity<?> createOrder(@RequestBody @Valid OrderDto orderDto) {
-        ResponseEntity<?> responseEntity = orderService.createNewOrder(orderDto);
+        try {
+            Optional<OrderDto> order = orderService.createNewOrder(orderDto);
 
-        if (responseEntity.getStatusCode() == HttpStatus.CREATED) {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(responseEntity.getBody());
-        } else {
-            return ResponseEntity.status(responseEntity.getStatusCode())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(order);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .contentType(MediaType.TEXT_PLAIN)
-                    .body(responseEntity.getBody());
+                    .body(e.getMessage());
         }
     }
 
@@ -104,16 +105,22 @@ public class OrderController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     public ResponseEntity<?> updateOrder(@PathVariable Long orderId, @RequestBody @Valid OrderDto orderDto) {
-        ResponseEntity<?> responseEntity = orderService.updateOrder(orderId, orderDto);
+        try {
+            boolean result = orderService.updateOrder(orderId, orderDto);
 
-        if (responseEntity.getStatusCode() == HttpStatus.CREATED) {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(responseEntity.getBody());
-        } else {
-            return ResponseEntity.status(responseEntity.getStatusCode())
+            if (result) {
+                return ResponseEntity.status(HttpStatus.CREATED)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("Order successfully updated.");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("An error occurred while updating order.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .contentType(MediaType.TEXT_PLAIN)
-                    .body(responseEntity.getBody());
+                    .body(e.getMessage());
         }
     }
 }
