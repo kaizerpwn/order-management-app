@@ -22,75 +22,107 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        try {
+            return userRepository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get all users: " + e.getMessage());
+        }
     }
 
     @Override
     public Optional<User> getUserById(Long userId) {
-        return userRepository.findById(userId);
+        try {
+            return userRepository.findById(userId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get user by ID: " + e.getMessage());
+        }
     }
 
     @Override
     @Transactional
     public User createUser(User user) {
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create new user: " + e.getMessage());
+        }
     }
 
     @Override
     public Optional<User> updateUser(Long userId, UserDto updatedUserDto) {
-        Optional<User> optionalExistingUser = userRepository.findById(userId);
+        try {
+            Optional<User> optionalExistingUser = userRepository.findById(userId);
 
-        if (optionalExistingUser.isPresent()) {
-            User existingUser = optionalExistingUser.get();
-            BeanUtils.copyProperties(updatedUserDto, existingUser);
+            if (optionalExistingUser.isPresent()) {
+                User existingUser = optionalExistingUser.get();
+                BeanUtils.copyProperties(updatedUserDto, existingUser);
 
-            try {
                 userRepository.save(existingUser);
                 return Optional.of(existingUser);
-            } catch (Exception e) {
+            } else {
                 return Optional.empty();
             }
-        } else {
-            return Optional.empty();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update the user: " + e.getMessage());
         }
     }
 
     @Override
     public boolean deleteUser(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            return false;
+        try {
+            if (!userRepository.existsById(userId)) {
+                return false;
+            }
+            userRepository.deleteById(userId);
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete user by ID: " + e.getMessage());
         }
-        userRepository.deleteById(userId);
-        return true;
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return Optional.ofNullable(userRepository.findByEmail(email));
+        try {
+            return Optional.ofNullable(userRepository.findByEmail(email));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get user by email: " + e.getMessage());
+        }
     }
 
     @Override
     public Optional<User> findById(Long userId) {
-        return userRepository.findById(userId);
+        try {
+            return userRepository.findById(userId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get user by ID: " + e.getMessage());
+        }
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return Optional.ofNullable(userRepository.findByUsername(username));
+        try {
+            return Optional.ofNullable(userRepository.findByUsername(username));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get user by username: " + e.getMessage());
+        }
     }
 
     @Override
     public User loginUser(LoginRequest request) {
-        Optional<User> retrievedUser = Optional.ofNullable(userRepository.findByUsername(request.getUsername()));
+        try {
+            Optional<User> retrievedUser = Optional.ofNullable(userRepository.findByUsername(request.getUsername()));
 
-        if (retrievedUser.isPresent()) {
-            if (request.getPassword().equals(retrievedUser.get().getPassword()))
-                return retrievedUser.get();
-
-            else
+            if (retrievedUser.isPresent()) {
+                if (request.getPassword().equals(retrievedUser.get().getPassword())) {
+                    return retrievedUser.get();
+                } else {
+                    return null;
+                }
+            } else {
                 return null;
-        } else {
-            return null;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to log in the user: " + e.getMessage());
         }
     }
 }

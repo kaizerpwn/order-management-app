@@ -18,18 +18,31 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<Address> getAllAddresses() {
-        return addressRepository.findAll();
+        try{
+            return addressRepository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get all addresses: " + e.getMessage());
+        }
     }
 
     @Override
     public Optional<Address> getAddressById(Long addressId) {
-        return addressRepository.findById(addressId);
+        try {
+            return addressRepository.findById(addressId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to find address with that ID: " + e.getMessage());
+        }
     }
 
     @Override
     public Address createAddress(Address address) {
-        return addressRepository.save(address);
+        try {
+            return addressRepository.save(address);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create address: " + e.getMessage());
+        }
     }
+
 
     @Override
     public boolean deleteAddress(Long addressId) {
@@ -37,7 +50,7 @@ public class AddressServiceImpl implements AddressService {
             addressRepository.deleteById(addressId);
             return true;
         } catch (Exception e) {
-            return false;
+            throw new RuntimeException("Failed to delete address: " +e.getMessage());
         }
     }
 }

@@ -49,35 +49,51 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getAllUsersOrders(User user) {
-        return orderRepository.getAllUsersOrders(user);
+        try {
+            return orderRepository.getAllUsersOrders(user);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get all users orders: " + e.getMessage());
+        }
     }
 
     @Override
     public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+        try {
+            return orderRepository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get all orders: " + e.getMessage());
+        }
     }
 
     @Override
     public OrderDto getOrderById(Long orderId) {
-        Optional<Order> orderOptional = orderRepository.findById(orderId);
+        try {
+            Optional<Order> orderOptional = orderRepository.findById(orderId);
 
-        if (orderOptional.isPresent()) {
-            Order order = orderOptional.get();
-            return orderMapper.mapTo(order);
-        } else {
-            return null;
+            if (orderOptional.isPresent()) {
+                Order order = orderOptional.get();
+                return orderMapper.mapTo(order);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get order by ID: " + e.getMessage());
         }
     }
 
     @Override
     public boolean deleteOrderById(Long orderId) {
-        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        try {
+            Optional<Order> optionalOrder = orderRepository.findById(orderId);
 
-        if (optionalOrder.isPresent()) {
-            orderRepository.deleteById(orderId);
-            return true;
-        } else {
-            return false;
+            if (optionalOrder.isPresent()) {
+                orderRepository.deleteById(orderId);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete order by ID: " + e.getMessage());
         }
     }
 

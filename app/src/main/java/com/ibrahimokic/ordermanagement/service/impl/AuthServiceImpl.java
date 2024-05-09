@@ -47,7 +47,6 @@ public class AuthServiceImpl implements AuthService {
                 return ResponseEntity.badRequest().build();
             }
 
-
             User user = userMapper.mapFrom(userDto);
             User createdUser = userService.createUser(user);
 

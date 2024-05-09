@@ -21,39 +21,59 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        try {
+            return productRepository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get all products: " + e.getMessage());
+        }
     }
 
     @Override
     public List<Product> getAllAvailableProducts() {
-        return productRepository.findAvailableProducts(LocalDate.now());
+        try {
+            return productRepository.findAvailableProducts(LocalDate.now());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get all available products: " + e.getMessage());
+        }
     }
 
     @Override
     public Optional<Product> getProductById(Long productId) {
-        return productRepository.findById(productId);
+        try {
+            return productRepository.findById(productId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get product by ID: " + e.getMessage());
+        }
     }
 
     @Override
     public Product createProduct(Product product) {
-        return productRepository.save(product);
+        try {
+            return productRepository.save(product);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create new product: " + e.getMessage());
+        }
     }
 
     @Override
     public Optional<Product> updateProduct(Long productId, ProductDto updatedProductDto) {
-        Optional<Product> optionalExistingProduct = productRepository.findById(productId);
+        try {
+            Optional<Product> optionalExistingProduct = productRepository.findById(productId);
 
-        if (optionalExistingProduct.isPresent()) {
-            Product existingProduct = optionalExistingProduct.get();
-            BeanUtils.copyProperties(updatedProductDto, existingProduct);
-            try {
-                productRepository.save(existingProduct);
-                return Optional.of(existingProduct);
-            } catch (Exception e) {
+            if (optionalExistingProduct.isPresent()) {
+                Product existingProduct = optionalExistingProduct.get();
+                BeanUtils.copyProperties(updatedProductDto, existingProduct);
+                try {
+                    productRepository.save(existingProduct);
+                    return Optional.of(existingProduct);
+                } catch (Exception e) {
+                    return Optional.empty();
+                }
+            } else {
                 return Optional.empty();
             }
-        } else {
-            return Optional.empty();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update product: " + e.getMessage());
         }
     }
 
@@ -63,7 +83,7 @@ public class ProductServiceImpl implements ProductService {
             productRepository.deleteById(productId);
             return true;
         } catch (Exception e) {
-            return false;
+            throw new RuntimeException("Failed to delete product by ID: " + e.getMessage());
         }
     }
 }

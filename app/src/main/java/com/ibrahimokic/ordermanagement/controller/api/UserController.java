@@ -1,9 +1,13 @@
 package com.ibrahimokic.ordermanagement.controller.api;
 
+import com.ibrahimokic.ordermanagement.domain.dto.OrderDto;
 import com.ibrahimokic.ordermanagement.domain.dto.api.LoginRequest;
+import com.ibrahimokic.ordermanagement.domain.entity.Order;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.domain.dto.UserDto;
+import com.ibrahimokic.ordermanagement.mapper.impl.OrderMapperImpl;
 import com.ibrahimokic.ordermanagement.service.AuthService;
+import com.ibrahimokic.ordermanagement.service.OrderService;
 import com.ibrahimokic.ordermanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -30,6 +35,8 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
     private final AuthService authService;
+    private final OrderService orderService;
+    private final OrderMapperImpl orderMapper;
 
     @GetMapping
     @Operation(summary = "Get all users", description = "Get list of all users")
@@ -39,6 +46,27 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
+
+    @GetMapping("/{userId}/orders")
+    @Operation(summary = "Get orders of a specific user", description = "Get a list of orders belonging to a specific user")
+    @ApiResponse(responseCode = "200", description = "List of orders belonging to the user", content = {
+            @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = OrderDto.class)))
+    })
+    public ResponseEntity<List<OrderDto>> getOrdersByUser(@PathVariable("userId") Long userId) {
+        Optional<User> user = userService.getUserById(userId);
+
+        if (user.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<Order> userOrders = orderService.getAllUsersOrders(user.get());
+        List<OrderDto> userOrdersDto = userOrders.stream()
+                .map(orderMapper::mapTo)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(userOrdersDto);
+    }
+
 
     @GetMapping("/{userId}")
     @Operation(summary = "Get a user by ID", description = "Get a user by providing its ID")
