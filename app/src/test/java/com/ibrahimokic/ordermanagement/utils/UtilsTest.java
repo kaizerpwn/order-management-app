@@ -36,7 +36,7 @@ public class UtilsTest {
 
     @Test
     void checkIfUserIdIsDifferent_shouldReturnTrueForDifferentUserIds() {
-        User user1 = User.builder().userId(1l).firstName("John").build();
+        User user1 = User.builder().userId(1L).firstName("John").build();
         User user2 = User.builder().userId(2L).firstName("Jane").build();
         Order order = Order.builder().user(user1).build();
         assertTrue(Utils.checkIfUserIdIsDifferent(user2, order));
