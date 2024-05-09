@@ -83,8 +83,14 @@ public class AddressController {
     @DeleteMapping("/{addressId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete address", description = "Delete address with provided address id")
-    public void deleteAddress(@PathVariable Long addressId) {
-        addressService.deleteAddress(addressId);
+    public ResponseEntity<?> deleteAddress(@PathVariable Long addressId) {
+        boolean deletionResult = addressService.deleteAddress(addressId);
+
+        if (deletionResult) {
+            return ResponseEntity.ok().body("Address deleted successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting address " + addressId + ".");
+        }
     }
 
     @PatchMapping("/{addressId}")

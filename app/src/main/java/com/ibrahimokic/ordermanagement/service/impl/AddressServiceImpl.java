@@ -32,7 +32,12 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public void deleteAddress(Long addressId) {
-        addressRepository.deleteById(addressId);
+    public boolean deleteAddress(Long addressId) {
+        try {
+            addressRepository.deleteById(addressId);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

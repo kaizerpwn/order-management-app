@@ -12,5 +12,5 @@ public interface AddressService {
 
     Address createAddress(Address address);
 
-    void deleteAddress(Long addressId);
+    boolean deleteAddress(Long addressId);
 }
