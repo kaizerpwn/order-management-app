@@ -1,4 +1,4 @@
-package com.ibrahimokic.ordermanagement.controller.api;
+package com.ibrahimokic.ordermanagement.controller;
 
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;

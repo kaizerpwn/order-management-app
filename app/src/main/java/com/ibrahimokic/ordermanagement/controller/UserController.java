@@ -1,4 +1,4 @@
-package com.ibrahimokic.ordermanagement.controller.api;
+package com.ibrahimokic.ordermanagement.controller;
 
 import com.ibrahimokic.ordermanagement.domain.dto.OrderDto;
 import com.ibrahimokic.ordermanagement.domain.dto.api.LoginRequest;
