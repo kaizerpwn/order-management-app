@@ -35,16 +35,20 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
 
     @Override
-    public List<OrderDto> getAllOrdersWithDetails() {
-        List<Order> orders = orderRepository.findAll();
-        List<OrderDto> orderDtoList = new ArrayList<>();
+    public List<OrderDto> getAllOrdersWithDetails() { 
+        try {
+            List<Order> orders = orderRepository.findAll();
+            List<OrderDto> orderDtoList = new ArrayList<>();
 
-        for (Order order : orders) {
-            OrderDto orderDto = orderMapper.mapTo(order);
-            orderDtoList.add(orderDto);
+            for (Order order : orders) {
+                OrderDto orderDto = orderMapper.mapTo(order);
+                orderDtoList.add(orderDto);
+            }
+
+            return orderDtoList;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get all users orders: " + e.getMessage());
         }
-
-        return orderDtoList;
     }
 
     @Override
