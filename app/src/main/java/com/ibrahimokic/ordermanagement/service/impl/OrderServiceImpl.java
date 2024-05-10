@@ -1,10 +1,11 @@
 package com.ibrahimokic.ordermanagement.service.impl;
 
-import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
 import com.ibrahimokic.ordermanagement.domain.dto.OrderItemDto;
 import com.ibrahimokic.ordermanagement.domain.entity.*;
 import com.ibrahimokic.ordermanagement.domain.dto.OrderDto;
-import com.ibrahimokic.ordermanagement.mapper.Mapper;
+import com.ibrahimokic.ordermanagement.mapper.impl.AddressMapperImpl;
+import com.ibrahimokic.ordermanagement.mapper.impl.OrderItemMapperImpl;
+import com.ibrahimokic.ordermanagement.mapper.impl.OrderMapperImpl;
 import com.ibrahimokic.ordermanagement.repository.*;
 import com.ibrahimokic.ordermanagement.service.OrderService;
 import com.ibrahimokic.ordermanagement.utils.Utils;
@@ -25,9 +26,9 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
-    private final Mapper<Order, OrderDto> orderMapper;
-    private final Mapper<Address, AddressDto> addressMapper;
-    private final Mapper<OrderItem, OrderItemDto> orderItemMapper;
+    private final OrderMapperImpl orderMapper;
+    private final AddressMapperImpl addressMapper;
+    private final OrderItemMapperImpl orderItemMapper;
     private final AddressRepository addressRepository;
     private final ProductRepository productRepository;
 
