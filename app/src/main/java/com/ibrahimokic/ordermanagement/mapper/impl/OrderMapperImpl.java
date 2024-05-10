@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OrderMapperImpl implements Mapper<Order, OrderDto> {
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
     public OrderMapperImpl(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }

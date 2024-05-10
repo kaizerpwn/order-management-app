@@ -2,7 +2,7 @@ package com.ibrahimokic.ordermanagement.controller;
 
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
-import com.ibrahimokic.ordermanagement.mapper.Mapper;
+import com.ibrahimokic.ordermanagement.mapper.impl.AddressMapperImpl;
 import com.ibrahimokic.ordermanagement.repository.AddressRepository;
 import com.ibrahimokic.ordermanagement.service.AddressService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -30,7 +31,7 @@ public class AddressController {
 
     private final AddressService addressService;
     private final AddressRepository addressRepository;
-    private final Mapper<Address, AddressDto> addressMapper;
+    private final AddressMapperImpl addressMapper;
 
     @GetMapping
     @Operation(summary = "Get all addresses", description = "Get list of all addresses")
@@ -39,7 +40,8 @@ public class AddressController {
     })
     public ResponseEntity<?> getAllAddresses() {
         try {
-            return ResponseEntity.ok(addressService.getAllAddresses());
+            List<AddressDto> retrievedAddresses = addressMapper.mapListToDtoList(addressService.getAllAddresses());
+            return ResponseEntity.ok(retrievedAddresses);
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -59,7 +61,7 @@ public class AddressController {
             Optional<Address> address = addressService.getAddressById(addressId);
 
             if (address.isPresent()) {
-                return ResponseEntity.ok(address);
+                return ResponseEntity.ok(addressMapper.mapTo(address.get()));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .contentType(MediaType.TEXT_PLAIN)
@@ -85,7 +87,7 @@ public class AddressController {
         try {
             Address newAddress = addressMapper.mapFrom(addressDto);
             Address createdAddress = addressService.createAddress(newAddress);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdAddress);
+            return ResponseEntity.status(HttpStatus.CREATED).body(addressMapper.mapTo(createdAddress));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .contentType(MediaType.TEXT_PLAIN)
@@ -125,7 +127,7 @@ public class AddressController {
                 BeanUtils.copyProperties(updatedAddressDto, existingAddress);
                 try {
                     addressRepository.save(existingAddress);
-                    return ResponseEntity.ok(existingAddress);
+                    return ResponseEntity.ok(addressMapper.mapTo(existingAddress));
                 } catch (Exception e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .contentType(MediaType.TEXT_PLAIN)

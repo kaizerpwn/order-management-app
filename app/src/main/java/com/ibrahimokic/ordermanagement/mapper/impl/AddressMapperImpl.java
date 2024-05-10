@@ -6,6 +6,9 @@ import com.ibrahimokic.ordermanagement.mapper.Mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class AddressMapperImpl implements Mapper<Address, AddressDto> {
     private ModelMapper modelMapper;
@@ -19,5 +22,10 @@ public class AddressMapperImpl implements Mapper<Address, AddressDto> {
     @Override
     public Address mapFrom(AddressDto addressDto) {
         return modelMapper.map(addressDto, Address.class);
+    }
+    public List<AddressDto> mapListToDtoList(List<Address> addresses) {
+        return addresses.stream()
+                .map(this::mapTo)
+                .collect(Collectors.toList());
     }
 }

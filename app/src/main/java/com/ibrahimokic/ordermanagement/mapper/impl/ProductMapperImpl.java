@@ -6,6 +6,9 @@ import com.ibrahimokic.ordermanagement.mapper.Mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class ProductMapperImpl implements Mapper<Product, ProductDto> {
     private ModelMapper modelMapper;
@@ -19,5 +22,10 @@ public class ProductMapperImpl implements Mapper<Product, ProductDto> {
     @Override
     public Product mapFrom(ProductDto productDto) {
         return modelMapper.map(productDto, Product.class);
+    }
+    public List<ProductDto> mapListToDtoList(List<Product> products) {
+        return products.stream()
+                .map(this::mapTo)
+                .collect(Collectors.toList());
     }
 }

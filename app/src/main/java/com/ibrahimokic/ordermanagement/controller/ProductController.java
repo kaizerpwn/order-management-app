@@ -2,7 +2,7 @@ package com.ibrahimokic.ordermanagement.controller;
 
 import com.ibrahimokic.ordermanagement.domain.entity.Product;
 import com.ibrahimokic.ordermanagement.domain.dto.ProductDto;
-import com.ibrahimokic.ordermanagement.mapper.Mapper;
+import com.ibrahimokic.ordermanagement.mapper.impl.ProductMapperImpl;
 import com.ibrahimokic.ordermanagement.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -26,7 +27,7 @@ import java.util.Optional;
 @Tag(name = "Product", description = "Operations related to products")
 public class ProductController {
     private final ProductService productService;
-    private final Mapper<Product, ProductDto> productMapper;
+    private final ProductMapperImpl productMapper;
 
     @GetMapping
     @Operation(summary = "Get all products", description = "Get list of all products")
@@ -35,7 +36,8 @@ public class ProductController {
     })
     public ResponseEntity<?> getAllProducts() {
         try {
-            return ResponseEntity.ok(productService.getAllProducts());
+            List<ProductDto> retrievedProducts = productMapper.mapListToDtoList(productService.getAllProducts());
+            return ResponseEntity.ok(retrievedProducts);
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -55,7 +57,7 @@ public class ProductController {
             Optional<Product> product = productService.getProductById(productId);
 
             if (product.isPresent()) {
-                return ResponseEntity.ok(product);
+                return ResponseEntity.ok(productMapper.mapTo(product.get()));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .contentType(MediaType.TEXT_PLAIN)
@@ -98,7 +100,7 @@ public class ProductController {
             Optional<Product> updatedProduct = productService.updateProduct(productId, updatedProductDto);
 
             if (updatedProduct.isPresent()) {
-                return ResponseEntity.ok().body(updatedProduct.get());
+                return ResponseEntity.ok().body(productMapper.mapTo(updatedProduct.get()));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting a product.");
             }

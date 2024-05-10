@@ -6,6 +6,7 @@ import com.ibrahimokic.ordermanagement.domain.entity.Order;
 import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.domain.dto.UserDto;
 import com.ibrahimokic.ordermanagement.mapper.impl.OrderMapperImpl;
+import com.ibrahimokic.ordermanagement.mapper.impl.UserMapperImpl;
 import com.ibrahimokic.ordermanagement.service.AuthService;
 import com.ibrahimokic.ordermanagement.service.OrderService;
 import com.ibrahimokic.ordermanagement.service.UserService;
@@ -38,6 +39,7 @@ public class UserController {
     private final AuthService authService;
     private final OrderService orderService;
     private final OrderMapperImpl orderMapper;
+    private final UserMapperImpl userMapper;
 
     @GetMapping
     @Operation(summary = "Get all users", description = "Get list of all users")
@@ -46,7 +48,8 @@ public class UserController {
     })
     public ResponseEntity<?> getAllUsers() {
         try {
-            return ResponseEntity.ok(userService.getAllUsers());
+            List<UserDto> retrievedUsers = userMapper.mapUserListToDtoList(userService.getAllUsers());
+            return ResponseEntity.ok(retrievedUsers);
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -95,7 +98,7 @@ public class UserController {
             Optional<User> userOptional = userService.getUserById(userId);
 
             if (userOptional.isPresent()) {
-                return ResponseEntity.ok().body(userOptional.get());
+                return ResponseEntity.ok().body(userMapper.mapTo(userOptional.get()));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with ID " + userId + " not found.");
             }
@@ -160,7 +163,7 @@ public class UserController {
             Optional<User> updatedUser = userService.updateUser(userId, updatedUserDto);
 
             if (updatedUser.isPresent()) {
-                return ResponseEntity.ok().body(updatedUser.get());
+                return ResponseEntity.ok().body(userMapper.mapTo(updatedUser.get()));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while updating user " + userId + ".");
             }
