@@ -136,13 +136,23 @@ public class OrderServiceImpl implements OrderService {
 
                 Optional<Product> productItem = productRepository.findById(orderItemDto.getProductId());
 
-                if (productItem.isPresent() && productItem.get().getAvailableQuantity() >= orderItem.getQuantity()) {
-                    orderItemRepository.save(orderItem);
-                    orderItems.add(orderItem);
+                if (productItem.isPresent()) {
+                    if(orderItemDto.getQuantity() != 0) {
+                        if (!Utils.checkProductQuantity(productItem.get(), orderItemDto.getQuantity())) {
+                            throw new RuntimeException("Quantity available for product "+ productItem.get().getProductId() +" is '" + productItem.get().getAvailableQuantity() + "', not '" + orderItemDto.getQuantity() + "'.");
+                        }
+                        if (!Utils.checkProductAvailability(productItem.get())) {
+                            throw new RuntimeException("Product "+ productItem.get().getProductId() +" is not currently available, it is available from the date " + productItem.get().getAvailableFrom() + " to "+ productItem.get().getAvailableUntil() + ".");
+                        }
 
-                    productItem.get()
-                            .setAvailableQuantity(productItem.get().getAvailableQuantity() - orderItem.getQuantity());
-                    productRepository.save(productItem.get());
+                        orderItemRepository.save(orderItem);
+                        orderItems.add(orderItem);
+
+                        productItem.get().setAvailableQuantity(productItem.get().getAvailableQuantity() - orderItem.getQuantity());
+                        productRepository.save(productItem.get());
+                    } else {
+                        throw new RuntimeException("Product with id " + orderItemDto.getProductId() +" can't have zero quantity.");
+                    }
                 }
             }
 
@@ -159,7 +169,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public boolean updateOrder(Long orderId, OrderDto orderDto) {
+    public boolean updateOrder(Long orderId, @Valid OrderDto orderDto) {
         try {
             Optional<Order> retrievedOrderFromDatabase = orderRepository.findById(orderId);
 
