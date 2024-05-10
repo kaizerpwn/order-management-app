@@ -20,7 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -38,8 +37,15 @@ public class AddressController {
     @ApiResponse(responseCode = "200", description = "List of addresses", content = {
             @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Address.class)))
     })
-    public ResponseEntity<List<Address>> getAllAddresses() {
-        return ResponseEntity.ok(addressService.getAllAddresses());
+    public ResponseEntity<?> getAllAddresses() {
+        try {
+            return ResponseEntity.ok(addressService.getAllAddresses());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage());
+        }
     }
 
     @GetMapping("/{addressId}")
@@ -49,14 +55,21 @@ public class AddressController {
             @ApiResponse(responseCode = "404", description = "Address not found.")
     })
     public ResponseEntity<?> getAddressById(@PathVariable Long addressId) {
-        Optional<Address> address = addressService.getAddressById(addressId);
+        try {
+            Optional<Address> address = addressService.getAddressById(addressId);
 
-        if (address.isPresent()) {
-            return ResponseEntity.ok(address);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            if (address.isPresent()) {
+                return ResponseEntity.ok(address);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("Address not found.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .contentType(MediaType.TEXT_PLAIN)
-                    .body("Address not found.");
+                    .body(e.getMessage());
         }
     }
 
@@ -84,12 +97,19 @@ public class AddressController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete address", description = "Delete address with provided address id")
     public ResponseEntity<?> deleteAddress(@PathVariable Long addressId) {
-        boolean deletionResult = addressService.deleteAddress(addressId);
+        try {
+            boolean deletionResult = addressService.deleteAddress(addressId);
 
-        if (deletionResult) {
-            return ResponseEntity.ok().body("Address deleted successfully.");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting address " + addressId + ".");
+            if (deletionResult) {
+                return ResponseEntity.ok().body("Address deleted successfully.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting address " + addressId + ".");
+            }
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage());
         }
     }
 
@@ -97,23 +117,30 @@ public class AddressController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Edit address", description = "Edit address based on request body and address ID")
     public ResponseEntity<?> updateAddress(@PathVariable Long addressId, @RequestBody AddressDto updatedAddressDto) {
-        Optional<Address> optionalExistingAddress = addressService.getAddressById(addressId);
+        try {
+            Optional<Address> optionalExistingAddress = addressService.getAddressById(addressId);
 
-        if (optionalExistingAddress.isPresent()) {
-            Address existingAddress = optionalExistingAddress.get();
-            BeanUtils.copyProperties(updatedAddressDto, existingAddress);
-            try {
-                addressRepository.save(existingAddress);
-                return ResponseEntity.ok(existingAddress);
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            if (optionalExistingAddress.isPresent()) {
+                Address existingAddress = optionalExistingAddress.get();
+                BeanUtils.copyProperties(updatedAddressDto, existingAddress);
+                try {
+                    addressRepository.save(existingAddress);
+                    return ResponseEntity.ok(existingAddress);
+                } catch (Exception e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .contentType(MediaType.TEXT_PLAIN)
+                            .body("Internal server error");
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .contentType(MediaType.TEXT_PLAIN)
-                        .body("Internal server error");
+                        .body("Address with that ID does not exist in database");
             }
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .contentType(MediaType.TEXT_PLAIN)
-                    .body("Address with that ID does not exist in database");
+                    .body(e.getMessage());
         }
     }
 }

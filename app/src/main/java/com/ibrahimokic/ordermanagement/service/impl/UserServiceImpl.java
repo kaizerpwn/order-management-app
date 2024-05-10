@@ -42,9 +42,16 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User createUser(User user) {
         try {
+            User userExists = userRepository.findByEmail(user.getEmail());
+
+            if(userExists != null)
+            {
+                throw new RuntimeException("User with that email already exists in the database.");
+            }
+
             return userRepository.save(user);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create new user: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -60,7 +67,7 @@ public class UserServiceImpl implements UserService {
                 userRepository.save(existingUser);
                 return Optional.of(existingUser);
             } else {
-                return Optional.empty();
+                throw new RuntimeException("User with ID "+ userId +" does not exist in the database.");
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to update the user: " + e.getMessage());

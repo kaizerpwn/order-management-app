@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -43,8 +44,15 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "List of users", content = {
             @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))
     })
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<?> getAllUsers() {
+        try {
+            return ResponseEntity.ok(userService.getAllUsers());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage());
+        }
     }
 
     @GetMapping("/{userId}/orders")
@@ -52,19 +60,27 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "List of orders belonging to the user", content = {
             @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = OrderDto.class)))
     })
-    public ResponseEntity<List<OrderDto>> getOrdersByUser(@PathVariable("userId") Long userId) {
-        Optional<User> user = userService.getUserById(userId);
+    public ResponseEntity<?> getOrdersByUser(@PathVariable("userId") Long userId) {
+        try {
+            Optional<User> user = userService.getUserById(userId);
 
-        if (user.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            if (user.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            List<Order> userOrders = orderService.getAllUsersOrders(user.get());
+            List<OrderDto> userOrdersDto = userOrders.stream()
+                    .map(orderMapper::mapTo)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(userOrdersDto);
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage());
         }
-
-        List<Order> userOrders = orderService.getAllUsersOrders(user.get());
-        List<OrderDto> userOrdersDto = userOrders.stream()
-                .map(orderMapper::mapTo)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(userOrdersDto);
     }
 
 
@@ -75,12 +91,19 @@ public class UserController {
     })
     @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     public ResponseEntity<?> getUserById(@PathVariable Long userId) {
-        Optional<User> userOptional = userService.getUserById(userId);
+        try {
+            Optional<User> userOptional = userService.getUserById(userId);
 
-        if (userOptional.isPresent()) {
-            return ResponseEntity.ok().body(userOptional.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with ID " + userId + " not found.");
+            if (userOptional.isPresent()) {
+                return ResponseEntity.ok().body(userOptional.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with ID " + userId + " not found.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage());
         }
     }
 
@@ -92,8 +115,15 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<User> registerUser(@RequestBody(required = false) @Valid UserDto userDto, HttpServletResponse response) {
-        return authService.registerUser(userDto, response);
+    public ResponseEntity<?> registerUser(@RequestBody(required = false) @Valid UserDto userDto, HttpServletResponse response) {
+        try {
+            return authService.registerUser(userDto, response);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage());
+        }
     }
 
     @PostMapping("/login")
@@ -105,7 +135,14 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     public ResponseEntity<?> loginUser(@Validated @RequestBody LoginRequest request, HttpServletResponse response) {
-        return authService.loginUser(request, response);
+        try {
+            return authService.loginUser(request, response);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage());
+        }
     }
 
     @PatchMapping("/{userId}")
@@ -119,12 +156,19 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "An error occurred while deleting user")
     })
     public ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody UserDto updatedUserDto) {
-        Optional<User> updatedUser = userService.updateUser(userId, updatedUserDto);
+        try {
+            Optional<User> updatedUser = userService.updateUser(userId, updatedUserDto);
 
-        if (updatedUser.isPresent()) {
-            return ResponseEntity.ok().body(updatedUser.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting user " + userId + ".");
+            if (updatedUser.isPresent()) {
+                return ResponseEntity.ok().body(updatedUser.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while updating user " + userId + ".");
+            }
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage());
         }
     }
 
@@ -138,11 +182,18 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "An error occurred while deleting user", content = @Content)
     })
     public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
-        if(userService.deleteUser(userId)) {
-            return ResponseEntity.status(HttpStatus.OK).body("User with ID " + userId + " successfully deleted.");
-        }
-        else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting user " + userId + ".");
+        try {
+            if(userService.deleteUser(userId)) {
+                return ResponseEntity.status(HttpStatus.OK).body("User with ID " + userId + " successfully deleted.");
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting user " + userId + ".");
+            }
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage());
         }
     }
 }

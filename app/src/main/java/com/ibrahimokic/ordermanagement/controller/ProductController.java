@@ -34,7 +34,14 @@ public class ProductController {
             @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Product.class)))
     })
     public ResponseEntity<?> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+        try {
+            return ResponseEntity.ok(productService.getAllProducts());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage());
+        }
     }
 
     @GetMapping("/{productId}")
@@ -44,14 +51,21 @@ public class ProductController {
             @ApiResponse(responseCode = "404", description = "Product not found.")
     })
     public ResponseEntity<?> getProductById(@PathVariable Long productId) {
-        Optional<Product> product = productService.getProductById(productId);
+        try {
+            Optional<Product> product = productService.getProductById(productId);
 
-        if (product.isPresent()) {
-            return ResponseEntity.ok(product);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            if (product.isPresent()) {
+                return ResponseEntity.ok(product);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("Product not found.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .contentType(MediaType.TEXT_PLAIN)
-                    .body("Product not found.");
+                    .body(e.getMessage());
         }
     }
 
@@ -80,12 +94,19 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Edit product", description = "Edit product based on request body and product ID")
     public ResponseEntity<?> updateProduct(@PathVariable Long productId, @RequestBody ProductDto updatedProductDto) {
-        Optional<Product> updatedProduct = productService.updateProduct(productId, updatedProductDto);
+        try {
+            Optional<Product> updatedProduct = productService.updateProduct(productId, updatedProductDto);
 
-        if (updatedProduct.isPresent()) {
-            return ResponseEntity.ok().body(updatedProduct.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting a product.");
+            if (updatedProduct.isPresent()) {
+                return ResponseEntity.ok().body(updatedProduct.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting a product.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage());
         }
     }
 
@@ -96,12 +117,19 @@ public class ProductController {
             @ApiResponse(responseCode = "404", description = "Product not found")
     })
     public ResponseEntity<String> deleteProduct(@PathVariable Long productId) {
-        boolean deletionResult = productService.deleteProduct(productId);
+        try {
+            boolean deletionResult = productService.deleteProduct(productId);
 
-        if (deletionResult) {
-            return ResponseEntity.ok().body("Product deleted successfully.");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting product " + productId + ".");
+            if (deletionResult) {
+                return ResponseEntity.ok().body("Product deleted successfully.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting product " + productId + ".");
+            }
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage());
         }
     }
 

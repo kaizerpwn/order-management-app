@@ -31,9 +31,16 @@ public class OrderController {
     @ApiResponse(responseCode = "200", description = "List of orders with details", content = {
             @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = OrderDto.class)))
     })
-    public ResponseEntity<List<OrderDto>> getAllOrdersWithDetails() {
-        List<OrderDto> ordersWithDetails = orderService.getAllOrdersWithDetails();
-        return ResponseEntity.ok(ordersWithDetails);
+    public ResponseEntity<?> getAllOrdersWithDetails() {
+        try {
+            List<OrderDto> ordersWithDetails = orderService.getAllOrdersWithDetails();
+            return ResponseEntity.ok(ordersWithDetails);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage());
+        }
     }
 
     @GetMapping("/{orderId}")
@@ -44,14 +51,21 @@ public class OrderController {
             @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)
     })
     public ResponseEntity<?> getOrderById(@PathVariable Long orderId) {
-        OrderDto orderDto = orderService.getOrderById(orderId);
+        try {
+            OrderDto orderDto = orderService.getOrderById(orderId);
 
-        if (orderDto != null) {
-            return ResponseEntity.ok(orderDto);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            if (orderDto != null) {
+                return ResponseEntity.ok(orderDto);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("Order not found");
+            }
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .contentType(MediaType.TEXT_PLAIN)
-                    .body("Order not found");
+                    .body(e.getMessage());
         }
     }
 
@@ -63,15 +77,22 @@ public class OrderController {
             @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)
     })
     public ResponseEntity<?> deleteOrderById(@PathVariable Long orderId) {
-        boolean deleted = orderService.deleteOrderById(orderId);
-        if (deleted) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        try {
+            boolean deleted = orderService.deleteOrderById(orderId);
+            if (deleted) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("Order deleted successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("Order not found");
+            }
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .contentType(MediaType.TEXT_PLAIN)
-                    .body("Order deleted successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .body("Order not found");
+                    .body(e.getMessage());
         }
     }
 
