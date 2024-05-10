@@ -2,11 +2,15 @@ package com.ibrahimokic.ordermanagement.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -21,14 +25,18 @@ public class UserDto {
 
     @JsonProperty("username")
     @NotNull
+    @NotBlank(message = "Username is required")
     private String username;
 
     @JsonProperty(value = "password", access = JsonProperty.Access.WRITE_ONLY)
     @NotNull
+    @NotBlank(message = "Password is required")
     private String password;
 
     @JsonProperty("email")
     @NotNull
+    @Email
+    @NotBlank(message = "Email is required")
     private String email;
 
     @JsonProperty("role")
@@ -37,14 +45,18 @@ public class UserDto {
 
     @JsonProperty("first_name")
     @NotNull
+    @NotBlank(message = "First name is required")
     private String firstName;
 
     @JsonProperty("last_name")
     @NotNull
+    @NotBlank(message = "Last name is required")
     private String lastName;
 
     @JsonProperty("birth_date")
     @NotNull
+    @Past(message = "Birth date must be in the past")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
     @JsonProperty("address")

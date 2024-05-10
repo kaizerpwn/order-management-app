@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
 
             if (optionalExistingUser.isPresent()) {
                 User existingUser = optionalExistingUser.get();
-                BeanUtils.copyProperties(updatedUserDto, existingUser);
+                BeanUtils.copyProperties(updatedUserDto, existingUser, "userId");
 
                 userRepository.save(existingUser);
                 return Optional.of(existingUser);
@@ -73,6 +73,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Failed to update the user: " + e.getMessage());
         }
     }
+
 
     @Override
     public boolean deleteUser(Long userId) {

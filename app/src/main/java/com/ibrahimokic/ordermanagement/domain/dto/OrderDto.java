@@ -2,6 +2,7 @@ package com.ibrahimokic.ordermanagement.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,15 +24,18 @@ public class OrderDto {
     private Long userId;
 
     @JsonProperty("order_date")
+    @NotNull
     private LocalDate orderDate;
 
     @JsonProperty("total_amount")
     private BigDecimal totalAmount;
 
     @JsonProperty("delivery_address")
+    @NotNull
     private AddressDto deliveryAddress;
 
     @JsonProperty("source_address")
+    @NotNull
     private AddressDto sourceAddress;
 
     @JsonProperty("items")

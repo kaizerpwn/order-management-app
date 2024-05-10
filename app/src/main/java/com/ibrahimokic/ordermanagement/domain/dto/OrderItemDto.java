@@ -1,6 +1,7 @@
 package com.ibrahimokic.ordermanagement.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,9 +23,11 @@ public class OrderItemDto {
 
     @JsonProperty("quantity")
     @NotNull
+    @NotBlank(message = "Quantity is required")
     private Integer quantity;
 
     @JsonProperty("item_price")
     @NotNull
+    @NotBlank(message = "Item price is required")
     private BigDecimal itemPrice;
 }

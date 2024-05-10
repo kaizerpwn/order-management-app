@@ -116,7 +116,7 @@ public class AddressController {
     @PatchMapping("/{addressId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Edit address", description = "Edit address based on request body and address ID")
-    public ResponseEntity<?> updateAddress(@PathVariable Long addressId, @RequestBody AddressDto updatedAddressDto) {
+    public ResponseEntity<?> updateAddress(@PathVariable Long addressId, @Valid @RequestBody AddressDto updatedAddressDto) {
         try {
             Optional<Address> optionalExistingAddress = addressService.getAddressById(addressId);
 

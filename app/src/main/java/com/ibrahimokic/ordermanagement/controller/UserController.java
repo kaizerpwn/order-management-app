@@ -115,7 +115,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<?> registerUser(@RequestBody(required = false) @Valid UserDto userDto, HttpServletResponse response) {
+    public ResponseEntity<?> registerUser(@RequestBody @Valid UserDto userDto, HttpServletResponse response) {
         try {
             return authService.registerUser(userDto, response);
         } catch (Exception e) {
@@ -155,7 +155,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "An error occurred while deleting user")
     })
-    public ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody UserDto updatedUserDto) {
+    public ResponseEntity<?> updateUser(@PathVariable Long userId, @Valid @RequestBody UserDto updatedUserDto) {
         try {
             Optional<User> updatedUser = userService.updateUser(userId, updatedUserDto);
 

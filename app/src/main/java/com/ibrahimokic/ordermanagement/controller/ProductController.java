@@ -93,7 +93,7 @@ public class ProductController {
     @PatchMapping("/{productId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Edit product", description = "Edit product based on request body and product ID")
-    public ResponseEntity<?> updateProduct(@PathVariable Long productId, @RequestBody ProductDto updatedProductDto) {
+    public ResponseEntity<?> updateProduct(@PathVariable Long productId, @Valid @RequestBody ProductDto updatedProductDto) {
         try {
             Optional<Product> updatedProduct = productService.updateProduct(productId, updatedProductDto);
 

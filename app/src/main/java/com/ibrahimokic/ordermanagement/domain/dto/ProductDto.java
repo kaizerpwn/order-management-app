@@ -3,6 +3,7 @@ package com.ibrahimokic.ordermanagement.domain.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,10 +23,12 @@ public class ProductDto {
 
     @JsonProperty("product_name")
     @NotNull
+    @NotBlank(message = "Product name is required")
     private String productName;
 
     @JsonProperty("price")
     @NotNull
+    @NotBlank(message = "Price is required")
     private BigDecimal price;
 
     @JsonProperty("available_from")
@@ -39,5 +42,6 @@ public class ProductDto {
     private LocalDate availableUntil;
 
     @JsonProperty("available_quantity")
+    @NotBlank(message = "Available quantity is required")
     private int availableQuantity;
 }

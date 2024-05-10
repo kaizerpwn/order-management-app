@@ -11,5 +11,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface AuthService {
     public ResponseEntity<?> loginUser(@Validated @RequestBody LoginRequest request, HttpServletResponse response);
-    public ResponseEntity<User> registerUser(@RequestBody(required = false) @Valid UserDto userDto, HttpServletResponse response);
+    public ResponseEntity<User> registerUser(@RequestBody @Valid UserDto userDto, HttpServletResponse response);
 }
