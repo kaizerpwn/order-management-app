@@ -2,10 +2,7 @@ package com.ibrahimokic.ordermanagement.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,6 +28,10 @@ public class UserDto {
     @JsonProperty(value = "password", access = JsonProperty.Access.WRITE_ONLY)
     @NotNull
     @NotBlank(message = "Password is required")
+    @Size(
+            min = 5,
+            message = "The password '${validatedValue}' must be greater then {min}"
+    )
     private String password;
 
     @JsonProperty("email")

@@ -211,44 +211,50 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
     }
 
     private void createUserAccountForm() {
-        String username = Utils.promptUserInput(scanner,"username");
-        String password = Utils.promptUserInput(scanner,"password");
-        String email;
+        try {
+            String username = Utils.promptUserInput(scanner,"username");
+            String password = Utils.promptUserInput(scanner,"password");
+            String email;
 
-        do {
-            email = Utils.promptUserInput(scanner,"email");
-            if (userService.findByEmail(email).isPresent()) {
-                System.out.println("User with this email already exists. Please try a different email address.");
-            }
-        } while (userService.findByEmail(email).isPresent());
+            do {
+                email = Utils.promptUserInput(scanner,"email");
+                if (userService.findByEmail(email).isPresent()) {
+                    System.out.println("User with this email already exists. Please try a different email address.");
+                }
+            } while (userService.findByEmail(email).isPresent());
 
-        String name = Utils.promptUserInput(scanner,"first name");
-        String surname = Utils.promptUserInput(scanner,"last name");
-        LocalDate birthDate = LocalDate.parse(Utils.promptUserInput(scanner,"birth date (yyyy-MM-dd)"));
-        String streetName = Utils.promptUserInput(scanner,"street address");
-        String zipCode = Utils.promptUserInput(scanner,"postal code");
-        String city = Utils.promptUserInput(scanner,"city");
-        String country = Utils.promptUserInput(scanner,"country");
+            String name = Utils.promptUserInput(scanner,"first name");
+            String surname = Utils.promptUserInput(scanner,"last name");
+            LocalDate birthDate = LocalDate.parse(Utils.promptUserInput(scanner,"birth date (yyyy-MM-dd)"));
+            String streetName = Utils.promptUserInput(scanner,"street address");
+            String zipCode = Utils.promptUserInput(scanner,"postal code");
+            String city = Utils.promptUserInput(scanner,"city");
+            String country = Utils.promptUserInput(scanner,"country");
 
-        Address newAddress = Address.builder()
-                .country(country)
-                .city(city)
-                .zip(zipCode)
-                .street(streetName)
-                .build();
+            Address newAddress = Address.builder()
+                    .country(country)
+                    .city(city)
+                    .zip(zipCode)
+                    .street(streetName)
+                    .build();
 
-        User newUserAccount = User.builder()
-                .username(username)
-                .password(password)
-                .role("user")
-                .email(email)
-                .firstName(name)
-                .lastName(surname)
-                .birthDate(birthDate)
-                .address(newAddress)
-                .build();
+            User newUserAccount = User.builder()
+                    .username(username)
+                    .password(password)
+                    .role("user")
+                    .email(email)
+                    .firstName(name)
+                    .lastName(surname)
+                    .birthDate(birthDate)
+                    .address(newAddress)
+                    .build();
 
-        saveUserAndReturnToMenu(newUserAccount);
+            saveUserAndReturnToMenu(newUserAccount);
+        } catch (Exception e) {
+            System.out.println("ERROR: "+ e.getMessage());
+            Utils.returnBackToTheMainMenu(scanner);
+            adminUserManagementOptions();
+        }
     }
 
     private void deleteUserForm() {
@@ -273,16 +279,16 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
 
         try {
             userId = Long.parseLong(userIdInput);
+
+            if (userService.findById(userId).isPresent()) {
+                userService.deleteUser(userId);
+                System.out.println("Successfully deleted user with ID: " + userId);
+            } else {
+                System.out.println("User with that ID does not exist.");
+            }
         } catch (NumberFormatException e) {
             System.out.println("Invalid input. Please enter a valid user ID.");
             return;
-        }
-
-        if (userService.findById(userId).isPresent()) {
-            userService.deleteUser(userId);
-            System.out.println("Successfully deleted user with ID: " + userId);
-        } else {
-            System.out.println("User with that ID does not exist.");
         }
 
         Utils.returnBackToTheMainMenu(scanner);
@@ -297,8 +303,12 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
     }
 
     private void saveUserAndReturnToMenu(User user) {
-        userService.createUser(user);
-        System.out.println("OM-APP: New account '" + user.getFirstName() + " " + user.getLastName() + "' with role '"+user.getRole()+"' has been successfully created.");
+        try {
+            userService.createUser(user);
+            System.out.println("OM-APP: New account '" + user.getFirstName() + " " + user.getLastName() + "' with role '"+ user.getRole() +"' has been successfully created.");
+        } catch (Exception e) {
+            System.out.println("ERROR: An error occurred while creating an user, please check your inputs.");
+        }
 
         Utils.returnBackToTheMainMenu(scanner);
         adminUserManagementOptions();

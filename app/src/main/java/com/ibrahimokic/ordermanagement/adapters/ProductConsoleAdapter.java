@@ -55,29 +55,33 @@ public class ProductConsoleAdapter extends ConsoleUserInterface {
     }
 
     public void createNewProduct() {
-        System.out.println(">> Create a new product");
-        System.out.println(">> To cancel and go back to the main menu just press 'ENTER'");
+        try {
+            System.out.println(">> Create a new product");
+            System.out.println(">> To cancel and go back to the main menu just press 'ENTER'");
 
-        String productName = Utils.promptUserInput(scanner,"product name");
+            String productName = Utils.promptUserInput(scanner,"product name");
 
-        if(productName.length() == 0) {
-            return;
+            if(productName.length() == 0) {
+                return;
+            }
+
+            BigDecimal price = new BigDecimal(Utils.promptUserInput(scanner,"price"));
+            LocalDate availableFrom = LocalDate.parse(Utils.promptUserInput(scanner,"available from (yyyy-MM-dd)"));
+            LocalDate availableUntil = LocalDate.parse(Utils.promptUserInput(scanner,"available until (yyyy-MM-dd)"));
+            int availableQuantity = Integer.parseInt(Utils.promptUserInput(scanner,"available quantity"));
+
+            Product newProduct = new Product();
+            newProduct.setProductName(productName);
+            newProduct.setPrice(price);
+            newProduct.setAvailableFrom(availableFrom);
+            newProduct.setAvailableUntil(availableUntil);
+            newProduct.setAvailableQuantity(availableQuantity);
+
+            productService.createProduct(newProduct);
+            System.out.println("Product '"+ productName +"' successfully created.");
+        } catch (Exception e) {
+            System.out.println("ERROR: An error occurred while creating a product");
         }
-
-        BigDecimal price = new BigDecimal(Utils.promptUserInput(scanner,"price"));
-        LocalDate availableFrom = LocalDate.parse(Utils.promptUserInput(scanner,"available from (yyyy-MM-dd)"));
-        LocalDate availableUntil = LocalDate.parse(Utils.promptUserInput(scanner,"available until (yyyy-MM-dd)"));
-        int availableQuantity = Integer.parseInt(Utils.promptUserInput(scanner,"available quantity"));
-
-        Product newProduct = new Product();
-        newProduct.setProductName(productName);
-        newProduct.setPrice(price);
-        newProduct.setAvailableFrom(availableFrom);
-        newProduct.setAvailableUntil(availableUntil);
-        newProduct.setAvailableQuantity(availableQuantity);
-
-        productService.createProduct(newProduct);
-        System.out.println("Product '"+productName+"' successfully created.");
 
         Utils.returnBackToTheMainMenu(scanner);
     }
@@ -97,21 +101,20 @@ public class ProductConsoleAdapter extends ConsoleUserInterface {
         long productId;
         try {
             productId = Long.parseLong(productIdInput);
+
+            if (productId != 0) {
+                if (productList.stream().anyMatch(product -> product.getProductId().equals(productId))) {
+                    productService.deleteProduct(productId);
+                    System.out.println("Successfully deleted product with ID: " + productId);
+                } else {
+                    System.out.println("Product with that ID does not exist.");
+                }
+            }
         } catch (NumberFormatException e) {
             System.out.println("Invalid input. Please enter a valid product ID.");
             return;
         }
 
-        if (productId != 0) {
-            if (productList.stream().anyMatch(product -> product.getProductId().equals(productId))) {
-                productService.deleteProduct(productId);
-                System.out.println("Successfully deleted product with ID: " + productId);
-            } else {
-                System.out.println("Product with that ID does not exist.");
-            }
-        }
-
         Utils.returnBackToTheMainMenu(scanner);
     }
-
 }
