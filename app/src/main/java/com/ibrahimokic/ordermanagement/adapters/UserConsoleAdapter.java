@@ -234,62 +234,74 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
     }
 
     private void finishOrder() {
-        Long unavailableProduct = null;
-        OrderItemMapperImpl orderItemMapper = new OrderItemMapperImpl(new ModelMapper());
-        OrderDto newOrder = new OrderDto();
-        AddressDto deliveryAddress = AddressDto.builder()
-                .city(loggedUser.getAddress().getCity())
-                .street(loggedUser.getAddress().getStreet())
-                .country(loggedUser.getAddress().getCountry())
-                .zip(loggedUser.getAddress().getZip())
-                .build();
-        AddressDto sourceAddress = AddressDto.builder()
-                .zip("71000")
-                .country("Bosnia and Herzegovina")
-                .street("Džemala Bijedića Bb")
-                .city("Sarajevo")
-                .build();
+        try {
+            if(currentOrder.size() == 0) {
+                System.out.println("ERROR: Your cart is currently empty, so order is not created.");
+                return;
+            }
+            Long unavailableProduct = null;
+            OrderItemMapperImpl orderItemMapper = new OrderItemMapperImpl(new ModelMapper());
+            OrderDto newOrder = new OrderDto();
+            AddressDto deliveryAddress = AddressDto.builder()
+                    .city(loggedUser.getAddress().getCity())
+                    .street(loggedUser.getAddress().getStreet())
+                    .country(loggedUser.getAddress().getCountry())
+                    .zip(loggedUser.getAddress().getZip())
+                    .build();
+            AddressDto sourceAddress = AddressDto.builder()
+                    .zip("71000")
+                    .country("Bosnia and Herzegovina")
+                    .street("Džemala Bijedića Bb")
+                    .city("Sarajevo")
+                    .build();
 
-        List<OrderItemDto> orderItemsList = new ArrayList<>();
-        for (Product product : currentOrder) {
-            Optional<Product> retrievedProduct = productService.getProductById(product.getProductId());
+            List<OrderItemDto> orderItemsList = new ArrayList<>();
+            for (Product product : currentOrder) {
+                Optional<Product> retrievedProduct = productService.getProductById(product.getProductId());
 
-            if (retrievedProduct.isPresent()) {
-                if (retrievedProduct.get().getAvailableQuantity() >= product.getAvailableQuantity()) {
-                    OrderItemDto orderItem = new OrderItemDto();
-                    orderItem.setProductId(product.getProductId());
-                    orderItem.setItemPrice(product.getPrice());
-                    orderItem.setQuantity(product.getAvailableQuantity());
+                if (retrievedProduct.isPresent()) {
+                    if (retrievedProduct.get().getAvailableQuantity() >= product.getAvailableQuantity()) {
+                        OrderItemDto orderItem = new OrderItemDto();
+                        orderItem.setProductId(product.getProductId());
+                        orderItem.setItemPrice(product.getPrice());
+                        orderItem.setQuantity(product.getAvailableQuantity());
 
-                    orderItemsList.add(orderItem);
-                } else {
-                    unavailableProduct = retrievedProduct.get().getProductId();
+                        orderItemsList.add(orderItem);
+                    } else {
+                        unavailableProduct = retrievedProduct.get().getProductId();
+                    }
                 }
             }
-        }
 
-        if (unavailableProduct != null) {
-            System.out.println("ERROR: Product with ID: '" + unavailableProduct + "' does not have the quantity you ordered.");
-            System.out.println("ERROR: Please use 'REMOVE " + unavailableProduct + "' to remove that product from the cart to continue the order.");
-        } else {
-            List<OrderItem> mappedOrderItems = orderItemMapper.mapListToEntityList(orderItemsList);
+            if (unavailableProduct != null) {
+                System.out.println("ERROR: Product with ID: '" + unavailableProduct + "' does not have the quantity you ordered.");
+                System.out.println("ERROR: Please use 'REMOVE " + unavailableProduct + "' to remove that product from the cart to continue the order.");
+            } else {
+                List<OrderItem> mappedOrderItems = orderItemMapper.mapListToEntityList(orderItemsList);
 
-            newOrder.setUserId(loggedUser.getUserId());
-            newOrder.setDeliveryAddress(deliveryAddress);
-            newOrder.setSourceAddress(sourceAddress);
-            newOrder.setOrderDate(LocalDate.now());
-            newOrder.setOrderItems(orderItemsList);
-            newOrder.setTotalAmount(Utils.calculateTotalProductsPriceAmount(mappedOrderItems));
+                newOrder.setUserId(loggedUser.getUserId());
+                newOrder.setDeliveryAddress(deliveryAddress);
+                newOrder.setSourceAddress(sourceAddress);
+                newOrder.setOrderDate(LocalDate.now());
+                newOrder.setOrderItems(orderItemsList);
+                newOrder.setTotalAmount(Utils.calculateTotalProductsPriceAmount(mappedOrderItems));
 
-            orderService.createNewOrder(newOrder);
-            System.out.println("|---------------------------------------------------------------------------------------------------------------------|");
-            System.out.println("|                                          [ NEW ORDER CREATED SUCCESSFULLY ]                                         |");
-            System.out.println("|---------------------------------------------------------------------------------------------------------------------|");
-            ProductConsoleAdapter.showProductsInTable(currentOrder);
+                orderService.createNewOrder(newOrder);
+                System.out.println("|---------------------------------------------------------------------------------------------------------------------|");
+                System.out.println("|                                          [ NEW ORDER CREATED SUCCESSFULLY ]                                         |");
+                System.out.println("|---------------------------------------------------------------------------------------------------------------------|");
+                ProductConsoleAdapter.showProductsInTable(currentOrder);
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR: An error occurred while creating an order.");
         }
     }
 
     private void processUserInput(String userInput) {
+        if (userInput == null || userInput.isEmpty()) {
+            return;
+        }
+
         String[] inputParts = userInput.split(" ");
         if (inputParts.length < 2) {
             return;
@@ -309,41 +321,45 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
             return;
         }
 
-        Optional<Product> product = productService.getProductById(Long.parseLong(productId));
-        if (product.isEmpty()) {
-            System.out.println("ERROR: Product with ID '" + productId + "' does not exist.");
-            return;
-        }
-
-        if (!Utils.checkProductQuantity(product.get(), quantity)) {
-            System.out.println("ERROR: Quantity available for that product is '" + product.get().getAvailableQuantity() + "', not '" + quantity + "'.");
-            return;
-        }
-
-        if (!Utils.checkProductAvailability(product.get())) {
-            System.out.println("ERROR: That product is not currently available, it is available from the date " + product.get().getAvailableFrom() + " to "+ product.get().getAvailableUntil() + ".");
-            return;
-        }
-
-        boolean found = false;
-        for (Product p : currentOrder) {
-            if (p.getProductId().equals(product.get().getProductId())) {
-                found = true;
-                int updatedQuantity = p.getAvailableQuantity() + quantity;
-                if (updatedQuantity <= product.get().getAvailableQuantity()) {
-                    p.setAvailableQuantity(updatedQuantity);
-                    System.out.println("ORDER-LIST: Quantity of Product with ID '" + productId + "' updated to " + updatedQuantity);
-                } else {
-                    System.out.println("ERROR: Quantity available for that product is '" + product.get().getAvailableQuantity() + "', not '" + updatedQuantity + "'.");
-                }
-                break;
+        try {
+            Optional<Product> product = productService.getProductById(Long.parseLong(productId));
+            if (product.isEmpty()) {
+                System.out.println("ERROR: Product with ID '" + productId + "' does not exist.");
+                return;
             }
-        }
 
-        if (!found) {
-            product.get().setAvailableQuantity(quantity);
-            currentOrder.add(product.get());
-            System.out.println("ORDER-LIST: " + quantity + "x Product with ID '" + productId + "' successfully added to list.");
+            if (!Utils.checkProductQuantity(product.get(), quantity)) {
+                System.out.println("ERROR: Quantity available for that product is '" + product.get().getAvailableQuantity() + "', not '" + quantity + "'.");
+                return;
+            }
+
+            if (!Utils.checkProductAvailability(product.get())) {
+                System.out.println("ERROR: That product is not currently available, it is available from the date " + product.get().getAvailableFrom() + " to "+ product.get().getAvailableUntil() + ".");
+                return;
+            }
+
+            boolean found = false;
+            for (Product p : currentOrder) {
+                if (p.getProductId().equals(product.get().getProductId())) {
+                    found = true;
+                    int updatedQuantity = p.getAvailableQuantity() + quantity;
+                    if (updatedQuantity <= product.get().getAvailableQuantity()) {
+                        p.setAvailableQuantity(updatedQuantity);
+                        System.out.println("ORDER-LIST: Quantity of Product with ID '" + productId + "' updated to " + updatedQuantity);
+                    } else {
+                        System.out.println("ERROR: Quantity available for that product is '" + product.get().getAvailableQuantity() + "', not '" + updatedQuantity + "'.");
+                    }
+                    break;
+                }
+            }
+
+            if (!found) {
+                product.get().setAvailableQuantity(quantity);
+                currentOrder.add(product.get());
+                System.out.println("ORDER-LIST: " + quantity + "x Product with ID '" + productId + "' successfully added to list.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("ERROR: Invalid input. Please provide a valid input.");
         }
     }
 

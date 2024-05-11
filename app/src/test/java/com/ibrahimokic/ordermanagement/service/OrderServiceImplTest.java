@@ -1,7 +1,7 @@
 package com.ibrahimokic.ordermanagement.service;
 
 import com.ibrahimokic.ordermanagement.domain.dto.OrderDto;
-import com.ibrahimokic.ordermanagement.domain.entity.Order; 
+import com.ibrahimokic.ordermanagement.domain.entity.Order;
 import com.ibrahimokic.ordermanagement.mapper.impl.OrderMapperImpl;
 import com.ibrahimokic.ordermanagement.repository.*;
 import com.ibrahimokic.ordermanagement.service.impl.OrderServiceImpl;
