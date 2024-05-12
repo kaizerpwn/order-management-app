@@ -102,7 +102,7 @@ public class ProductController {
             if (updatedProduct.isPresent()) {
                 return ResponseEntity.ok().body(productMapper.mapTo(updatedProduct.get()));
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting a product.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while updating an product.");
             }
         } catch (Exception e) {
             return ResponseEntity
@@ -125,7 +125,7 @@ public class ProductController {
             if (deletionResult) {
                 return ResponseEntity.ok().body("Product deleted successfully.");
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting product " + productId + ".");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting an product " + productId + ".");
             }
         } catch (Exception e) {
             return ResponseEntity

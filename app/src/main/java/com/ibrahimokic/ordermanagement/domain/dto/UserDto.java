@@ -29,10 +29,7 @@ public class UserDto {
     @JsonProperty(value = "password", access = JsonProperty.Access.WRITE_ONLY)
     @NotNull
     @NotBlank(message = "Password is required")
-    @Size(
-            min = 5,
-            message = "The password '${validatedValue}' must be greater then {min}"
-    )
+    @Size(min = 5, message = "The password '${validatedValue}' must be greater then {min}")
     private String password;
 
     @JsonProperty("email")

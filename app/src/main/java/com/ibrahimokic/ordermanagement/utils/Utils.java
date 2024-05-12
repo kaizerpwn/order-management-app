@@ -30,11 +30,6 @@ public class Utils {
             !Objects.equals(address.getCity(), addressDto.getCity()) ||
             !Objects.equals(address.getZip(), addressDto.getZip()) ||
             !Objects.equals(address.getCountry(), addressDto.getCountry())) {
-
-            System.out.println(address.getStreet() + " "+ addressDto.getStreet());
-            System.out.println(address.getCity() + " "+ addressDto.getCity());
-            System.out.println(address.getZip() + " "+ addressDto.getZip());
-            System.out.println(address.getCountry() + " "+ addressDto.getCountry());
             return true;
         }
         return false;

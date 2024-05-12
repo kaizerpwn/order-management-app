@@ -15,7 +15,6 @@ public class OrderMapperImpl implements Mapper<Order, OrderDto> {
     @Override
     public OrderDto mapTo(Order order) {
         OrderDto orderDto = modelMapper.map(order, OrderDto.class);
-        System.out.println(orderDto);
         orderDto.setUserId(order.getUser().getUserId());
         return orderDto;
     }

@@ -2,13 +2,14 @@ package com.ibrahimokic.ordermanagement.service.impl;
 
 import com.ibrahimokic.ordermanagement.domain.dto.ProductDto;
 import com.ibrahimokic.ordermanagement.domain.entity.Product;
+import com.ibrahimokic.ordermanagement.mapper.impl.ProductMapperImpl;
 import com.ibrahimokic.ordermanagement.repository.OrderItemRepository;
 import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.service.ProductService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final OrderItemRepository orderItemRepository;
+    private final ProductMapperImpl productMapper;
 
     @Override
     public List<Product> getAllProducts() {
@@ -58,18 +60,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Optional<Product> updateProduct(Long productId, ProductDto updatedProductDto) {
+    public Optional<Product> updateProduct(Long productId, @Valid ProductDto updatedProductDto) {
         try {
             Optional<Product> optionalExistingProduct = productRepository.findById(productId);
 
             if (optionalExistingProduct.isPresent()) {
-                Product existingProduct = optionalExistingProduct.get();
-                BeanUtils.copyProperties(updatedProductDto, existingProduct);
+                Product existingProduct = productMapper.mapFrom(updatedProductDto);
+                existingProduct.setProductId(productId);
                 try {
                     productRepository.save(existingProduct);
                     return Optional.of(existingProduct);
                 } catch (Exception e) {
-                    return Optional.empty();
+                    throw new RuntimeException("Product not found");
                 }
             } else {
                 return Optional.empty();

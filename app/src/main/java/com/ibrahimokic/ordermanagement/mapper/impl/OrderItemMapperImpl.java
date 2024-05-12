@@ -3,7 +3,6 @@ package com.ibrahimokic.ordermanagement.mapper.impl;
 import com.ibrahimokic.ordermanagement.domain.dto.OrderItemDto;
 import com.ibrahimokic.ordermanagement.domain.entity.OrderItem;
 import com.ibrahimokic.ordermanagement.mapper.Mapper;
-import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
