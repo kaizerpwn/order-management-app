@@ -328,12 +328,12 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
                 return;
             }
 
-            if (!Utils.checkProductQuantity(product.get(), quantity)) {
+            if (Utils.checkProductQuantity(product.get(), quantity)) {
                 System.out.println("ERROR: Quantity available for that product is '" + product.get().getAvailableQuantity() + "', not '" + quantity + "'.");
                 return;
             }
 
-            if (!Utils.checkProductAvailability(product.get())) {
+            if (Utils.checkProductAvailability(product.get())) {
                 System.out.println("ERROR: That product is not currently available, it is available from the date " + product.get().getAvailableFrom() + " to "+ product.get().getAvailableUntil() + ".");
                 return;
             }

@@ -26,13 +26,10 @@ public class Utils {
     }
 
     public static boolean checkIfAddressIsDifferent(Address address, AddressDto addressDto) {
-        if (!Objects.equals(address.getStreet(), addressDto.getStreet()) ||
-            !Objects.equals(address.getCity(), addressDto.getCity()) ||
-            !Objects.equals(address.getZip(), addressDto.getZip()) ||
-            !Objects.equals(address.getCountry(), addressDto.getCountry())) {
-            return true;
-        }
-        return false;
+        return !Objects.equals(address.getStreet(), addressDto.getStreet()) ||
+                !Objects.equals(address.getCity(), addressDto.getCity()) ||
+                !Objects.equals(address.getZip(), addressDto.getZip()) ||
+                !Objects.equals(address.getCountry(), addressDto.getCountry());
     }
 
     public static boolean checkIfOrderItemsAreDifferent(List<OrderItem> retrievedOrderItems, List<OrderItem> updatedOrderItems) {
@@ -82,12 +79,11 @@ public class Utils {
         LocalDate availableFrom = product.getAvailableFrom();
         LocalDate availableUntil = product.getAvailableUntil();
 
-        return currentDate.isAfter(availableFrom) && currentDate.isBefore(availableUntil);
+        return !currentDate.isAfter(availableFrom) || !currentDate.isBefore(availableUntil);
     }
 
     public static boolean checkProductQuantity(Product product, int quantity) {
-        if (product.getAvailableQuantity() < quantity) return false;
-        return true;
+        return product.getAvailableQuantity() < quantity;
     }
 
     public static int getValidInput(Scanner scanner, int max) {

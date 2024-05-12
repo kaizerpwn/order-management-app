@@ -140,10 +140,10 @@ public class OrderServiceImpl implements OrderService {
 
                 if (productItem.isPresent()) {
                     if(orderItemDto.getQuantity() != 0) {
-                        if (!Utils.checkProductQuantity(productItem.get(), orderItemDto.getQuantity())) {
+                        if (Utils.checkProductQuantity(productItem.get(), orderItemDto.getQuantity())) {
                             throw new RuntimeException("Quantity available for product "+ productItem.get().getProductId() +" is '" + productItem.get().getAvailableQuantity() + "', not '" + orderItemDto.getQuantity() + "'.");
                         }
-                        if (!Utils.checkProductAvailability(productItem.get())) {
+                        if (Utils.checkProductAvailability(productItem.get())) {
                             throw new RuntimeException("Product "+ productItem.get().getProductId() +" is not currently available, it is available from the date " + productItem.get().getAvailableFrom() + " to "+ productItem.get().getAvailableUntil() + ".");
                         }
 
