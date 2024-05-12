@@ -2,8 +2,7 @@ package com.ibrahimokic.ordermanagement.controller;
 
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
-import com.ibrahimokic.ordermanagement.mapper.impl.AddressMapperImpl;
-import com.ibrahimokic.ordermanagement.repository.AddressRepository;
+import com.ibrahimokic.ordermanagement.mapper.impl.AddressMapperImpl; 
 import com.ibrahimokic.ordermanagement.service.AddressService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +28,6 @@ import java.util.Optional;
 public class AddressController {
 
     private final AddressService addressService;
-    private final AddressRepository addressRepository;
     private final AddressMapperImpl addressMapper;
 
     @GetMapping
@@ -120,24 +117,10 @@ public class AddressController {
     @Operation(summary = "Edit address", description = "Edit address based on request body and address ID")
     public ResponseEntity<?> updateAddress(@PathVariable Long addressId, @Valid @RequestBody AddressDto updatedAddressDto) {
         try {
-            Optional<Address> optionalExistingAddress = addressService.getAddressById(addressId);
-
-            if (optionalExistingAddress.isPresent()) {
-                Address existingAddress = optionalExistingAddress.get();
-                BeanUtils.copyProperties(updatedAddressDto, existingAddress);
-                try {
-                    addressRepository.save(existingAddress);
-                    return ResponseEntity.ok(addressMapper.mapTo(existingAddress));
-                } catch (Exception e) {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .contentType(MediaType.TEXT_PLAIN)
-                            .body("Internal server error");
-                }
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .contentType(MediaType.TEXT_PLAIN)
-                        .body("Address with that ID does not exist in database");
-            }
+            AddressDto updatedAddress = addressService.updateAddress(addressId, updatedAddressDto);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(updatedAddress);
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)

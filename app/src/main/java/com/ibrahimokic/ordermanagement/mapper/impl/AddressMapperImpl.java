@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class AddressMapperImpl implements Mapper<Address, AddressDto> {
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
     public AddressMapperImpl(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
