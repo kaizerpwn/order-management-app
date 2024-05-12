@@ -3,6 +3,7 @@ package com.ibrahimokic.ordermanagement.service;
 import com.ibrahimokic.ordermanagement.domain.dto.ProductDto;
 import com.ibrahimokic.ordermanagement.domain.entity.Product;
 import com.ibrahimokic.ordermanagement.mapper.impl.ProductMapperImpl;
+import com.ibrahimokic.ordermanagement.repository.OrderItemRepository;
 import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.service.impl.ProductServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,9 @@ public class ProductServiceImplTest {
 
     @Mock
     private ProductRepository productRepository;
+
+    @Mock
+    private OrderItemRepository orderItemRepository;
 
     @Mock
     private ProductMapperImpl productMapper;
@@ -54,6 +58,7 @@ public class ProductServiceImplTest {
     @Test
     void testDeleteProduct() {
         Long productId = 1L;
+        when(productRepository.existsById(1L)).thenReturn(true);
         productService.deleteProduct(productId);
         verify(productRepository, times(1)).deleteById(productId);
     }

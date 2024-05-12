@@ -2,6 +2,7 @@ package com.ibrahimokic.ordermanagement.service.impl;
 
 import com.ibrahimokic.ordermanagement.domain.dto.ProductDto;
 import com.ibrahimokic.ordermanagement.domain.entity.Product;
+import com.ibrahimokic.ordermanagement.repository.OrderItemRepository;
 import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.service.ProductService;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Override
     public List<Product> getAllProducts() {
@@ -80,8 +82,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean deleteProduct(Long productId) {
         try {
-            productRepository.deleteById(productId);
-            return true;
+            if(productRepository.existsById(productId)) {
+                orderItemRepository.deleteByProductId(productId);
+                productRepository.deleteById(productId);
+                return true;
+            }
+            return false;
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete product by ID: " + e.getMessage());
         }

@@ -25,7 +25,7 @@ public class OrderItem {
         @JoinColumn(name = "order_id", nullable = false)
         private Order order;
 
-        @ManyToOne
+        @ManyToOne(cascade = CascadeType.REMOVE)
         @JoinColumn(name = "product_id", nullable = false)
         private Product product;
 
