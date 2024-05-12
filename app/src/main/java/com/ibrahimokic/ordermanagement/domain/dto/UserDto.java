@@ -2,6 +2,7 @@ package com.ibrahimokic.ordermanagement.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -62,5 +63,6 @@ public class UserDto {
 
     @JsonProperty("address")
     @NotNull
+    @Valid
     private AddressDto address;
 }

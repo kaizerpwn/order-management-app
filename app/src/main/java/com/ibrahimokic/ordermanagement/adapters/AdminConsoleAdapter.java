@@ -8,6 +8,7 @@ import com.ibrahimokic.ordermanagement.service.OrderService;
 import com.ibrahimokic.ordermanagement.service.ProductService;
 import com.ibrahimokic.ordermanagement.service.UserService;
 import com.ibrahimokic.ordermanagement.utils.Utils;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
@@ -250,7 +251,15 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
                     .build();
 
             saveUserAndReturnToMenu(newUserAccount);
-        } catch (Exception e) {
+        }
+        catch (ConstraintViolationException e) {
+            e.getConstraintViolations().forEach(violation ->
+                    System.out.println(violation.getMessage())
+            );
+            Utils.returnBackToTheMainMenu(scanner);
+            adminUserManagementOptions();
+        }
+        catch (Exception e) {
             System.out.println("ERROR: "+ e.getMessage());
             Utils.returnBackToTheMainMenu(scanner);
             adminUserManagementOptions();
@@ -306,7 +315,13 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
         try {
             userService.createUser(user);
             System.out.println("OM-APP: New account '" + user.getFirstName() + " " + user.getLastName() + "' with role '"+ user.getRole() +"' has been successfully created.");
-        } catch (Exception e) {
+        }
+        catch (ConstraintViolationException e) {
+            e.getConstraintViolations().forEach(violation ->
+                    System.out.println(violation.getMessage())
+            );
+        }
+        catch (Exception e) {
             System.out.println("ERROR: An error occurred while creating an user, please check your inputs.");
         }
 

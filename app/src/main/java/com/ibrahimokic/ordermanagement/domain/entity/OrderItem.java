@@ -1,6 +1,7 @@
 package com.ibrahimokic.ordermanagement.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,8 +30,10 @@ public class OrderItem {
         private Product product;
 
         @Column(nullable = false)
+        @NotNull
         private int quantity;
 
         @Column(name = "item_price", nullable = false, precision = 10, scale = 2)
+        @NotNull
         private BigDecimal itemPrice;
 }

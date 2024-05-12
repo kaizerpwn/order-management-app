@@ -30,7 +30,6 @@ public class Product {
     private String productName;
 
     @Column(nullable = false)
-    @NotBlank(message = "Price is required")
     @NotNull
     private BigDecimal price;
 
@@ -47,7 +46,6 @@ public class Product {
     private LocalDate availableUntil;
 
     @Column(name = "available_quantity", nullable = false)
-    @NotBlank(message = "Available quantity is required")
     @NotNull
     private int availableQuantity;
 }

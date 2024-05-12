@@ -23,11 +23,9 @@ public class OrderItemDto {
 
     @JsonProperty("quantity")
     @NotNull
-    @NotBlank(message = "Quantity is required")
     private Integer quantity;
 
     @JsonProperty("item_price")
     @NotNull
-    @NotBlank(message = "Item price is required")
     private BigDecimal itemPrice;
 }

@@ -31,7 +31,6 @@ public class OrderMapperImplTest {
 
     @Test
     void testMapToOrderDto() {
-        // Given
         User user = User.builder().userId(101L).build();
         Address deliveryAddress = Address.builder().addressId(1L).build();
         Address sourceAddress = Address.builder().addressId(2L).build();
@@ -56,16 +55,12 @@ public class OrderMapperImplTest {
 
         when(modelMapper.map(order, OrderDto.class)).thenReturn(expectedOrderDto);
 
-        // When
         OrderDto result = orderMapper.mapTo(order);
-
-        // Then
         assertEquals(expectedOrderDto, result);
     }
 
     @Test
     void testMapFromOrderDto() {
-        // Given
         AddressDto deliveryAddressDto = AddressDto.builder().addressId(1L).build();
         AddressDto sourceAddressDto = AddressDto.builder().addressId(2L).build();
         OrderDto orderDto = OrderDto.builder()
@@ -91,10 +86,7 @@ public class OrderMapperImplTest {
 
         when(modelMapper.map(orderDto, Order.class)).thenReturn(expectedOrder);
 
-        // When
         Order result = orderMapper.mapFrom(orderDto);
-
-        // Then
         assertEquals(expectedOrder, result);
     }
 }

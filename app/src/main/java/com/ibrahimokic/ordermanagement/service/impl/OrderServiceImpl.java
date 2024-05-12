@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -109,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
                     .sourceAddress(addressMapper.mapFrom(orderDto.getSourceAddress()))
                     .orderDate(orderDto.getOrderDate())
                     .orderItems(null)
-                    .totalAmount(new BigDecimal(0))
+                    .totalAmount(BigDecimal.ZERO)
                     .build();
 
             Optional<User> optionalUser = userRepository.findById(orderDto.getUserId());
@@ -161,10 +162,10 @@ public class OrderServiceImpl implements OrderService {
             order.setTotalAmount(Utils.calculateTotalProductsPriceAmount(orderItems));
 
             orderRepository.save(order);
-
-            return Optional.ofNullable(orderMapper.mapTo(order));
+            OrderDto mappedOrderDto = orderMapper.mapTo(order);
+            return Optional.of(Objects.requireNonNullElse(mappedOrderDto, orderDto));
         } catch (Exception e) {
-            throw new RuntimeException("Error creating order: " + e.getMessage());
+            throw new RuntimeException("Error occurred while creating an order: " + e.getMessage());
         }
     }
 

@@ -29,7 +29,6 @@ public class ProductDto {
 
     @JsonProperty("price")
     @NotNull
-    @NotBlank(message = "Price is required")
     private BigDecimal price;
 
     @JsonProperty("available_from")
@@ -45,6 +44,6 @@ public class ProductDto {
     private LocalDate availableUntil;
 
     @JsonProperty("available_quantity")
-    @NotBlank(message = "Available quantity is required")
+    @NotNull
     private int availableQuantity;
 }

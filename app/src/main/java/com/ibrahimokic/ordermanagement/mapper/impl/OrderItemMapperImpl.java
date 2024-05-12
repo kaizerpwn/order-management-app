@@ -31,11 +31,4 @@ public class OrderItemMapperImpl implements Mapper<OrderItem, OrderItemDto> {
                 .map(this::mapFrom)
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public List<OrderItemDto> mapDtoListToEntityList(@Valid List<OrderItemDto> orderItems) {
-        return orderItems.stream()
-                .map(orderItemDto -> mapTo(mapFrom(orderItemDto)))
-                .collect(Collectors.toList());
-    }
 }

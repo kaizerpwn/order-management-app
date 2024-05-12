@@ -28,10 +28,7 @@ public class User {
     @Column(name = "password", nullable = false)
     @JsonIgnore
     @NotBlank(message = "Password is required")
-    @Size(
-            min = 5,
-            message = "The password '${validatedValue}' must be greater then {min}"
-    )
+    @Size( min = 5, message = "The password '${validatedValue}' must be greater then {min}")
     private String password;
 
     @Column(name = "email", nullable = false)
@@ -67,5 +64,4 @@ public class User {
     public boolean checkUserPassword(String password) {
         return password.equals(this.password);
     }
-    public boolean checkEmailAlreadyExists(String email) { return email.equals(this.email); }
 }

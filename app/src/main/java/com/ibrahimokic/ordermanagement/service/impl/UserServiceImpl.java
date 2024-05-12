@@ -44,8 +44,7 @@ public class UserServiceImpl implements UserService {
         try {
             User userExists = userRepository.findByEmail(user.getEmail());
 
-            if(userExists != null)
-            {
+            if(userExists != null) {
                 throw new RuntimeException("User with that email already exists in the database.");
             }
 
