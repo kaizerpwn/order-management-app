@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class ProductMapperImpl implements Mapper<Product, ProductDto> {
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
     public ProductMapperImpl(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
