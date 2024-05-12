@@ -10,6 +10,7 @@ import com.ibrahimokic.ordermanagement.mapper.impl.UserMapperImpl;
 import com.ibrahimokic.ordermanagement.service.AuthService;
 import com.ibrahimokic.ordermanagement.service.OrderService;
 import com.ibrahimokic.ordermanagement.service.UserService;
+import com.ibrahimokic.ordermanagement.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -118,7 +120,10 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<?> registerUser(@RequestBody @Valid UserDto userDto, HttpServletResponse response) {
+    public ResponseEntity<?> registerUser(@RequestBody @Valid UserDto userDto, HttpServletResponse response, BindingResult bindingResult) {
+        ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
+        if (errors != null) return errors;
+
         try {
             return authService.registerUser(userDto, response);
         } catch (Exception e) {
@@ -137,7 +142,11 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Username and password does not match any user in the database", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<?> loginUser(@Validated @RequestBody LoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> loginUser(@Validated @RequestBody LoginRequest request, HttpServletResponse response, BindingResult bindingResult) {
+
+        ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
+        if (errors != null) return errors;
+
         try {
             return authService.loginUser(request, response);
         } catch (Exception e) {
@@ -158,7 +167,11 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "An error occurred while deleting user")
     })
-    public ResponseEntity<?> updateUser(@PathVariable Long userId, @Valid @RequestBody UserDto updatedUserDto) {
+    public ResponseEntity<?> updateUser(@PathVariable Long userId, @Valid @RequestBody UserDto updatedUserDto, BindingResult bindingResult) {
+
+        ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
+        if (errors != null) return errors;
+
         try {
             Optional<User> updatedUser = userService.updateUser(userId, updatedUserDto);
 

@@ -4,6 +4,7 @@ import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
 import com.ibrahimokic.ordermanagement.mapper.impl.AddressMapperImpl;
 import com.ibrahimokic.ordermanagement.service.AddressService;
+import com.ibrahimokic.ordermanagement.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -80,7 +82,10 @@ public class AddressController {
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<?> createAddress(@RequestBody @Valid AddressDto addressDto) {
+    public ResponseEntity<?> createAddress(@RequestBody @Valid AddressDto addressDto, BindingResult bindingResult) {
+        ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
+        if (errors != null) return errors;
+
         try {
             Address newAddress = addressMapper.mapFrom(addressDto);
             Address createdAddress = addressService.createAddress(newAddress);
@@ -115,7 +120,10 @@ public class AddressController {
     @PatchMapping("/{addressId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Edit address", description = "Edit address based on request body and address ID")
-    public ResponseEntity<?> updateAddress(@PathVariable Long addressId, @Valid @RequestBody AddressDto updatedAddressDto) {
+    public ResponseEntity<?> updateAddress(@PathVariable Long addressId, @Valid @RequestBody AddressDto updatedAddressDto, BindingResult bindingResult) {
+        ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
+        if (errors != null) return errors;
+
         try {
             AddressDto updatedAddress = addressService.updateAddress(addressId, updatedAddressDto);
             return ResponseEntity.ok()

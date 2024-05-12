@@ -4,6 +4,7 @@ import com.ibrahimokic.ordermanagement.domain.entity.Product;
 import com.ibrahimokic.ordermanagement.domain.dto.ProductDto;
 import com.ibrahimokic.ordermanagement.mapper.impl.ProductMapperImpl;
 import com.ibrahimokic.ordermanagement.service.ProductService;
+import com.ibrahimokic.ordermanagement.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -79,7 +81,10 @@ public class ProductController {
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<?> createProduct(@RequestBody @Valid ProductDto productDto) {
+    public ResponseEntity<?> createProduct(@RequestBody @Valid ProductDto productDto, BindingResult bindingResult) {
+        ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
+        if (errors != null) return errors;
+
         try {
             Product newProduct = productMapper.mapFrom(productDto);
             Product createdProduct = productService.createProduct(newProduct);
@@ -95,7 +100,10 @@ public class ProductController {
     @PatchMapping("/{productId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Edit product", description = "Edit product based on request body and product ID")
-    public ResponseEntity<?> updateProduct(@PathVariable Long productId, @Valid @RequestBody ProductDto updatedProductDto) {
+    public ResponseEntity<?> updateProduct(@PathVariable Long productId, @Valid @RequestBody ProductDto updatedProductDto, BindingResult bindingResult) {
+        ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
+        if (errors != null) return errors;
+
         try {
             Optional<Product> updatedProduct = productService.updateProduct(productId, updatedProductDto);
 

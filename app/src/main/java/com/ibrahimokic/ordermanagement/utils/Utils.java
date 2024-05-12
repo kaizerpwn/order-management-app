@@ -2,12 +2,13 @@ package com.ibrahimokic.ordermanagement.utils;
 
 import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
 import com.ibrahimokic.ordermanagement.domain.entity.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class Utils {
     public static BigDecimal calculateTotalProductsPriceAmount(List<OrderItem> orderItems) {
@@ -72,6 +73,17 @@ public class Utils {
 
     public static String formatAddress(Address address) {
         return String.format("%s, %s, %s, %s", address.getStreet(), address.getZip(), address.getCity(), address.getCountry());
+    }
+
+    public static ResponseEntity<?> getBindingResults(BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errors.put(error.getField(), error.getDefaultMessage());
+            }
+            return ResponseEntity.badRequest().body(errors);
+        }
+        return null;
     }
 
     public static boolean checkProductAvailability(Product product) {

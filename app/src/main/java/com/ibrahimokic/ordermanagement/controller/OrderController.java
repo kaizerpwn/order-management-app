@@ -2,6 +2,7 @@ package com.ibrahimokic.ordermanagement.controller;
 
 import com.ibrahimokic.ordermanagement.domain.dto.OrderDto;
 import com.ibrahimokic.ordermanagement.service.OrderService;
+import com.ibrahimokic.ordermanagement.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -104,7 +106,10 @@ public class OrderController {
             @ApiResponse(responseCode = "404", description = "Order with ID '4' does not exist.", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<?> createOrder(@RequestBody @Valid OrderDto orderDto) {
+    public ResponseEntity<?> createOrder(@RequestBody @Valid OrderDto orderDto, BindingResult bindingResult) {
+        ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
+        if (errors != null) return errors;
+
         try {
             Optional<OrderDto> order = orderService.createNewOrder(orderDto);
 
@@ -125,7 +130,10 @@ public class OrderController {
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<?> updateOrder(@PathVariable Long orderId, @RequestBody @Valid OrderDto orderDto) {
+    public ResponseEntity<?> updateOrder(@PathVariable Long orderId, @RequestBody @Valid OrderDto orderDto, BindingResult bindingResult) {
+        ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
+        if (errors != null) return errors;
+
         try {
             boolean result = orderService.updateOrder(orderId, orderDto);
 
