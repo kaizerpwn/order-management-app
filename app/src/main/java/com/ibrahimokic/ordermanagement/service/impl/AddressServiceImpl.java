@@ -47,8 +47,11 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public boolean deleteAddress(Long addressId) {
         try {
-            addressRepository.deleteById(addressId);
-            return true;
+            if(addressRepository.existsById(addressId)) {
+                addressRepository.deleteById(addressId);
+                return true;
+            }
+            return false;
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete address: " +e.getMessage());
         }

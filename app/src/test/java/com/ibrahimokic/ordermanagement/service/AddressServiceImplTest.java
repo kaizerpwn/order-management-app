@@ -6,14 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -65,5 +65,19 @@ public class AddressServiceImplTest {
 
         verify(addressRepository, times(1)).save(any(Address.class));
         assertEquals(mockAddress, createdAddress);
+    }
+
+    @Test
+    void testDeleteAddressShouldSuccess() {
+        when(addressRepository.existsById(1L)).thenReturn(true);
+
+        boolean result = addressService.deleteAddress(1L);
+        assertTrue(result);
+    }
+
+    @Test
+    void testDeleteAddressShouldFail() {
+        boolean result = addressService.deleteAddress(500L);
+        assertFalse(result);
     }
 }
