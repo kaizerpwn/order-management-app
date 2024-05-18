@@ -5,6 +5,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +30,7 @@ public class ProductDto {
 
     @JsonProperty("price")
     @NotNull
+    @Positive(message = "Price must be bigger than zero")
     private BigDecimal price;
 
     @JsonProperty("available_from")
@@ -45,5 +47,6 @@ public class ProductDto {
 
     @JsonProperty("available_quantity")
     @NotNull
+    @Positive(message = "Available quantity must be bigger than zero")
     private int availableQuantity;
 }

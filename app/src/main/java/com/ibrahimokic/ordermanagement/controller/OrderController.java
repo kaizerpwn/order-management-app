@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -108,14 +109,15 @@ public class OrderController {
     })
     public ResponseEntity<?> createOrder(@RequestBody @Valid OrderDto orderDto, BindingResult bindingResult) {
         ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
-        if (errors != null) return errors;
+        if (errors != null)
+            return errors;
 
         try {
             Optional<OrderDto> order = orderService.createNewOrder(orderDto);
 
             return ResponseEntity.status(HttpStatus.CREATED)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(order);
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(order);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .contentType(MediaType.TEXT_PLAIN)
@@ -130,9 +132,11 @@ public class OrderController {
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<?> updateOrder(@PathVariable Long orderId, @RequestBody @Valid OrderDto orderDto, BindingResult bindingResult) {
+    public ResponseEntity<?> updateOrder(@PathVariable Long orderId, @RequestBody @Valid OrderDto orderDto,
+            BindingResult bindingResult) {
         ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
-        if (errors != null) return errors;
+        if (errors != null)
+            return errors;
 
         try {
             boolean result = orderService.updateOrder(orderId, orderDto);
@@ -151,5 +155,12 @@ public class OrderController {
                     .contentType(MediaType.TEXT_PLAIN)
                     .body(e.getMessage());
         }
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleWrongDateFormatException() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                "Invalid order date format. Please provide the date in yyyy-MM-dd format");
     }
 }

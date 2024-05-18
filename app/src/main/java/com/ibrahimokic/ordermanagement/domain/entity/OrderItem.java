@@ -2,6 +2,7 @@ package com.ibrahimokic.ordermanagement.domain.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,9 +32,11 @@ public class OrderItem {
 
         @Column(nullable = false)
         @NotNull
+        @Positive(message = "Quantity must be bigger than zero")
         private int quantity;
 
         @Column(name = "item_price", nullable = false, precision = 10, scale = 2)
         @NotNull
+        @Positive(message = "Price must be bigger than zero")
         private BigDecimal itemPrice;
 }

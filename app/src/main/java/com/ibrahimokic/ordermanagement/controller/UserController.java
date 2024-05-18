@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -88,7 +89,6 @@ public class UserController {
         }
     }
 
-
     @GetMapping("/{userId}")
     @Operation(summary = "Get a user by ID", description = "Get a user by providing its ID")
     @ApiResponse(responseCode = "200", description = "User found", content = {
@@ -120,9 +120,11 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<?> registerUser(@RequestBody @Valid UserDto userDto, HttpServletResponse response, BindingResult bindingResult) {
+    public ResponseEntity<?> registerUser(@RequestBody @Valid UserDto userDto, HttpServletResponse response,
+            BindingResult bindingResult) {
         ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
-        if (errors != null) return errors;
+        if (errors != null)
+            return errors;
 
         try {
             return authService.registerUser(userDto, response);
@@ -142,10 +144,12 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Username and password does not match any user in the database", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<?> loginUser(@Validated @RequestBody LoginRequest request, HttpServletResponse response, BindingResult bindingResult) {
+    public ResponseEntity<?> loginUser(@Validated @RequestBody LoginRequest request, HttpServletResponse response,
+            BindingResult bindingResult) {
 
         ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
-        if (errors != null) return errors;
+        if (errors != null)
+            return errors;
 
         try {
             return authService.loginUser(request, response);
@@ -167,10 +171,12 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "An error occurred while deleting user")
     })
-    public ResponseEntity<?> updateUser(@PathVariable Long userId, @Valid @RequestBody UserDto updatedUserDto, BindingResult bindingResult) {
+    public ResponseEntity<?> updateUser(@PathVariable Long userId, @Valid @RequestBody UserDto updatedUserDto,
+            BindingResult bindingResult) {
 
         ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
-        if (errors != null) return errors;
+        if (errors != null)
+            return errors;
 
         try {
             Optional<User> updatedUser = userService.updateUser(userId, updatedUserDto);
@@ -178,7 +184,8 @@ public class UserController {
             if (updatedUser.isPresent()) {
                 return ResponseEntity.ok().body(userMapper.mapTo(updatedUser.get()));
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while updating user " + userId + ".");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("An error occurred while updating user " + userId + ".");
             }
         } catch (Exception e) {
             return ResponseEntity
@@ -199,11 +206,11 @@ public class UserController {
     })
     public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
         try {
-            if(userService.deleteUser(userId)) {
+            if (userService.deleteUser(userId)) {
                 return ResponseEntity.status(HttpStatus.OK).body("User with ID " + userId + " successfully deleted.");
-            }
-            else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting user " + userId + ".");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("An error occurred while deleting user " + userId + ".");
             }
         } catch (Exception e) {
             return ResponseEntity
@@ -211,5 +218,12 @@ public class UserController {
                     .contentType(MediaType.TEXT_PLAIN)
                     .body(e.getMessage());
         }
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleWrongDateFormatException() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                "Invalid birth date format. Please provide the date in yyyy-MM-dd format");
     }
 }

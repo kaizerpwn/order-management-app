@@ -33,7 +33,8 @@ public class Utils {
                 !Objects.equals(address.getCountry(), addressDto.getCountry());
     }
 
-    public static boolean checkIfOrderItemsAreDifferent(List<OrderItem> retrievedOrderItems, List<OrderItem> updatedOrderItems) {
+    public static boolean checkIfOrderItemsAreDifferent(List<OrderItem> retrievedOrderItems,
+            List<OrderItem> updatedOrderItems) {
         boolean differentOrderItems = false;
 
         if (retrievedOrderItems.size() != updatedOrderItems.size()) {
@@ -44,7 +45,8 @@ public class Utils {
             OrderItem retrievedOrderItem = retrievedOrderItems.get(i);
             OrderItem updatedOrderItem = updatedOrderItems.get(i);
 
-            if (!Objects.equals(retrievedOrderItem.getProduct().getProductId(), updatedOrderItem.getProduct().getProductId())) {
+            if (!Objects.equals(retrievedOrderItem.getProduct().getProductId(),
+                    updatedOrderItem.getProduct().getProductId())) {
                 differentOrderItems = true;
                 break;
             }
@@ -54,7 +56,7 @@ public class Utils {
     }
 
     public static void clearConsole(int lines) {
-        for(int i = 0; i < lines; i++) {
+        for (int i = 0; i < lines; i++) {
             System.out.println("\n");
         }
     }
@@ -67,12 +69,13 @@ public class Utils {
     }
 
     public static String promptUserInput(Scanner scanner, String fieldName) {
-        System.out.print(">> Please enter the "+ fieldName +": ");
+        System.out.print(">> Please enter the " + fieldName + ": ");
         return scanner.nextLine();
     }
 
     public static String formatAddress(Address address) {
-        return String.format("%s, %s, %s, %s", address.getStreet(), address.getZip(), address.getCity(), address.getCountry());
+        return String.format("%s, %s, %s, %s", address.getStreet(), address.getZip(), address.getCity(),
+                address.getCountry());
     }
 
     public static ResponseEntity<?> getBindingResults(BindingResult bindingResult) {

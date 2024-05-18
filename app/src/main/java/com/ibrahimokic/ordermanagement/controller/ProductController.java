@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,7 +84,8 @@ public class ProductController {
     })
     public ResponseEntity<?> createProduct(@RequestBody @Valid ProductDto productDto, BindingResult bindingResult) {
         ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
-        if (errors != null) return errors;
+        if (errors != null)
+            return errors;
 
         try {
             Product newProduct = productMapper.mapFrom(productDto);
@@ -100,9 +102,11 @@ public class ProductController {
     @PatchMapping("/{productId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Edit product", description = "Edit product based on request body and product ID")
-    public ResponseEntity<?> updateProduct(@PathVariable Long productId, @Valid @RequestBody ProductDto updatedProductDto, BindingResult bindingResult) {
+    public ResponseEntity<?> updateProduct(@PathVariable Long productId,
+            @Valid @RequestBody ProductDto updatedProductDto, BindingResult bindingResult) {
         ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
-        if (errors != null) return errors;
+        if (errors != null)
+            return errors;
 
         try {
             Optional<Product> updatedProduct = productService.updateProduct(productId, updatedProductDto);
@@ -133,7 +137,8 @@ public class ProductController {
             if (deletionResult) {
                 return ResponseEntity.ok().body("Product deleted successfully.");
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting an product " + productId + ".");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("An error occurred while deleting an product " + productId + ".");
             }
         } catch (Exception e) {
             return ResponseEntity
@@ -143,4 +148,10 @@ public class ProductController {
         }
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleWrongDateFormatException() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                "Invalid available from or available to date format. Please provide the date in yyyy-MM-dd format");
+    }
 }

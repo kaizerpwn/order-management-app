@@ -105,7 +105,9 @@ public class OrderServiceImpl implements OrderService {
     public Optional<OrderDto> createNewOrder(@Valid OrderDto orderDto) {
         try {
             Order order = Order.builder()
-                    .user(User.builder().userId(orderDto.getUserId()).build())
+                    .user(User.builder()
+                            .userId(orderDto.getUserId())
+                            .build())
                     .deliveryAddress(addressMapper.mapFrom(orderDto.getDeliveryAddress()))
                     .sourceAddress(addressMapper.mapFrom(orderDto.getSourceAddress()))
                     .orderDate(orderDto.getOrderDate())
@@ -139,21 +141,29 @@ public class OrderServiceImpl implements OrderService {
                 Optional<Product> productItem = productRepository.findById(orderItemDto.getProductId());
 
                 if (productItem.isPresent()) {
-                    if(orderItemDto.getQuantity() != 0) {
+                    if (orderItemDto.getQuantity() != 0) {
                         if (Utils.checkProductQuantity(productItem.get(), orderItemDto.getQuantity())) {
-                            throw new RuntimeException("Quantity available for product "+ productItem.get().getProductId() +" is '" + productItem.get().getAvailableQuantity() + "', not '" + orderItemDto.getQuantity() + "'.");
+                            throw new RuntimeException(
+                                    "Quantity available for product " + productItem.get().getProductId() + " is '"
+                                            + productItem.get().getAvailableQuantity() + "', not '"
+                                            + orderItemDto.getQuantity() + "'.");
                         }
                         if (Utils.checkProductAvailability(productItem.get())) {
-                            throw new RuntimeException("Product "+ productItem.get().getProductId() +" is not currently available, it is available from the date " + productItem.get().getAvailableFrom() + " to "+ productItem.get().getAvailableUntil() + ".");
+                            throw new RuntimeException("Product " + productItem.get().getProductId()
+                                    + " is not currently available, it is available from the date "
+                                    + productItem.get().getAvailableFrom() + " to "
+                                    + productItem.get().getAvailableUntil() + ".");
                         }
 
                         orderItemRepository.save(orderItem);
                         orderItems.add(orderItem);
 
-                        productItem.get().setAvailableQuantity(productItem.get().getAvailableQuantity() - orderItem.getQuantity());
+                        productItem.get().setAvailableQuantity(
+                                productItem.get().getAvailableQuantity() - orderItem.getQuantity());
                         productRepository.save(productItem.get());
                     } else {
-                        throw new RuntimeException("Product with id " + orderItemDto.getProductId() +" can't have zero quantity.");
+                        throw new RuntimeException(
+                                "Product with id " + orderItemDto.getProductId() + " can't have zero quantity.");
                     }
                 }
             }
@@ -238,8 +248,7 @@ public class OrderServiceImpl implements OrderService {
                 } else {
                     throw new RuntimeException("User with ID " + orderDto.getUserId() + " not found.");
                 }
-            }
-            else {
+            } else {
                 throw new RuntimeException("Order with ID '" + orderId + "' does not exist.");
             }
 

@@ -9,10 +9,6 @@ import com.ibrahimokic.ordermanagement.service.AddressService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +22,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<Address> getAllAddresses() {
-        try{
+        try {
             return addressRepository.findAll();
         } catch (Exception e) {
             throw new RuntimeException("Failed to get all addresses: " + e.getMessage());
@@ -51,17 +47,16 @@ public class AddressServiceImpl implements AddressService {
         }
     }
 
-
     @Override
     public boolean deleteAddress(Long addressId) {
         try {
-            if(addressRepository.existsById(addressId)) {
+            if (addressRepository.existsById(addressId)) {
                 addressRepository.deleteById(addressId);
                 return true;
             }
             return false;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to delete address: " +e.getMessage());
+            throw new RuntimeException("Failed to delete address: " + e.getMessage());
         }
     }
 

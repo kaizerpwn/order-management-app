@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    @Query("SELECT p FROM Product p WHERE :currentDate BETWEEN p.availableFrom AND p.availableUntil") 
+    @Query("SELECT p FROM Product p WHERE :currentDate BETWEEN p.availableFrom AND p.availableUntil AND p.availableQuantity != 0")
     List<Product> findAvailableProducts(LocalDate currentDate);
 }

@@ -3,6 +3,7 @@ package com.ibrahimokic.ordermanagement.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,6 +32,7 @@ public class Product {
 
     @Column(nullable = false)
     @NotNull
+    @Positive(message = "Price must be bigger than zero")
     private BigDecimal price;
 
     @Column(name = "available_from", nullable = false)
@@ -47,5 +49,6 @@ public class Product {
 
     @Column(name = "available_quantity", nullable = false)
     @NotNull
+    @Positive(message = "Available quantity must be bigger than zero")
     private int availableQuantity;
 }

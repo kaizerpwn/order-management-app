@@ -1,6 +1,5 @@
 package com.ibrahimokic.ordermanagement.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
