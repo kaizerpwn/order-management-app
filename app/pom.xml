@@ -7,7 +7,7 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.2.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
-	</parent>čšn
+	</parent>
 	<groupId>com.ibrahimokic</groupId>
 	<artifactId>ordermanagement</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
