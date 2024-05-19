@@ -91,11 +91,11 @@ public class ProductController {
             Product newProduct = productMapper.mapFrom(productDto);
             Product createdProduct = productService.createProduct(newProduct);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
+            return ResponseEntity.status(HttpStatus.CREATED).body(productMapper.mapTo(createdProduct));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .contentType(MediaType.TEXT_PLAIN)
-                    .body("Internal server error");
+                    .body(e.getMessage());
         }
     }
 

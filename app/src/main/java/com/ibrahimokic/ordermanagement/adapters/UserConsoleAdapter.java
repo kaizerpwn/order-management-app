@@ -30,6 +30,7 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
     private final OrderService orderService;
     private User loggedUser;
     private final List<Product> currentOrder = new ArrayList<>();
+
     public void userMainForm() {
         Utils.clearConsole(20);
         consoleHeader();
@@ -53,8 +54,7 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
         } while (choice < 1 || choice > 2);
 
         switch (choice) {
-            case 1 ->
-            {
+            case 1 -> {
                 scanner.nextLine();
                 userLoginForm();
             }
@@ -78,25 +78,41 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
             System.out.print(">> Please enter your password: ");
             String password = scanner.nextLine();
 
-            User retrievedUser = userService.findByUsername(username).get();
+            Optional<User> userOptional = userService.findByUsername(username);
 
-            if (retrievedUser.checkUserPassword(password)) {
-                loggedIn = true;
-                loggedUser = retrievedUser;
-                AdminConsoleAdapter adminConsoleAdapter = new AdminConsoleAdapter(retrievedUser, userService, addressService, productService, orderService);
+            if (userOptional.isPresent()) {
+                User retrievedUser = userOptional.get();
 
-                switch (retrievedUser.getRole()) {
-                    case "user" -> showUserOptions();
-                    case "admin" -> adminConsoleAdapter.adminDashboard();
+                if (retrievedUser.checkUserPassword(password)) {
+                    loggedIn = true;
+                    loggedUser = retrievedUser;
+                    AdminConsoleAdapter adminConsoleAdapter = new AdminConsoleAdapter(retrievedUser, userService,
+                            addressService, productService, orderService);
+
+                    switch (retrievedUser.getRole()) {
+                        case "user" -> showUserOptions();
+                        case "admin" -> adminConsoleAdapter.adminDashboard();
+                    }
+                } else {
+                    System.out.println("Incorrect username or password");
+                    System.out.println(">> Would you like to go back to the main form? (Y/N)");
+
+                    String choice = scanner.nextLine().trim().toUpperCase();
+                    goToMainForm = choice.equals("Y");
+
+                    if (goToMainForm) {
+                        userMainForm();
+                        return;
+                    }
                 }
             } else {
-                System.out.println("Incorrect username or password");
+                System.out.println("User not found for username: " + username);
                 System.out.println(">> Would you like to go back to the main form? (Y/N)");
 
                 String choice = scanner.nextLine().trim().toUpperCase();
                 goToMainForm = choice.equals("Y");
 
-                if(goToMainForm) {
+                if (goToMainForm) {
                     userMainForm();
                     return;
                 }
@@ -107,9 +123,12 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
     public void showAllUsersTable() {
         List<User> userList = userService.getAllUsers();
 
-        System.out.println("|-------------|--------------|------------------------|----------|----------------|---------------|----------------|");
-        System.out.println("|   User ID   |   Username   |         Email          |   Role   |   First Name   |   Last Name   |   Birth Date   |");
-        System.out.println("|-------------|--------------|------------------------|----------|----------------|---------------|----------------|");
+        System.out.println(
+                "|-------------|--------------|------------------------|----------|----------------|---------------|----------------|");
+        System.out.println(
+                "|   User ID   |   Username   |         Email          |   Role   |   First Name   |   Last Name   |   Birth Date   |");
+        System.out.println(
+                "|-------------|--------------|------------------------|----------|----------------|---------------|----------------|");
 
         for (User user : userList) {
             System.out.printf("| %-12s| %-13s| %-23s| %-9s| %-15s| %-14s| %-15s|%n",
@@ -122,14 +141,16 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
                     user.getBirthDate());
         }
 
-        System.out.println("|-------------|--------------|------------------------|----------|----------------|---------------|----------------|");
+        System.out.println(
+                "|-------------|--------------|------------------------|----------|----------------|---------------|----------------|");
     }
 
     public void displayUserMenu() {
         Utils.clearConsole(20);
         consoleHeader();
 
-        System.out.println("[OM-APP]: Welcome, " + loggedUser.getFirstName() + "! Take a moment to choose your next step:");
+        System.out.println(
+                "[OM-APP]: Welcome, " + loggedUser.getFirstName() + "! Take a moment to choose your next step:");
         System.out.println("1.) List of all orders");
         System.out.println("2.) Order new products");
         System.out.println("3.) Log out");
@@ -141,7 +162,7 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
 
         displayUserMenu();
 
-        int choice = Utils.getValidInput(scanner,  3);
+        int choice = Utils.getValidInput(scanner, 3);
         processUserMenuChoice(choice);
     }
 
@@ -157,8 +178,7 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
                 Utils.returnBackToTheMainMenu(scanner);
                 showUserOptions();
             }
-            case 3:
-            {
+            case 3: {
                 loggedUser = null;
                 userMainForm();
                 break;
@@ -170,7 +190,8 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
         List<Product> productList = productService.getAllAvailableProducts();
         ProductConsoleAdapter.showProductsInTable(productList);
 
-        System.out.println(">> To add a product to your order, please type 'ID of the product and quantity', example: 5 10.");
+        System.out.println(
+                ">> To add a product to your order, please type 'ID of the product and quantity', example: 5 10.");
         System.out.println(">> If you want to remove a product from the cart, type 'REMOVE and ID of the product'..");
         System.out.println(">> You can also view all selected products, simply type 'VIEW CART'..");
         System.out.println(">> If you want to finish your order, type 'FINISH ORDER'..");
@@ -187,9 +208,12 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
                     finishedOrder = true;
                 }
                 case "VIEW CART" -> {
-                    System.out.println("|---------------------------------------------------------------------------------------------------------------------|");
-                    System.out.println("|                                       [ CURRENTLY ADDED PRODUCTS TO THE CART ]                                      |");
-                    System.out.println("|---------------------------------------------------------------------------------------------------------------------|");
+                    System.out.println(
+                            "|---------------------------------------------------------------------------------------------------------------------|");
+                    System.out.println(
+                            "|                                       [ CURRENTLY ADDED PRODUCTS TO THE CART ]                                      |");
+                    System.out.println(
+                            "|---------------------------------------------------------------------------------------------------------------------|");
                     ProductConsoleAdapter.showProductsInTable(currentOrder);
                 }
                 case "FINISH ORDER" -> {
@@ -200,7 +224,8 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
                     if (usersInput.toUpperCase().startsWith("REMOVE")) {
                         String[] inputParts = usersInput.split(" ");
                         if (inputParts.length < 2) {
-                            System.out.println("ERROR: Invalid input format. Please enter the product ID after 'REMOVE'.");
+                            System.out.println(
+                                    "ERROR: Invalid input format. Please enter the product ID after 'REMOVE'.");
                         } else {
                             String productIdToRemove = inputParts[1];
                             removeProductFromCart(productIdToRemove);
@@ -235,7 +260,7 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
 
     private void finishOrder() {
         try {
-            if(currentOrder.size() == 0) {
+            if (currentOrder.size() == 0) {
                 System.out.println("ERROR: Your cart is currently empty, so order is not created.");
                 return;
             }
@@ -274,8 +299,10 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
             }
 
             if (unavailableProduct != null) {
-                System.out.println("ERROR: Product with ID: '" + unavailableProduct + "' does not have the quantity you ordered.");
-                System.out.println("ERROR: Please use 'REMOVE " + unavailableProduct + "' to remove that product from the cart to continue the order.");
+                System.out.println(
+                        "ERROR: Product with ID: '" + unavailableProduct + "' does not have the quantity you ordered.");
+                System.out.println("ERROR: Please use 'REMOVE " + unavailableProduct
+                        + "' to remove that product from the cart to continue the order.");
             } else {
                 List<OrderItem> mappedOrderItems = orderItemMapper.mapListToEntityList(orderItemsList);
 
@@ -287,9 +314,12 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
                 newOrder.setTotalAmount(Utils.calculateTotalProductsPriceAmount(mappedOrderItems));
 
                 orderService.createNewOrder(newOrder);
-                System.out.println("|---------------------------------------------------------------------------------------------------------------------|");
-                System.out.println("|                                          [ NEW ORDER CREATED SUCCESSFULLY ]                                         |");
-                System.out.println("|---------------------------------------------------------------------------------------------------------------------|");
+                System.out.println(
+                        "|---------------------------------------------------------------------------------------------------------------------|");
+                System.out.println(
+                        "|                                          [ NEW ORDER CREATED SUCCESSFULLY ]                                         |");
+                System.out.println(
+                        "|---------------------------------------------------------------------------------------------------------------------|");
                 ProductConsoleAdapter.showProductsInTable(currentOrder);
             }
         } catch (Exception e) {
@@ -316,7 +346,7 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
             return;
         }
 
-        if(quantity == 0) {
+        if (quantity == 0) {
             System.out.println("ERROR: Quantity can't be zero, please choose different value.");
             return;
         }
@@ -329,12 +359,14 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
             }
 
             if (Utils.checkProductQuantity(product.get(), quantity)) {
-                System.out.println("ERROR: Quantity available for that product is '" + product.get().getAvailableQuantity() + "', not '" + quantity + "'.");
+                System.out.println("ERROR: Quantity available for that product is '"
+                        + product.get().getAvailableQuantity() + "', not '" + quantity + "'.");
                 return;
             }
 
             if (Utils.checkProductAvailability(product.get())) {
-                System.out.println("ERROR: That product is not currently available, it is available from the date " + product.get().getAvailableFrom() + " to "+ product.get().getAvailableUntil() + ".");
+                System.out.println("ERROR: That product is not currently available, it is available from the date "
+                        + product.get().getAvailableFrom() + " to " + product.get().getAvailableUntil() + ".");
                 return;
             }
 
@@ -345,9 +377,11 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
                     int updatedQuantity = p.getAvailableQuantity() + quantity;
                     if (updatedQuantity <= product.get().getAvailableQuantity()) {
                         p.setAvailableQuantity(updatedQuantity);
-                        System.out.println("ORDER-LIST: Quantity of Product with ID '" + productId + "' updated to " + updatedQuantity);
+                        System.out.println("ORDER-LIST: Quantity of Product with ID '" + productId + "' updated to "
+                                + updatedQuantity);
                     } else {
-                        System.out.println("ERROR: Quantity available for that product is '" + product.get().getAvailableQuantity() + "', not '" + updatedQuantity + "'.");
+                        System.out.println("ERROR: Quantity available for that product is '"
+                                + product.get().getAvailableQuantity() + "', not '" + updatedQuantity + "'.");
                     }
                     break;
                 }
@@ -356,7 +390,8 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
             if (!found) {
                 product.get().setAvailableQuantity(quantity);
                 currentOrder.add(product.get());
-                System.out.println("ORDER-LIST: " + quantity + "x Product with ID '" + productId + "' successfully added to list.");
+                System.out.println("ORDER-LIST: " + quantity + "x Product with ID '" + productId
+                        + "' successfully added to list.");
             }
         } catch (NumberFormatException e) {
             System.out.println("ERROR: Invalid input. Please provide a valid input.");

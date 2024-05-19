@@ -94,7 +94,7 @@ public class Utils {
         LocalDate availableFrom = product.getAvailableFrom();
         LocalDate availableUntil = product.getAvailableUntil();
 
-        return !currentDate.isAfter(availableFrom) || !currentDate.isBefore(availableUntil);
+        return !currentDate.isAfter(availableFrom.minusDays(1)) || !currentDate.isBefore(availableUntil);
     }
 
     public static boolean checkProductQuantity(Product product, int quantity) {
