@@ -7,6 +7,7 @@ import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.service.UserService;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.BeanUtils;
@@ -50,6 +51,11 @@ public class UserServiceImpl implements UserService {
             }
 
             return userRepository.save(user);
+        } catch (ConstraintViolationException e) {
+            StringBuilder errorMessages = new StringBuilder("Validation failed with the following errors:\n");
+            e.getConstraintViolations()
+                    .forEach(violation -> errorMessages.append(" - ").append(violation.getMessage()).append("\n"));
+            throw new RuntimeException(errorMessages.toString());
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -58,17 +64,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> updateUser(Long userId, UserDto updatedUserDto) {
         try {
-            Optional<User> optionalExistingUser = userRepository.findById(userId);
+            Optional<User> retrievedUser = userRepository.findById(userId);
 
-            if (optionalExistingUser.isPresent()) {
-                User existingUser = optionalExistingUser.get();
-                BeanUtils.copyProperties(updatedUserDto, existingUser, "userId");
+            if (retrievedUser.isPresent()) {
+                User user = retrievedUser.get();
+                BeanUtils.copyProperties(updatedUserDto, user, "userId");
 
-                userRepository.save(existingUser);
-                return Optional.of(existingUser);
+                userRepository.save(user);
+                return Optional.of(user);
             } else {
                 throw new RuntimeException("User with ID " + userId + " does not exist in the database.");
             }
+        } catch (ConstraintViolationException e) {
+            StringBuilder errorMessages = new StringBuilder("Validation failed with the following errors:\n");
+            e.getConstraintViolations()
+                    .forEach(violation -> errorMessages.append(" - ").append(violation.getMessage()).append("\n"));
+            throw new RuntimeException(errorMessages.toString());
         } catch (Exception e) {
             throw new RuntimeException("Failed to update the user: " + e.getMessage());
         }
@@ -132,6 +143,22 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to log in the user: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean deleteUserByUsername(String username) {
+        try {
+            User retrievedUser = userRepository.findByUsername(username);
+            if (retrievedUser == null) {
+                return false;
+            }
+            userRepository.delete(retrievedUser);
+            return true;
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Cannot delete user because he is still referenced by some order.");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete user by username: " + e.getMessage());
         }
     }
 }

@@ -44,5 +44,6 @@ public class OrderDto {
 
     @JsonProperty("items")
     @Valid
+    @Builder.Default
     private List<OrderItemDto> orderItems = new ArrayList<>();
 }

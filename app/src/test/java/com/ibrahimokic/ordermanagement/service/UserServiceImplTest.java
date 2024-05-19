@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Collections;
 import java.util.List;
@@ -154,5 +155,68 @@ public class UserServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> userService.updateUser(userId, updatedUserDto));
+    }
+
+    @Test
+    void testDeleteUserByUsername_UserExists() {
+        String username = "existingUser";
+        User mockUser = User.builder().username(username).build();
+
+        when(userRepository.findByUsername(username)).thenReturn(mockUser);
+
+        boolean result = userService.deleteUserByUsername(username);
+
+        verify(userRepository, times(1)).findByUsername(username);
+        verify(userRepository, times(1)).delete(mockUser);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void testDeleteUserByUsername_UserDoesNotExist() {
+        String username = "nonExistingUser";
+
+        when(userRepository.findByUsername(username)).thenReturn(null);
+
+        boolean result = userService.deleteUserByUsername(username);
+
+        verify(userRepository, times(1)).findByUsername(username);
+        verify(userRepository, times(0)).delete(any(User.class));
+
+        assertFalse(result);
+    }
+
+    @Test
+    void testDeleteUserByUsername_DataIntegrityViolationException() {
+        String username = "userWithReferences";
+        User mockUser = User.builder().username(username).build();
+
+        when(userRepository.findByUsername(username)).thenReturn(mockUser);
+        doThrow(new DataIntegrityViolationException("User is still referenced")).when(userRepository).delete(mockUser);
+
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> userService.deleteUserByUsername(username));
+
+        verify(userRepository, times(1)).findByUsername(username);
+        verify(userRepository, times(1)).delete(mockUser);
+
+        assertEquals("Cannot delete user because he is still referenced by some order.", exception.getMessage());
+    }
+
+    @Test
+    void testDeleteUserByUsername_OtherException() {
+        String username = "userWithException";
+        User mockUser = User.builder().username(username).build();
+
+        when(userRepository.findByUsername(username)).thenReturn(mockUser);
+        doThrow(new RuntimeException("Unexpected error")).when(userRepository).delete(mockUser);
+
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> userService.deleteUserByUsername(username));
+
+        verify(userRepository, times(1)).findByUsername(username);
+        verify(userRepository, times(1)).delete(mockUser);
+
+        assertEquals("Failed to delete user by username: Unexpected error", exception.getMessage());
     }
 }

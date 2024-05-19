@@ -275,30 +275,21 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
                 orderService);
         userConsoleAdapter.showAllUsersTable();
 
-        System.out.println(">> Please enter 'ID' of the user you want to delete.");
+        System.out.println(">> Please enter 'USERNAME' of the user you want to delete.");
         System.out.println(">> Press 'ENTER ' if you want to go back to the main menu.");
 
-        String userIdInput = scanner.nextLine();
+        String usernameInput = scanner.nextLine();
 
-        if (userIdInput.isEmpty()) {
+        if (usernameInput.isEmpty()) {
             adminUserManagementOptions();
             return;
         }
 
-        Long userId;
-
         try {
-            userId = Long.parseLong(userIdInput);
-
-            if (userService.findById(userId).isPresent()) {
-                userService.deleteUser(userId);
-                System.out.println("Successfully deleted user with ID: " + userId);
-            } else {
-                throw new RuntimeException("User with that ID does not exist.");
-            }
+            userService.deleteUserByUsername(usernameInput);
+            System.out.println("Successfully deleted user: " + usernameInput);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return;
         }
 
         Utils.returnBackToTheMainMenu(scanner);
@@ -320,6 +311,7 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
         } catch (ConstraintViolationException e) {
             e.getConstraintViolations().forEach(violation -> System.out.println(violation.getMessage()));
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             System.out.println("ERROR: An error occurred while creating an user, please check your inputs.");
         }
 

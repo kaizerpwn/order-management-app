@@ -9,12 +9,22 @@ import java.util.Optional;
 
 public interface UserService {
     List<User> getAllUsers();
+
     Optional<User> getUserById(Long userId);
+
     User createUser(User user);
+
     User loginUser(LoginRequest request);
+
     Optional<User> updateUser(Long userId, UserDto updatedUserDto);
+
     boolean deleteUser(Long userId);
+
+    boolean deleteUserByUsername(String username);
+
     Optional<User> findByEmail(String email);
+
     Optional<User> findById(Long userId);
+
     Optional<User> findByUsername(String username);
 }
