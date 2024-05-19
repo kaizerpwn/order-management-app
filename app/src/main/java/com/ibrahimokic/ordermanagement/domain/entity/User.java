@@ -28,7 +28,7 @@ public class User {
     @Column(name = "password", nullable = false)
     @JsonIgnore
     @NotBlank(message = "Password is required")
-    @Size( min = 5, message = "The password '${validatedValue}' must be greater then {min}")
+    @Size(min = 5, message = "The password '${validatedValue}' must be greater then {min}")
     private String password;
 
     @Column(name = "email", nullable = false)
@@ -49,7 +49,7 @@ public class User {
 
     @Column(name = "birth_date")
     @NotNull
-    @Past(message = "Birth date must be in the past")
+    @PastOrPresent(message = "Birth date must be in the past")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
