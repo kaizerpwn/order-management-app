@@ -2,13 +2,13 @@ package com.ibrahimokic.ordermanagement.service.impl;
 
 import com.ibrahimokic.ordermanagement.domain.dto.ProductDto;
 import com.ibrahimokic.ordermanagement.domain.entity.Product;
-import com.ibrahimokic.ordermanagement.repository.OrderItemRepository;
 import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.service.ProductService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,7 +19,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
-    private final OrderItemRepository orderItemRepository;
 
     @Override
     public List<Product> getAllProducts() {
@@ -82,11 +81,12 @@ public class ProductServiceImpl implements ProductService {
     public boolean deleteProduct(Long productId) {
         try {
             if (productRepository.existsById(productId)) {
-                orderItemRepository.deleteByProductId(productId);
                 productRepository.deleteById(productId);
                 return true;
             }
             return false;
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Cannot delete product. It is still referenced by order items.");
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete product by ID: " + e.getMessage());
         }

@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -81,6 +82,8 @@ public class UserServiceImpl implements UserService {
             }
             userRepository.deleteById(userId);
             return true;
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Cannot delete user because he is still referenced by some order.");
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete user by ID: " + e.getMessage());
         }

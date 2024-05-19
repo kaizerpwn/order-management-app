@@ -28,24 +28,32 @@ public class OrderConsoleAdapter extends ConsoleUserInterface {
     }
 
     static List<Order> getOrders(List<Order> orderList) {
-        System.out.println("|-------------|---------------------|---------------|---------------------|-------------------------------------------------------------|-------------------------------------------------------|");
-        System.out.println("|   Order ID  |        User         |  Order Date   |    Total Amount     |                      Delivery Address                       |                     Source Address                    |");
-        System.out.println("|-------------|---------------------|---------------|---------------------|-------------------------------------------------------------|-------------------------------------------------------|");
+        System.out.println(
+                "|-------------|---------------------|---------------|---------------------|-------------------------------------------------------------|-------------------------------------------------------|");
+        System.out.println(
+                "|   Order ID  |        User         |  Order Date   |    Total Amount     |                      Delivery Address                       |                     Source Address                    |");
+        System.out.println(
+                "|-------------|---------------------|---------------|---------------------|-------------------------------------------------------------|-------------------------------------------------------|");
+        if (orderList.size() == 0) {
+            System.out.println(
+                    "|                                    There are no orders in the database!                                                |");
+        } else {
+            for (Order order : orderList) {
+                Address deliveryAddress = order.getDeliveryAddress();
+                Address sourceAddress = order.getSourceAddress();
 
-        for (Order order : orderList) {
-            Address deliveryAddress = order.getDeliveryAddress();
-            Address sourceAddress = order.getSourceAddress();
-
-            System.out.printf("| %-12s| %-20s| %-14s| $%-19s| %-45s| %-45s |%n",
-                    order.getOrderId(),
-                    order.getUser().getFirstName() + " " + order.getUser().getLastName(),
-                    order.getOrderDate(),
-                    order.getTotalAmount(),
-                    Utils.formatAddress(deliveryAddress),
-                    Utils.formatAddress(sourceAddress));
+                System.out.printf("| %-12s| %-20s| %-14s| $%-19s| %-45s| %-45s |%n",
+                        order.getOrderId(),
+                        order.getUser().getFirstName() + " " + order.getUser().getLastName(),
+                        order.getOrderDate(),
+                        order.getTotalAmount(),
+                        Utils.formatAddress(deliveryAddress),
+                        Utils.formatAddress(sourceAddress));
+            }
         }
 
-        System.out.println("|-------------|---------------------|---------------|---------------------|-------------------------------------------------------------|-------------------------------------------------------|");
+        System.out.println(
+                "|-------------|---------------------|---------------|---------------------|-------------------------------------------------------------|-------------------------------------------------------|");
         return orderList;
     }
 
@@ -59,8 +67,8 @@ public class OrderConsoleAdapter extends ConsoleUserInterface {
             Sheet sheet = workbook.createSheet("Orders");
 
             Row headerRow = sheet.createRow(0);
-            String[] headers = {"Order ID", "User ID", "First Name", "Last Name", "Order Date", "Total Amount",
-                    "Delivery Address", "Source Address", "Products"};
+            String[] headers = { "Order ID", "User ID", "First Name", "Last Name", "Order Date", "Total Amount",
+                    "Delivery Address", "Source Address", "Products" };
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(headers[i]);
@@ -107,7 +115,8 @@ public class OrderConsoleAdapter extends ConsoleUserInterface {
         Utils.clearConsole(20);
         consoleHeader();
 
-        System.out.println("[OM-APP]: Welcome, " + loggedUser.getFirstName() + "! Take a moment to choose your next step:");
+        System.out.println(
+                "[OM-APP]: Welcome, " + loggedUser.getFirstName() + "! Take a moment to choose your next step:");
         System.out.println("1.) List of all orders");
         System.out.println("2.) Export orders as CSV file");
         System.out.println("3.) Return to the main menu");

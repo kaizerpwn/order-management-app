@@ -57,10 +57,6 @@ public class User {
     @JoinColumn(name = "address_id", referencedColumnName = "address_id")
     private Address address;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Order> orders;
-
     public boolean checkUserPassword(String password) {
         return password.equals(this.password);
     }

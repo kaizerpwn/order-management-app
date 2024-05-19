@@ -23,6 +23,9 @@ public class OrderDto {
     @NotNull
     private Long userId;
 
+    @JsonProperty("order_id")
+    private Long orderId;
+
     @JsonProperty("order_date")
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")

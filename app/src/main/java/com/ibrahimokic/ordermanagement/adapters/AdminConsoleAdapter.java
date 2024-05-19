@@ -2,7 +2,7 @@ package com.ibrahimokic.ordermanagement.adapters;
 
 import com.ibrahimokic.ordermanagement.adapters.ui.ConsoleUserInterface;
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
-import com.ibrahimokic.ordermanagement.domain.entity.User;  
+import com.ibrahimokic.ordermanagement.domain.entity.User;
 import com.ibrahimokic.ordermanagement.service.AddressService;
 import com.ibrahimokic.ordermanagement.service.OrderService;
 import com.ibrahimokic.ordermanagement.service.ProductService;
@@ -27,12 +27,13 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
 
         displayAdminDashboardMenu();
 
-        int choice = Utils.getValidInput(scanner,  4);
+        int choice = Utils.getValidInput(scanner, 4);
         processAdminDashboardChoice(choice);
     }
 
     private void displayAdminDashboardMenu() {
-        System.out.println("[OM-APP]: Welcome, " + loggedUser.getFirstName() + "! Take a moment to choose your next step:");
+        System.out.println(
+                "[OM-APP]: Welcome, " + loggedUser.getFirstName() + "! Take a moment to choose your next step:");
         System.out.println("1.) Manage users");
         System.out.println("2.) Manage products");
         System.out.println("3.) Manage orders");
@@ -45,7 +46,8 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
             case 2 -> adminProductManagementOptions();
             case 3 -> adminOrderManagementOptions();
             case 4 -> {
-                UserConsoleAdapter userConsoleAdapter = new UserConsoleAdapter(userService, addressService, productService, orderService);
+                UserConsoleAdapter userConsoleAdapter = new UserConsoleAdapter(userService, addressService,
+                        productService, orderService);
                 userConsoleAdapter.userMainForm();
             }
         }
@@ -58,7 +60,7 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
         OrderConsoleAdapter orderConsoleAdapter = new OrderConsoleAdapter(loggedUser, orderService);
         orderConsoleAdapter.displayAdminOrderManagementMenu();
 
-        int choice = Utils.getValidInput(scanner,  3);
+        int choice = Utils.getValidInput(scanner, 3);
         processAdminOrderManagementChoice(choice);
     }
 
@@ -69,7 +71,7 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
         ProductConsoleAdapter productConsoleAdapter = new ProductConsoleAdapter(loggedUser, productService);
         productConsoleAdapter.displayAdminProductManagementMenu();
 
-        int choice = Utils.getValidInput(scanner,  4);
+        int choice = Utils.getValidInput(scanner, 4);
         processAdminProductManagementChoice(choice);
     }
 
@@ -79,12 +81,13 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
         consoleHeader();
         displayAdminUserManagementMenu();
 
-        int choice = Utils.getValidInput(scanner,  4);
+        int choice = Utils.getValidInput(scanner, 4);
         processAdminUserManagementChoice(choice);
     }
 
     private void displayAdminUserManagementMenu() {
-        System.out.println("[OM-APP]: Welcome, " + loggedUser.getFirstName() + "! Take a moment to choose your next step:");
+        System.out.println(
+                "[OM-APP]: Welcome, " + loggedUser.getFirstName() + "! Take a moment to choose your next step:");
         System.out.println("1.) List of the users");
         System.out.println("2.) Create new user");
         System.out.println("3.) Delete a user");
@@ -121,7 +124,8 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
         Utils.clearConsole(20);
         consoleHeader();
 
-        UserConsoleAdapter userConsoleAdapter = new UserConsoleAdapter(userService, addressService, productService, orderService);
+        UserConsoleAdapter userConsoleAdapter = new UserConsoleAdapter(userService, addressService, productService,
+                orderService);
         userConsoleAdapter.showAllUsersTable();
 
         Utils.returnBackToTheMainMenu(scanner);
@@ -197,9 +201,9 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
     }
 
     private void createAdminAccountForm() {
-        String username = Utils.promptUserInput(scanner,"username");
-        String password = Utils.promptUserInput(scanner,"password");
-        String email = Utils.promptUserInput(scanner,"email");
+        String username = Utils.promptUserInput(scanner, "username");
+        String password = Utils.promptUserInput(scanner, "password");
+        String email = Utils.promptUserInput(scanner, "email");
 
         User newAdminAccount = User.builder()
                 .username(username)
@@ -213,24 +217,24 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
 
     private void createUserAccountForm() {
         try {
-            String username = Utils.promptUserInput(scanner,"username");
-            String password = Utils.promptUserInput(scanner,"password");
+            String username = Utils.promptUserInput(scanner, "username");
+            String password = Utils.promptUserInput(scanner, "password");
             String email;
 
             do {
-                email = Utils.promptUserInput(scanner,"email");
+                email = Utils.promptUserInput(scanner, "email");
                 if (userService.findByEmail(email).isPresent()) {
                     System.out.println("User with this email already exists. Please try a different email address.");
                 }
             } while (userService.findByEmail(email).isPresent());
 
-            String name = Utils.promptUserInput(scanner,"first name");
-            String surname = Utils.promptUserInput(scanner,"last name");
-            LocalDate birthDate = LocalDate.parse(Utils.promptUserInput(scanner,"birth date (yyyy-MM-dd)"));
-            String streetName = Utils.promptUserInput(scanner,"street address");
-            String zipCode = Utils.promptUserInput(scanner,"postal code");
-            String city = Utils.promptUserInput(scanner,"city");
-            String country = Utils.promptUserInput(scanner,"country");
+            String name = Utils.promptUserInput(scanner, "first name");
+            String surname = Utils.promptUserInput(scanner, "last name");
+            LocalDate birthDate = LocalDate.parse(Utils.promptUserInput(scanner, "birth date (yyyy-MM-dd)"));
+            String streetName = Utils.promptUserInput(scanner, "street address");
+            String zipCode = Utils.promptUserInput(scanner, "postal code");
+            String city = Utils.promptUserInput(scanner, "city");
+            String country = Utils.promptUserInput(scanner, "country");
 
             Address newAddress = Address.builder()
                     .country(country)
@@ -251,16 +255,12 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
                     .build();
 
             saveUserAndReturnToMenu(newUserAccount);
-        }
-        catch (ConstraintViolationException e) {
-            e.getConstraintViolations().forEach(violation ->
-                    System.out.println(violation.getMessage())
-            );
+        } catch (ConstraintViolationException e) {
+            e.getConstraintViolations().forEach(violation -> System.out.println(violation.getMessage()));
             Utils.returnBackToTheMainMenu(scanner);
             adminUserManagementOptions();
-        }
-        catch (Exception e) {
-            System.out.println("ERROR: "+ e.getMessage());
+        } catch (Exception e) {
+            System.out.println("ERROR: " + e.getMessage());
             Utils.returnBackToTheMainMenu(scanner);
             adminUserManagementOptions();
         }
@@ -271,7 +271,8 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
         consoleHeader();
         scanner.nextLine();
 
-        UserConsoleAdapter userConsoleAdapter = new UserConsoleAdapter(userService, addressService, productService, orderService);
+        UserConsoleAdapter userConsoleAdapter = new UserConsoleAdapter(userService, addressService, productService,
+                orderService);
         userConsoleAdapter.showAllUsersTable();
 
         System.out.println(">> Please enter 'ID' of the user you want to delete.");
@@ -293,10 +294,10 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
                 userService.deleteUser(userId);
                 System.out.println("Successfully deleted user with ID: " + userId);
             } else {
-                System.out.println("User with that ID does not exist.");
+                throw new RuntimeException("User with that ID does not exist.");
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Please enter a valid user ID.");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
             return;
         }
 
@@ -314,14 +315,11 @@ public class AdminConsoleAdapter extends ConsoleUserInterface {
     private void saveUserAndReturnToMenu(User user) {
         try {
             userService.createUser(user);
-            System.out.println("OM-APP: New account '" + user.getFirstName() + " " + user.getLastName() + "' with role '"+ user.getRole() +"' has been successfully created.");
-        }
-        catch (ConstraintViolationException e) {
-            e.getConstraintViolations().forEach(violation ->
-                    System.out.println(violation.getMessage())
-            );
-        }
-        catch (Exception e) {
+            System.out.println("OM-APP: New account '" + user.getFirstName() + " " + user.getLastName()
+                    + "' with role '" + user.getRole() + "' has been successfully created.");
+        } catch (ConstraintViolationException e) {
+            e.getConstraintViolations().forEach(violation -> System.out.println(violation.getMessage()));
+        } catch (Exception e) {
             System.out.println("ERROR: An error occurred while creating an user, please check your inputs.");
         }
 
