@@ -1,5 +1,6 @@
 package com.ibrahimokic.ordermanagement.service;
 
+import com.ibrahimokic.ordermanagement.domain.dto.AddressDto;
 import com.ibrahimokic.ordermanagement.domain.entity.Address;
 import com.ibrahimokic.ordermanagement.repository.AddressRepository;
 import com.ibrahimokic.ordermanagement.service.impl.AddressServiceImpl;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -79,5 +81,35 @@ public class AddressServiceImplTest {
     void testDeleteAddressShouldFail() {
         boolean result = addressService.deleteAddress(500L);
         assertFalse(result);
+    }
+
+    @Test
+    void testGetAddressById_AddressNotExists() {
+        Long addressId = 1L;
+        when(addressRepository.findById(addressId)).thenReturn(Optional.empty());
+
+        Optional<Address> result = addressService.getAddressById(addressId);
+
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void testCreateAddress_ExceptionThrown() {
+        Address address = Address.builder().street("Dzemala Bijedica bb").country("Bosnia and Herzegovina").zip("75000")
+                .city("Sarajevo").build();
+        when(addressRepository.save(address)).thenThrow(new RuntimeException("Database connection error"));
+
+        assertThrows(RuntimeException.class, () -> addressService.createAddress(address));
+    }
+
+    @Test
+    void testUpdateAddress_AddressIdNotExists() {
+        Long addressId = 1L;
+        AddressDto updatedAddressDto = new AddressDto();
+        updatedAddressDto.setStreet("New Street");
+
+        when(addressRepository.findById(addressId)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> addressService.updateAddress(addressId, updatedAddressDto));
     }
 }

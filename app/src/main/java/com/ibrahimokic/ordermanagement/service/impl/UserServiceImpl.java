@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
         try {
             User userExists = userRepository.findByEmail(user.getEmail());
 
-            if(userExists != null) {
+            if (userExists != null) {
                 throw new RuntimeException("User with that email already exists in the database.");
             }
 
@@ -66,13 +66,12 @@ public class UserServiceImpl implements UserService {
                 userRepository.save(existingUser);
                 return Optional.of(existingUser);
             } else {
-                throw new RuntimeException("User with ID "+ userId +" does not exist in the database.");
+                throw new RuntimeException("User with ID " + userId + " does not exist in the database.");
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to update the user: " + e.getMessage());
         }
     }
-
 
     @Override
     public boolean deleteUser(Long userId) {

@@ -2,7 +2,6 @@ package com.ibrahimokic.ordermanagement.service.impl;
 
 import com.ibrahimokic.ordermanagement.domain.dto.ProductDto;
 import com.ibrahimokic.ordermanagement.domain.entity.Product;
-import com.ibrahimokic.ordermanagement.mapper.impl.ProductMapperImpl;
 import com.ibrahimokic.ordermanagement.repository.OrderItemRepository;
 import com.ibrahimokic.ordermanagement.repository.ProductRepository;
 import com.ibrahimokic.ordermanagement.service.ProductService;
@@ -21,7 +20,6 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final OrderItemRepository orderItemRepository;
-    private final ProductMapperImpl productMapper;
 
     @Override
     public List<Product> getAllProducts() {
@@ -64,15 +62,14 @@ public class ProductServiceImpl implements ProductService {
         try {
             Optional<Product> optionalExistingProduct = productRepository.findById(productId);
 
-            if (optionalExistingProduct.isPresent()) {
-                Product existingProduct = productMapper.mapFrom(updatedProductDto);
-                existingProduct.setProductId(productId);
-                try {
-                    productRepository.save(existingProduct);
-                    return Optional.of(existingProduct);
-                } catch (Exception e) {
-                    throw new RuntimeException("Product not found");
-                }
+            if (optionalExistingProduct != null && optionalExistingProduct.isPresent()) {
+                Product existingProduct = optionalExistingProduct.get();
+                existingProduct.setProductName(updatedProductDto.getProductName());
+                existingProduct.setPrice(updatedProductDto.getPrice());
+
+                productRepository.save(existingProduct);
+
+                return Optional.of(existingProduct);
             } else {
                 return Optional.empty();
             }
@@ -84,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean deleteProduct(Long productId) {
         try {
-            if(productRepository.existsById(productId)) {
+            if (productRepository.existsById(productId)) {
                 orderItemRepository.deleteByProductId(productId);
                 productRepository.deleteById(productId);
                 return true;

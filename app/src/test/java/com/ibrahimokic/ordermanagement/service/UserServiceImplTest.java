@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -135,4 +137,22 @@ public class UserServiceImplTest {
         assertEquals(mockUser, updatedUser.get());
     }
 
+    @Test
+    void testCreateUser_UserWithEmailExists() {
+        User existingUser = User.builder().email("existing@example.com").build();
+        when(userRepository.findByEmail(existingUser.getEmail())).thenReturn(existingUser);
+
+        assertThrows(RuntimeException.class, () -> userService.createUser(existingUser));
+    }
+
+    @Test
+    void testUpdateUser_UserNotExists() {
+        Long userId = 1L;
+        UserDto updatedUserDto = new UserDto();
+        updatedUserDto.setUsername("new_username");
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> userService.updateUser(userId, updatedUserDto));
+    }
 }

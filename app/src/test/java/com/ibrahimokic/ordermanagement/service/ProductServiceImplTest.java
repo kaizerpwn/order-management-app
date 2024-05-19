@@ -39,7 +39,8 @@ public class ProductServiceImplTest {
     @Test
     void testGetProductById() {
         Long productId = 1L;
-        Product product = Product.builder().productId(productId).productName("Chair").price(new BigDecimal("150.0")).build();
+        Product product = Product.builder().productId(productId).productName("Chair").price(new BigDecimal("150.0"))
+                .build();
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
 
         Optional<Product> result = productService.getProductById(productId);
@@ -109,5 +110,46 @@ public class ProductServiceImplTest {
         verify(productRepository, times(1)).save(existingProduct);
     }
 
-}
+    @Test
+    void testGetProductById_ProductNotExists() {
+        Long productId = 1L;
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
+        Optional<Product> result = productService.getProductById(productId);
+
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void testGetAllAvailableProducts_NoAvailableProducts() {
+        when(productRepository.findAvailableProducts(LocalDate.now())).thenReturn(Collections.emptyList());
+
+        List<Product> result = productService.getAllAvailableProducts();
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetAllProducts_RepositoryReturnsEmptyList() {
+        when(productRepository.findAll()).thenReturn(Collections.emptyList());
+
+        List<Product> result = productService.getAllProducts();
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testUpdateProduct_RepositoryReturnsNull() {
+        Long productId = 1L;
+        ProductDto updatedProductDto = new ProductDto();
+        updatedProductDto.setProductName("Table");
+        updatedProductDto.setPrice(new BigDecimal("200.0"));
+
+        when(productRepository.findById(productId)).thenReturn(null);
+
+        Optional<Product> result = productService.updateProduct(productId, updatedProductDto);
+
+        assertFalse(result.isPresent());
+    }
+
+}
