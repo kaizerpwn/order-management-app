@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -49,6 +50,6 @@ public class Product {
 
     @Column(name = "available_quantity", nullable = false)
     @NotNull
-    @Positive(message = "Available quantity must be bigger than zero")
+    @PositiveOrZero(message = "Available quantity must be bigger or equal to zero")
     private int availableQuantity;
 }

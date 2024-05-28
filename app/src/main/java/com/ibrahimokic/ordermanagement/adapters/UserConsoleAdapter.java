@@ -260,7 +260,7 @@ public class UserConsoleAdapter extends ConsoleUserInterface {
 
     private void finishOrder() {
         try {
-            if (currentOrder.size() == 0) {
+            if (currentOrder.isEmpty()) {
                 System.out.println("ERROR: Your cart is currently empty, so order is not created.");
                 return;
             }

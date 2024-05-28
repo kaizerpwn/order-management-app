@@ -13,7 +13,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories
 @RequiredArgsConstructor
 public class OrderManagementApplication implements CommandLineRunner {
 	private final AddressService addressService;
