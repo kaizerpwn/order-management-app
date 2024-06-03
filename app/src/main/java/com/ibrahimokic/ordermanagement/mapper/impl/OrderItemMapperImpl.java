@@ -15,6 +15,7 @@ public class OrderItemMapperImpl implements Mapper<OrderItem, OrderItemDto> {
 
     public OrderItemMapperImpl(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
+        this.modelMapper.getConfiguration().setAmbiguityIgnored(true);
         this.modelMapper.typeMap(OrderItem.class, OrderItemDto.class).addMappings(mapper -> {
             mapper.map(src -> src.getOrder().getOrderId(), OrderItemDto::setOrderId);
             mapper.map(src -> src.getProduct().getProductId(), OrderItemDto::setProductId);
