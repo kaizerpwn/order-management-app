@@ -12,13 +12,20 @@ import java.util.stream.Collectors;
 @Component
 public class OrderItemMapperImpl implements Mapper<OrderItem, OrderItemDto> {
     private final ModelMapper modelMapper;
+
     public OrderItemMapperImpl(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
+        this.modelMapper.typeMap(OrderItem.class, OrderItemDto.class).addMappings(mapper -> {
+            mapper.map(src -> src.getOrder().getOrderId(), OrderItemDto::setOrderId);
+            mapper.map(src -> src.getProduct().getProductId(), OrderItemDto::setProductId);
+        });
     }
+
     @Override
     public OrderItemDto mapTo(OrderItem orderItem) {
         return modelMapper.map(orderItem, OrderItemDto.class);
     }
+
     @Override
     public OrderItem mapFrom(OrderItemDto orderItemDto) {
         return modelMapper.map(orderItemDto, OrderItem.class);
