@@ -26,6 +26,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/address")
 @RequiredArgsConstructor
+@CrossOrigin(origins = { "http://localhost:4200" })
 @Tag(name = "Address", description = "Operations related to addresses")
 public class AddressController {
 
@@ -84,7 +85,8 @@ public class AddressController {
     })
     public ResponseEntity<?> createAddress(@RequestBody @Valid AddressDto addressDto, BindingResult bindingResult) {
         ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
-        if (errors != null) return errors;
+        if (errors != null)
+            return errors;
 
         try {
             Address newAddress = addressMapper.mapFrom(addressDto);
@@ -107,7 +109,8 @@ public class AddressController {
             if (deletionResult) {
                 return ResponseEntity.ok().body("Address deleted successfully.");
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error occurred while deleting address " + addressId + ".");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("An error occurred while deleting address " + addressId + ".");
             }
         } catch (Exception e) {
             return ResponseEntity
@@ -120,9 +123,11 @@ public class AddressController {
     @PatchMapping("/{addressId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Edit address", description = "Edit address based on request body and address ID")
-    public ResponseEntity<?> updateAddress(@PathVariable Long addressId, @Valid @RequestBody AddressDto updatedAddressDto, BindingResult bindingResult) {
+    public ResponseEntity<?> updateAddress(@PathVariable Long addressId,
+            @Valid @RequestBody AddressDto updatedAddressDto, BindingResult bindingResult) {
         ResponseEntity<?> errors = Utils.getBindingResults(bindingResult);
-        if (errors != null) return errors;
+        if (errors != null)
+            return errors;
 
         try {
             AddressDto updatedAddress = addressService.updateAddress(addressId, updatedAddressDto);

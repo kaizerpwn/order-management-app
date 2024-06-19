@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
+@CrossOrigin(origins = { "http://localhost:4200" })
 @Tag(name = "User", description = "Operations related to users")
 public class UserController {
     private final UserService userService;

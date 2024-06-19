@@ -30,9 +30,9 @@ public class AuthServiceImpl implements AuthService {
         if (user != null) {
             issueNewJwt(response, user, request.getUsername());
 
-            return ResponseEntity.status(HttpStatus.OK)
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .body("Successfully logged in");
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(userMapper.mapTo(user));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .contentType(MediaType.TEXT_PLAIN)
@@ -62,8 +62,7 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtIssuer.issue(
                 user.getUserId(),
                 username,
-                user.getRole()
-        );
+                user.getRole());
 
         Cookie cookie = new Cookie("accessToken", accessToken);
         cookie.setHttpOnly(true);
