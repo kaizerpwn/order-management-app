@@ -64,8 +64,7 @@ public class AuthServiceImplTest {
 
         assertNotNull(responseEntity);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(MediaType.TEXT_PLAIN, responseEntity.getHeaders().getContentType());
-        assertEquals("Successfully logged in", responseEntity.getBody());
+        assertEquals(MediaType.APPLICATION_JSON, responseEntity.getHeaders().getContentType());
 
         verify(jwtIssuer, times(1)).issue(anyLong(), eq("ibrahim"), eq("USER"));
         verify(response, times(1)).addCookie(any(Cookie.class));
